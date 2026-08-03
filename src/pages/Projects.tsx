@@ -14,9 +14,20 @@ import { db } from '../firebase/config'
 import { projectFromDoc } from '../lib/firestore'
 import { Seo } from '../components/Seo'
 import { CtaBanner } from '../components/CtaBanner'
+import { EmptyState } from '../components/EmptyState'
 import type { Project } from '../types'
 
 const PAGE_SIZE = 6
+
+function BriefcaseIcon() {
+    return (
+        <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M5 6h14a1 1 0 0 1 1 1v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a1 1 0 0 1 1-1ZM3 11h18"
+        />
+    )
+}
 
 function useProjects() {
     const [projects, setProjects] = useState<Project[] | null>(null)
@@ -71,7 +82,7 @@ function Hero() {
                 Our Work
             </span>
 
-            <h1 className="mt-5 text-4xl font-bold tracking-tight sm:text-5xl">Projects We&rsquo;ve Delivered</h1>
+            <h1 className="mt-5 text-4xl font-bold tracking-tight sm:text-6xl">Projects We&rsquo;ve Delivered</h1>
 
             <p className="mt-5 max-w-xl text-lg text-slate-300">
                 Explore some of the digital products we&rsquo;ve designed, built, and shipped for our clients.
@@ -130,7 +141,7 @@ function ProjectCard({ project }: { project: Project }) {
                 )}
             </div>
             <div className="p-5">
-                <h3 className="font-semibold">{project.title}</h3>
+                <h3 className="text-lg font-semibold">{project.title}</h3>
                 <p className="mt-2 line-clamp-2 text-sm text-slate-400">{project.description}</p>
             </div>
         </Link>
@@ -161,9 +172,18 @@ function ProjectsGrid() {
                     ))}
                 </div>
             ) : projects.length === 0 ? (
-                <p className="mt-8 rounded-xl border border-slate-800 bg-slate-900/40 px-6 py-10 text-center text-slate-400">
-                    No projects published yet — check back soon.
-                </p>
+                <EmptyState
+                    icon={<BriefcaseIcon />}
+                    title="New projects coming soon"
+                    message="We're currently building out our portfolio. Check back soon, or get in touch to be one of our first case studies."
+                    action={{ label: 'Get in Touch', to: '/contact' }}
+                />
+            ) : visibleProjects && visibleProjects.length === 0 ? (
+                <EmptyState
+                    icon={<BriefcaseIcon />}
+                    title={`No ${activeCategory} projects yet`}
+                    message="Try a different category, or check back soon as we publish more work."
+                />
             ) : (
                 <div className="mt-8 grid gap-6 md:grid-cols-3">
                     {visibleProjects?.map((project) => <ProjectCard key={project.id} project={project} />)}

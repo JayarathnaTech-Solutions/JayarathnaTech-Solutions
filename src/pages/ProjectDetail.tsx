@@ -45,7 +45,7 @@ function BackLink() {
 function ProjectInfo({ project }: { project: Project }) {
     return (
         <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
-            <h3 className="font-semibold">Project Info</h3>
+            <h3 className="text-lg font-semibold">Project Info</h3>
 
             <dl className="mt-4 space-y-4 text-sm">
                 {project.client && (
@@ -83,7 +83,7 @@ function ProjectInfo({ project }: { project: Project }) {
 function QuoteCta() {
     return (
         <div className="rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 p-6">
-            <h3 className="font-semibold text-white">Have a similar project?</h3>
+            <h3 className="text-lg font-semibold text-white">Have a similar project?</h3>
             <p className="mt-1 text-sm text-blue-100">Let&rsquo;s talk about what you&rsquo;re building.</p>
             <Link
                 to="/contact"
@@ -100,27 +100,27 @@ function ProjectBody({ project }: { project: Project }) {
     return (
         <div className="space-y-8">
             <div>
-                <h2 className="text-xl font-bold">Project Overview</h2>
+                <h2 className="text-2xl font-bold sm:text-3xl">Project Overview</h2>
                 <p className="mt-3 text-slate-300">{project.description}</p>
             </div>
 
             {project.challenge && (
                 <div>
-                    <h2 className="text-xl font-bold">The Challenge</h2>
+                    <h2 className="text-2xl font-bold sm:text-3xl">The Challenge</h2>
                     <p className="mt-3 text-slate-300">{project.challenge}</p>
                 </div>
             )}
 
             {project.solution && (
                 <div>
-                    <h2 className="text-xl font-bold">Our Solution</h2>
+                    <h2 className="text-2xl font-bold sm:text-3xl">Our Solution</h2>
                     <p className="mt-3 text-slate-300">{project.solution}</p>
                 </div>
             )}
 
             {project.keyFeatures && project.keyFeatures.length > 0 && (
                 <div>
-                    <h2 className="text-xl font-bold">Key Features</h2>
+                    <h2 className="text-2xl font-bold sm:text-3xl">Key Features</h2>
                     <ul className="mt-3 space-y-2.5">
                         {project.keyFeatures.map((feature) => (
                             <li key={feature} className="flex items-start gap-2.5 text-slate-300">
@@ -161,7 +161,7 @@ function ProjectView({ project }: { project: Project }) {
                 )}
             </div>
 
-            <h1 className="mt-8 text-3xl font-bold tracking-tight sm:text-4xl">{project.title}</h1>
+            <h1 className="mt-8 text-4xl font-bold tracking-tight sm:text-6xl">{project.title}</h1>
 
             <div className="mt-10 grid gap-8 lg:grid-cols-3">
                 <div className="lg:col-span-2">
@@ -180,7 +180,7 @@ function ProjectView({ project }: { project: Project }) {
 function NotFound() {
     return (
         <section className="mx-auto max-w-7xl px-6 py-24 text-center">
-            <h1 className="text-2xl font-bold">Project not found</h1>
+            <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">Project not found</h1>
             <p className="mt-3 text-slate-400">This project may have been removed or the link is incorrect.</p>
             <Link to="/projects" className="mt-6 inline-block text-sm font-medium text-blue-400 hover:text-blue-300">
                 &larr; Back to Projects
