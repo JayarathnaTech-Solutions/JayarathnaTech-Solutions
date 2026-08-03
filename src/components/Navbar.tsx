@@ -1,14 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router'
 import { Logo } from './Logo'
-
-const links = [
-  { to: '/', label: 'Home', end: true },
-  { to: '/about', label: 'About' },
-  { to: '/services', label: 'Services' },
-  { to: '/projects', label: 'Projects' },
-  { to: '/contact', label: 'Contact' },
-]
+import { navLinks as links } from '../lib/siteInfo'
 
 export function Navbar() {
   const [open, setOpen] = useState(false)

@@ -1,12 +1,13 @@
 import { useState, type FormEvent } from 'react'
 import { Seo } from '../components/Seo'
+import { siteContact } from '../lib/siteInfo'
 
 const WEB3FORMS_ACCESS_KEY = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY as string
 
 const contactDetails = [
     {
         label: 'Email',
-        value: 'hello@jayarathnatechsolutions.com',
+        value: siteContact.email,
         icon: (
             <path
                 strokeLinecap="round"
@@ -17,7 +18,7 @@ const contactDetails = [
     },
     {
         label: 'Phone',
-        value: '+94 78 628 7211',
+        value: siteContact.phone,
         icon: (
             <path
                 strokeLinecap="round"
@@ -28,7 +29,7 @@ const contactDetails = [
     },
     {
         label: 'Location',
-        value: 'Negombo, Sri Lanka',
+        value: siteContact.location,
         icon: (
             <>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 21s7-6.5 7-11a7 7 0 1 0-14 0c0 4.5 7 11 7 11Z" />
