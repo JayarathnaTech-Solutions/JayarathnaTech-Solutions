@@ -40,6 +40,99 @@ const team = [
     { name: 'Harshani Fernando', role: 'QA Tester', img: 'https://i.ibb.co/M47SptC/Whats-App-Image-2026-07-26-at-10-07-51.jpg' },
 ]
 
+const processSteps = [
+    {
+        step: '01',
+        title: 'Discover',
+        description: 'We start by understanding your business goals, users, and challenges to define a clear project scope.',
+    },
+    {
+        step: '02',
+        title: 'Design',
+        description: 'We craft intuitive UI/UX and technical architecture that balances usability with scalability.',
+    },
+    {
+        step: '03',
+        title: 'Develop',
+        description: 'Our team builds your product using modern, reliable technologies with clean, maintainable code.',
+    },
+    {
+        step: '04',
+        title: 'Deliver & Support',
+        description: 'We launch your product and stay engaged with ongoing support and improvements.',
+    },
+]
+
+const whyChooseUsItems = [
+    {
+        title: 'Modern Tech Stack',
+        description: 'We build with proven, modern frameworks and cloud infrastructure for performance and scalability.',
+        icon: (
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m12 2 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 17l9 5 9-5"
+            />
+        ),
+    },
+    {
+        title: 'Transparent Communication',
+        description: "You'll always know where your project stands — clear updates, no surprises.",
+        icon: (
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"
+            />
+        ),
+    },
+    {
+        title: 'Dedicated Attention',
+        description: 'As a growing studio, every project gets our full focus and hands-on care.',
+        icon: (
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 21s-6.7-4.35-9.3-8.4C1 9.9 1.8 6.6 4.6 5.2 7 4 9.7 4.8 12 7.5 14.3 4.8 17 4 19.4 5.2c2.8 1.4 3.6 4.7 1.9 7.4C18.7 16.65 12 21 12 21Z"
+            />
+        ),
+    },
+    {
+        title: 'Flexible & Responsive',
+        description: 'We adapt quickly to feedback and changing requirements throughout the project.',
+        icon: (
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />
+        ),
+    },
+]
+
+const technologyGroups = [
+    {
+        category: 'Frontend & Mobile',
+        items: [
+            { name: 'React', mono: 'Re', color: 'bg-cyan-500/10 text-cyan-400' },
+            { name: 'Vue', mono: 'Vu', color: 'bg-emerald-500/10 text-emerald-400' },
+            { name: 'React Native', mono: 'RN', color: 'bg-sky-500/10 text-sky-400' },
+        ],
+    },
+    {
+        category: 'Backend',
+        items: [
+            { name: 'Laravel', mono: 'La', color: 'bg-red-500/10 text-red-400' },
+            { name: 'Spring Boot', mono: 'Sp', color: 'bg-lime-500/10 text-lime-400' },
+            { name: 'Express', mono: 'Ex', color: 'bg-red-500/10 text-lime-400' },
+        ],
+    },
+    {
+        category: 'Cloud & Data',
+        items: [
+            { name: 'AWS', mono: 'AW', color: 'bg-orange-500/10 text-orange-400' },
+            { name: 'Firebase', mono: 'Fi', color: 'bg-amber-500/10 text-amber-400' },
+            { name: 'MySQL', mono: 'My', color: 'bg-blue-500/10 text-blue-400' },
+        ],
+    },
+]
+
 function Hero() {
     return (
         <section className="relative overflow-hidden">
@@ -91,6 +184,79 @@ function Mission() {
     )
 }
 
+function Process() {
+    return (
+        <section className="mx-auto max-w-7xl px-6 py-16">
+            <h2 className="text-2xl font-bold sm:text-3xl">Our Process</h2>
+
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-4">
+                {processSteps.map((item) => (
+                    <div key={item.step} className="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
+                        <span className="text-3xl font-bold text-blue-500/30">{item.step}</span>
+                        <h3 className="mt-4 font-semibold">{item.title}</h3>
+                        <p className="mt-2 text-sm text-slate-400">{item.description}</p>
+                    </div>
+                ))}
+            </div>
+        </section>
+    )
+}
+
+function WhyChooseUs() {
+    return (
+        <section className="mx-auto max-w-7xl px-6 py-16">
+            <h2 className="text-2xl font-bold sm:text-3xl">Why Choose Us</h2>
+
+            <div className="mt-8 grid gap-6 sm:grid-cols-2">
+                {whyChooseUsItems.map((item) => (
+                    <div key={item.title} className="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+                                {item.icon}
+                            </svg>
+                        </div>
+                        <h3 className="mt-4 font-semibold">{item.title}</h3>
+                        <p className="mt-2 text-sm text-slate-400">{item.description}</p>
+                    </div>
+                ))}
+            </div>
+        </section>
+    )
+}
+
+function TechStack() {
+    return (
+        <section className="mx-auto max-w-7xl px-6 py-16">
+            <h2 className="text-2xl font-bold sm:text-3xl">Technologies We Use</h2>
+
+            <div className="mt-8 grid gap-8 md:grid-cols-3">
+                {technologyGroups.map((group) => (
+                    <div key={group.category}>
+                        <h3 className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
+                            {group.category}
+                        </h3>
+                        <div className="mt-4 space-y-3">
+                            {group.items.map((tech) => (
+                                <div
+                                    key={tech.name}
+                                    className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/40 p-4 transition-colors hover:border-slate-700"
+                                >
+                                    <div
+                                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${tech.color}`}
+                                    >
+                                        {tech.mono}
+                                    </div>
+                                    <span className="font-medium text-slate-200">{tech.name}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </section>
+    )
+}
+
 function Team() {
     return (
         <section className="mx-auto max-w-7xl px-6 py-16">
@@ -100,9 +266,9 @@ function Team() {
                 {team.map((member) => (
                     <div
                         key={member.name}
-                        className="rounded-xl border border-slate-800 bg-slate-900/40 p-6 text-center"
+                        className="group rounded-xl border border-slate-800 bg-slate-900/40 p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/30 hover:bg-slate-900/60 hover:shadow-lg hover:shadow-black/20"
                     >
-                        <div className="mx-auto flex h-40 w-40 items-center justify-center overflow-hidden rounded-full bg-slate-800 text-xl font-semibold text-slate-300">
+                        <div className="mx-auto flex h-36 w-36 items-center justify-center overflow-hidden rounded-full bg-slate-800 text-xl font-semibold text-slate-300 ring-4 ring-slate-800/80 transition-all duration-300 group-hover:ring-blue-500/30">
                             {member.img ? (
                                 <img src={member.img} alt={member.name} className="h-full w-full rounded-full object-cover" />
                             ) : (
@@ -112,8 +278,10 @@ function Team() {
                                     .join('')
                             )}
                         </div>
-                        <h3 className="mt-4 font-semibold">{member.name}</h3>
-                        <p className="mt-1 text-sm text-slate-400">{member.role}</p>
+                        <h3 className="mt-5 font-semibold">{member.name}</h3>
+                        <span className="mt-2 inline-block rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400">
+                            {member.role}
+                        </span>
                     </div>
                 ))}
             </div>
@@ -131,6 +299,9 @@ export function About() {
 
             <Hero />
             <Mission />
+            <Process />
+            <WhyChooseUs />
+            <TechStack />
             <Team />
             <CtaBanner />
         </>
