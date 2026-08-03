@@ -87,6 +87,110 @@ function useFeaturedTestimonials() {
 
 const heroImages = [heroBackground, heroBackground2, heroBackground3]
 
+const services = [
+    {
+        title: 'Custom Web Development',
+        description: 'Tailored web applications and platforms engineered around your exact workflows and goals.',
+        icon: <path strokeLinecap="round" strokeLinejoin="round" d="m9 8-4 4 4 4M15 8l4 4-4 4" />,
+    },
+    {
+        title: 'E-Commerce Solutions',
+        description: 'Secure, scalable online stores that turn browsers into paying customers.',
+        icon: (
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3 4h2l.4 2M7 14h10l3-8H6.4M7 14 5.4 6M7 14l-1.5 6h11M9 22a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+            />
+        ),
+    },
+    {
+        title: 'Mobile App Development',
+        description: "Native and cross-platform apps that put your product in your customers' pockets.",
+        icon: (
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8 3h8a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Zm3 15h2"
+            />
+        ),
+    },
+    {
+        title: 'UI/UX Design',
+        description: 'Interfaces people enjoy using — researched, wireframed, and polished for conversion.',
+        icon: (
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 19 19 12l3 3-7 7-3-3Zm0 0-4 1 1-4L19 6l3 3-10 10Z"
+            />
+        ),
+    },
+    {
+        title: 'SaaS Development',
+        description: 'Multi-tenant software products built to scale from your first user to your thousandth.',
+        icon: (
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M7 18a4 4 0 1 1 .7-7.94A5.5 5.5 0 0 1 18 12a3.5 3.5 0 0 1 0 7H7Z"
+            />
+        ),
+    },
+    {
+        title: 'Maintenance & Support',
+        description: 'Ongoing monitoring, updates, and support so your product keeps running smoothly.',
+        icon: (
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2 2.6-2.6Z"
+            />
+        ),
+    },
+]
+
+const whyChooseUsItems = [
+    {
+        title: 'Faster Time-to-Market',
+        description: 'Streamlined development gets your product to market quickly without cutting corners.',
+        icon: <path strokeLinecap="round" strokeLinejoin="round" d="m3 17 6-6 4 4 8-8M15 7h6v6" />,
+    },
+    {
+        title: 'Scalable by Design',
+        description: 'Architecture built to grow with your business, from first launch to enterprise scale.',
+        icon: (
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m12 3 8 4-8 4-8-4 8-4ZM4 12l8 4 8-4M4 16l8 4 8-4"
+            />
+        ),
+    },
+    {
+        title: 'End-to-End Ownership',
+        description: 'From first sketch to production deployment, one team owns your entire product.',
+        icon: (
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6l-7-3Zm-3 9 2 2 4-4"
+            />
+        ),
+    },
+    {
+        title: 'Transparent Pricing',
+        description: 'Clear scopes and honest quotes — no hidden fees or scope creep.',
+        icon: (
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 2h7a1 1 0 0 1 1 1v7a1 1 0 0 1-.3.7l-9 9a1 1 0 0 1-1.4 0l-6.3-6.3a1 1 0 0 1 0-1.4l9-9A1 1 0 0 1 12 2Zm4.5 5.5h.01"
+            />
+        ),
+    },
+]
+
 function Hero() {
     const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
@@ -163,6 +267,73 @@ function Hero() {
                         </p>
                     </div>
                 </div>
+            </div>
+        </section>
+    )
+}
+
+function Services() {
+    return (
+        <section className="mx-auto max-w-7xl px-6 py-16">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+                <div>
+          <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-400">
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
+            What We Do
+          </span>
+                    <h2 className="mt-2 text-2xl font-bold sm:text-3xl">Our Services</h2>
+                </div>
+                <Link to="/services" className="text-sm font-medium text-blue-400 hover:text-blue-300">
+                    View all services &rarr;
+                </Link>
+            </div>
+
+            <div className="mt-8 grid gap-6 md:grid-cols-3">
+                {services.map((service) => (
+                    <Link
+                        key={service.title}
+                        to="/services"
+                        className="group rounded-xl border border-slate-800 bg-slate-900/40 p-6 transition-colors hover:border-slate-700"
+                    >
+                        <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+                                {service.icon}
+                            </svg>
+                        </div>
+                        <h3 className="mt-4 font-semibold">{service.title}</h3>
+                        <p className="mt-2 text-sm text-slate-400">{service.description}</p>
+                        <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-blue-400 group-hover:text-blue-300">
+                            Learn more
+                            <span aria-hidden="true">&rarr;</span>
+                        </span>
+                    </Link>
+                ))}
+            </div>
+        </section>
+    )
+}
+
+function WhyChooseUs() {
+    return (
+        <section className="mx-auto max-w-7xl px-6 py-16">
+      <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-400">
+        <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
+        Why Choose Us
+      </span>
+            <h2 className="mt-2 text-2xl font-bold sm:text-3xl">Built for Your Business Goals</h2>
+
+            <div className="mt-8 grid gap-6 sm:grid-cols-2">
+                {whyChooseUsItems.map((item) => (
+                    <div key={item.title} className="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+                                {item.icon}
+                            </svg>
+                        </div>
+                        <h3 className="mt-4 font-semibold">{item.title}</h3>
+                        <p className="mt-2 text-sm text-slate-400">{item.description}</p>
+                    </div>
+                ))}
             </div>
         </section>
     )
@@ -292,7 +463,9 @@ export function Home() {
             />
 
             <Hero />
+            <Services />
             <FeaturedProjects projects={projects} />
+            <WhyChooseUs />
             <FeaturedTestimonials testimonials={testimonials} />
             <CtaBanner />
         </>
