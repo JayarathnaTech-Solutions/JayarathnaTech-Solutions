@@ -10,11 +10,11 @@ export function HeroBackdrop({ image }: { image: string }) {
               style={{ backgroundImage: `url(${image})` }}
           />
 
-          {/* Flat tint: knocks the photo back so it reads as texture, not subject. */}
-          <div className="absolute inset-0 bg-slate-950/80" />
+          {/* Flat tint: balanced darkness */}
+          <div className="absolute inset-0 bg-slate-950/65" />
 
-          {/* Left-weighted gradient: stops halfway so the right side is completely clear */}
-          <div className="absolute inset-0 bg-linear-to-r from-slate-950 via-slate-950/40 to-transparent w-3/5" />
+          {/* Left-weighted gradient: gives just the right amount of shadow for text readability */}
+          <div className="absolute inset-0 bg-linear-to-r from-slate-950/95 via-slate-950/30 to-transparent w-3/5" />
 
           {/* Bottom fade so the hero blends into the page background. */}
           <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-slate-950 to-transparent" />
