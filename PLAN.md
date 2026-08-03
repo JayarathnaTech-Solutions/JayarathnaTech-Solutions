@@ -75,14 +75,14 @@ this file only tracks scope and progress.
 - [x] Install test stack: Vitest, React Testing Library, `@firebase/rules-unit-testing`
 - [ ] Connect Vercel project for deployment
 - [x] Set up folder structure (public routes, admin routes, shared components, firebase lib, types)
-- [ ] Set up Cloudinary account (free tier) + unsigned upload preset for project cover images
+- [x] Set up Cloudinary account (free tier) + unsigned upload preset for project cover images
 
 ## 1. Public — Home Page
-- [ ] Hero section (agency intro, mobile-first responsive)
-- [ ] Featured projects section (pulled from Firestore `projects`)
-- [ ] Featured testimonials section (pulled from approved `testimonials`)
-- [ ] CTA to Contact/Services
-- [ ] Basic SEO meta/OG tags
+- [x] Hero section (agency intro, mobile-first responsive)
+- [x] Featured projects section (pulled from Firestore `projects`)
+- [x] Featured testimonials section (pulled from approved `testimonials`)
+- [x] CTA to Contact/Services
+- [x] Basic SEO meta/OG tags
 
 ## 2. Public — About Page
 - [ ] Static hardcoded content (agency story, mission, team)
