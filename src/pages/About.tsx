@@ -175,7 +175,7 @@ function Mission() {
                                 {item.icon}
                             </svg>
                         </div>
-                        <h3 className="mt-4 font-semibold">{item.title}</h3>
+                        <h3 className="mt-4 text-lg font-semibold">{item.title}</h3>
                         <p className="mt-2 text-sm text-slate-400">{item.description}</p>
                     </div>
                 ))}
@@ -193,7 +193,7 @@ function Process() {
                 {processSteps.map((item) => (
                     <div key={item.step} className="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
                         <span className="text-3xl font-bold text-blue-500/30">{item.step}</span>
-                        <h3 className="mt-4 font-semibold">{item.title}</h3>
+                        <h3 className="mt-4 text-lg font-semibold">{item.title}</h3>
                         <p className="mt-2 text-sm text-slate-400">{item.description}</p>
                     </div>
                 ))}
@@ -215,7 +215,7 @@ function WhyChooseUs() {
                                 {item.icon}
                             </svg>
                         </div>
-                        <h3 className="mt-4 font-semibold">{item.title}</h3>
+                        <h3 className="mt-4 text-lg font-semibold">{item.title}</h3>
                         <p className="mt-2 text-sm text-slate-400">{item.description}</p>
                     </div>
                 ))}
@@ -278,7 +278,7 @@ function Team() {
                                     .join('')
                             )}
                         </div>
-                        <h3 className="mt-5 font-semibold">{member.name}</h3>
+                        <h3 className="mt-5 text-lg font-semibold">{member.name}</h3>
                         <span className="mt-2 inline-block rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400">
                             {member.role}
                         </span>

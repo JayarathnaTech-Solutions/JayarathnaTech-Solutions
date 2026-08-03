@@ -11,7 +11,7 @@ export function CtaBanner() {
             </svg>
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white sm:text-2xl">
+            <h2 className="text-2xl font-bold text-white sm:text-3xl">
               Let&apos;s Build Something Amazing Together
             </h2>
             <p className="mt-1 text-sm text-blue-100">

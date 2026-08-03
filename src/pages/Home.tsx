@@ -5,6 +5,7 @@ import { db } from '../firebase/config'
 import { toIsoString, projectFromDoc } from '../lib/firestore'
 import { Seo } from '../components/Seo'
 import { CtaBanner } from '../components/CtaBanner'
+import { EmptyState } from '../components/EmptyState'
 import { HeroBackdrop } from '../components/HeroBackdrop'
 import heroBackground from '../assets/background-image1.jpg'
 import heroBackground2 from '../assets/background-image2.jpg'
@@ -201,17 +202,17 @@ function Hero() {
 
             <div className="relative z-10 mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-[1fr_1.3fr] md:items-center md:py-24">
                 <div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400">
-            <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
-            Building the Future, Together
-          </span>
+                    <span className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400">
+                      <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
+                      Building the Future, Together
+                    </span>
 
-                    <h1 className="mt-5 text-4xl font-bold tracking-tight sm:text-5xl">
+                    <h1 className="mt-5 text-4xl font-bold tracking-tight sm:text-6xl md:mb-24">
                         We Build Digital Solutions That Drive{' '}
                         <span className="text-blue-500">Real Business Growth</span>
                     </h1>
 
-                    <p className="mt-5 max-w-xl text-slate-300">
+                    <p className="mt-5 max-w-xl text-lg text-slate-300">
                         From powerful web applications to scalable software systems, we turn ideas into
                         high-performance digital products.
                     </p>
@@ -284,7 +285,7 @@ function Services() {
                                 {service.icon}
                             </svg>
                         </div>
-                        <h3 className="mt-4 font-semibold">{service.title}</h3>
+                        <h3 className="mt-4 text-lg font-semibold">{service.title}</h3>
                         <p className="mt-2 text-sm text-slate-400">{service.description}</p>
                         <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-blue-400 group-hover:text-blue-300">
                             Learn more
@@ -314,7 +315,7 @@ function WhyChooseUs() {
                                 {item.icon}
                             </svg>
                         </div>
-                        <h3 className="mt-4 font-semibold">{item.title}</h3>
+                        <h3 className="mt-4 text-lg font-semibold">{item.title}</h3>
                         <p className="mt-2 text-sm text-slate-400">{item.description}</p>
                     </div>
                 ))}
@@ -346,9 +347,17 @@ function FeaturedProjects({ projects }: { projects: Project[] | null }) {
                     ))}
                 </div>
             ) : projects.length === 0 ? (
-                <p className="mt-8 rounded-xl border border-slate-800 bg-slate-900/40 px-6 py-10 text-center text-slate-400">
-                    No projects published yet — check back soon.
-                </p>
+                <EmptyState
+                    icon={
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M5 6h14a1 1 0 0 1 1 1v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a1 1 0 0 1 1-1ZM3 11h18"
+                        />
+                    }
+                    title="Projects coming soon"
+                    message="We're just getting started — new work will appear here as we ship it."
+                />
             ) : (
                 <div className="mt-8 grid gap-6 md:grid-cols-3">
                     {projects.map((project) => (
@@ -367,7 +376,7 @@ function FeaturedProjects({ projects }: { projects: Project[] | null }) {
                                 )}
                             </div>
                             <div className="p-5">
-                                <h3 className="font-semibold">{project.title}</h3>
+                                <h3 className="text-lg font-semibold">{project.title}</h3>
                                 <p className="mt-2 line-clamp-2 text-sm text-slate-400">{project.description}</p>
                             </div>
                         </Link>
@@ -414,9 +423,17 @@ function FeaturedTestimonials({ testimonials }: { testimonials: Testimonial[] | 
                     ))}
                 </div>
             ) : testimonials.length === 0 ? (
-                <p className="mt-8 rounded-xl border border-slate-800 bg-slate-900/40 px-6 py-10 text-center text-slate-400">
-                    No testimonials published yet — check back soon.
-                </p>
+                <EmptyState
+                    icon={
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"
+                        />
+                    }
+                    title="Testimonials coming soon"
+                    message="We're collecting feedback from our early clients — check back soon."
+                />
             ) : (
                 <div className="mt-8 grid gap-6 md:grid-cols-3">
                     {testimonials.map((testimonial) => (

@@ -24,6 +24,12 @@ this file only tracks scope and progress.
   client-side uploads, no backend needed).
 - **Language**: English only for v1.
 - **Content**: About/Services pages are hardcoded in code (not admin-editable) for v1.
+- **Project schema**: extended beyond the original title/description/cover image to
+  also support optional `category`, `client`, `technologies` (string list), `challenge`,
+  `solution`, and `keyFeatures` (string list) — needed for the Projects listing filter
+  tabs and the richer detail-page layout. All new fields are optional so existing docs
+  keep working; the admin add/edit project form (section 10) still needs to be built to
+  capture them.
 - **Quotes**: internal admin tool only, exported as PDF (no public shareable quote link).
 - **Contact form**: writes to Firestore only — no email notifications (no Cloud Functions).
 - **Testing**: automated tests are required for v1 (not just manual click-through).
@@ -89,14 +95,16 @@ this file only tracks scope and progress.
 - [x] SEO meta tags
 
 ## 3. Public — Services Page
-- [ ] Static hardcoded content listing services offered
-- [ ] SEO meta tags
+- [x] Static hardcoded content listing services offered
+- [x] SEO meta tags
 
 ## 4. Public — Projects Page
-- [ ] Projects listing grid (from Firestore `projects`)
-- [ ] Project detail view (title, description, cover image)
-- [ ] Empty state (no projects yet)
-- [ ] SEO meta tags
+- [x] Projects listing grid (from Firestore `projects`), with category filter tabs and
+      "Load More" pagination
+- [x] Project detail view (title, description, cover image, plus optional category,
+      client, technologies, challenge, solution, key features — see schema note below)
+- [x] Empty state (no projects yet)
+- [x] SEO meta tags
 
 ## 5. Public — Contact Page
 - [ ] Contact form (name, email, phone optional, message) with client-side validation
@@ -133,7 +141,9 @@ this file only tracks scope and progress.
 
 ## 10. Admin — Project Management
 - [ ] Project list view with edit/delete
-- [ ] Add/edit project form (title, description, cover image upload to Cloudinary)
+- [ ] Add/edit project form — title, description, cover image upload to Cloudinary,
+      plus category, client, technologies (tag list), challenge, solution, and key
+      features (see extended Project schema in Locked-in decisions)
 - [ ] Delete confirmation flow
 - [ ] Image upload progress/error handling
 

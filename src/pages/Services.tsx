@@ -146,7 +146,7 @@ function ServicesGrid() {
                                 {service.icon}
                             </svg>
                         </div>
-                        <h3 className="mt-4 font-semibold">{service.title}</h3>
+                        <h3 className="mt-4 text-lg font-semibold">{service.title}</h3>
                         <p className="mt-2 text-sm text-slate-400">{service.description}</p>
                         <Link
                             to="/contact"
@@ -179,7 +179,7 @@ function EngagementModels() {
                                 {model.icon}
                             </svg>
                         </div>
-                        <h3 className="mt-4 font-semibold">{model.title}</h3>
+                        <h3 className="mt-4 text-lg font-semibold">{model.title}</h3>
                         <p className="mt-2 text-sm text-slate-400">{model.description}</p>
                     </div>
                 ))}
@@ -199,7 +199,7 @@ function Faq() {
                         key={faq.question}
                         className="group rounded-xl border border-slate-800 bg-slate-900/40 p-6 open:bg-slate-900/60"
                     >
-                        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold [&::-webkit-details-marker]:hidden">
+                        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold [&::-webkit-details-marker]:hidden">
                             {faq.question}
                             <svg
                                 width="20"
