@@ -15,6 +15,12 @@ export interface Project {
   description: string
   coverImageUrl: string
   createdAt: string
+  category?: string
+  client?: string
+  technologies?: string[]
+  challenge?: string
+  solution?: string
+  keyFeatures?: string[]
 }
 
 export type TestimonialStatus = 'pending' | 'approved' | 'rejected'
