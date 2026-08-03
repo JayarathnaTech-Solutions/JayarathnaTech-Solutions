@@ -85,8 +85,8 @@ this file only tracks scope and progress.
 - [x] Basic SEO meta/OG tags
 
 ## 2. Public — About Page
-- [ ] Static hardcoded content (agency story, mission, team)
-- [ ] SEO meta tags
+- [x] Static hardcoded content (agency story, mission, team)
+- [x] SEO meta tags
 
 ## 3. Public — Services Page
 - [ ] Static hardcoded content listing services offered
