@@ -29,6 +29,7 @@ function App() {
         <Route path="projects/:projectId" element={<ProjectDetail />} />
         <Route path="contact" element={<Contact />} />
         <Route path="testimonial/:token" element={<TestimonialSubmission />} />
+        <Route path="*" element={<NotFound />} />
       </Route>
 
       <Route path="admin/login" element={<Login />} />
@@ -47,8 +48,6 @@ function App() {
         <Route path="inbox" element={<AdminInbox />} />
         <Route path="staff" element={<AdminStaff />} />
       </Route>
-
-      <Route path="*" element={<NotFound />} />
     </Routes>
   )
 }
