@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { collection, getDocs, limit, orderBy, query, Timestamp, where } from 'firebase/firestore'
+import { collection, getDocs, limit, orderBy, query, where } from 'firebase/firestore'
 import { db } from '../firebase/config'
+import { toIsoString, projectFromDoc } from '../lib/firestore'
 import { Seo } from '../components/Seo'
 import { CtaBanner } from '../components/CtaBanner'
 import { HeroBackdrop } from '../components/HeroBackdrop'
@@ -9,12 +10,6 @@ import heroBackground from '../assets/background-image1.jpg'
 import heroBackground2 from '../assets/background-image2.jpg'
 import heroBackground3 from '../assets/background-image3.jpg'
 import type { Project, Testimonial } from '../types'
-
-function toIsoString(value: unknown): string {
-    if (value instanceof Timestamp) return value.toDate().toISOString()
-    if (typeof value === 'string') return value
-    return new Date().toISOString()
-}
 
 function useFeaturedProjects() {
     const [projects, setProjects] = useState<Project[] | null>(null)
@@ -25,18 +20,7 @@ function useFeaturedProjects() {
         getDocs(query(collection(db, 'projects'), orderBy('createdAt', 'desc'), limit(3)))
             .then((snapshot) => {
                 if (cancelled) return
-                setProjects(
-                    snapshot.docs.map((doc) => {
-                        const data = doc.data()
-                        return {
-                            id: doc.id,
-                            title: data.title,
-                            description: data.description,
-                            coverImageUrl: data.coverImageUrl,
-                            createdAt: toIsoString(data.createdAt),
-                        } satisfies Project
-                    }),
-                )
+                setProjects(snapshot.docs.map(projectFromDoc))
             })
             .catch(() => {
                 if (!cancelled) setProjects([])
