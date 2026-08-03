@@ -3,7 +3,8 @@ import { Link } from 'react-router'
 import { collection, getDocs, limit, orderBy, query, Timestamp, where } from 'firebase/firestore'
 import { db } from '../firebase/config'
 import { Seo } from '../components/Seo'
-import heroImage from '../assets/home-page-bg.png'
+import heroBackground from '../assets/background-image.png'
+import heroGraphic from '../assets/hero-section-image.png'
 import type { Project, Testimonial } from '../types'
 
 function toIsoString(value: unknown): string {
@@ -83,13 +84,13 @@ function useFeaturedTestimonials() {
 
 function Hero() {
   return (
-    <section className="relative mx-auto max-w-7xl px-6 py-16 md:py-24">
+    <section className="relative overflow-hidden">
       <div
-          className="pointer-events-none absolute inset-0 hidden bg-cover bg-right bg-no-repeat md:block"
-          style={{ backgroundImage: `url(${heroImage})` }}
+        className="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat md:block"
+        style={{ backgroundImage: `url(${heroBackground})` }}
       />
 
-      <div className="relative grid md:grid-cols-2 md:items-center">
+      <div className="relative mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-[1fr_1.3fr] md:items-center md:py-24">
         <div>
           <span className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400">
             <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
@@ -140,6 +141,10 @@ function Hero() {
               to deliver digital excellence
             </p>
           </div>
+        </div>
+
+        <div className="hidden md:block">
+          <img src={heroGraphic} alt="" className="w-full" />
         </div>
       </div>
     </section>
