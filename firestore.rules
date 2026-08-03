@@ -1,0 +1,12 @@
+rules_version = '2';
+
+// Placeholder: deny everything by default. Per-collection rules land in
+// PLAN.md step 8 (staff, projects, testimonials, testimonialInvites, quotes,
+// contactMessages) — do not treat this as the final security posture.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

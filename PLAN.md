@@ -16,8 +16,12 @@ this file only tracks scope and progress.
 - **Styling**: Tailwind CSS, mobile-first.
 - **App structure**: single React + TypeScript + Vite SPA with React Router; public
   routes are open, `/admin/*` is guarded.
-- **Hosting**: Vercel for the app; Firebase provides Auth, Firestore, Storage only.
+- **Hosting**: Vercel for the app; Firebase provides Auth and Firestore only.
   Domain not yet chosen.
+- **File storage**: no Firebase Storage — Google now requires the Blaze plan to
+  enable Cloud Storage on any project created after Oct 2024, and we're staying on
+  Spark. Project cover images use Cloudinary's free tier instead (unsigned
+  client-side uploads, no backend needed).
 - **Language**: English only for v1.
 - **Content**: About/Services pages are hardcoded in code (not admin-editable) for v1.
 - **Quotes**: internal admin tool only, exported as PDF (no public shareable quote link).
@@ -29,10 +33,15 @@ this file only tracks scope and progress.
 - First-ever Admin account is bootstrapped manually (seeded directly in the Firebase
   console or via a one-off script) — there's no in-app way to create the first admin.
 - PDF export uses a client-side library (e.g. `@react-pdf/renderer`), not server-rendered.
-- Single Firebase project for v1 (no separate staging project); local dev uses the
-  Firebase Local Emulator Suite.
+- Single Firebase project for v1 (no separate staging project). Day-to-day local dev
+  connects directly to the live project (`VITE_USE_FIREBASE_EMULATORS=false`) — the
+  Local Emulator Suite is configured (`firebase.json`, `npm run emulators`) but not
+  used by default since the Firestore emulator's first-time jar download is very slow
+  on this network. Revisit using it once security rules exist to test.
 - Test stack: Vitest + React Testing Library, plus `@firebase/rules-unit-testing`
-  against the emulator for security-rule tests.
+  for security-rule tests — these specifically require the Local Emulator Suite
+  (they can't run against the live project), so budget time for that jar download
+  when step 8 (Firestore Security Rules) starts.
 - Vercel free tier is sufficient for hosting.
 - Contact/testimonial forms use standard fields (name, email, phone optional, message).
 - Quotes use a single currency (exact default TBD, e.g. USD or LKR).
@@ -57,14 +66,16 @@ this file only tracks scope and progress.
 ---
 
 ## 0. Project Setup
-- [ ] Install and configure Tailwind CSS
-- [ ] Install and configure React Router
-- [ ] Create Firebase project (Auth, Firestore, Storage enabled, Spark plan)
-- [ ] Install Firebase SDK and initialize config (env vars for Firebase config)
-- [ ] Set up Firebase Local Emulator Suite for local dev (Auth, Firestore, Storage)
-- [ ] Install test stack: Vitest, React Testing Library, `@firebase/rules-unit-testing`
+- [x] Install and configure Tailwind CSS
+- [x] Install and configure React Router
+- [x] Create Firebase project (Auth, Firestore enabled, Spark plan; no Storage — see
+      locked-in decisions)
+- [x] Install Firebase SDK and initialize config (env vars for Firebase config)
+- [x] Set up Firebase Local Emulator Suite for local dev (Auth, Firestore)
+- [x] Install test stack: Vitest, React Testing Library, `@firebase/rules-unit-testing`
 - [ ] Connect Vercel project for deployment
-- [ ] Set up folder structure (public routes, admin routes, shared components, firebase lib, types)
+- [x] Set up folder structure (public routes, admin routes, shared components, firebase lib, types)
+- [ ] Set up Cloudinary account (free tier) + unsigned upload preset for project cover images
 
 ## 1. Public — Home Page
 - [ ] Hero section (agency intro, mobile-first responsive)
@@ -122,7 +133,7 @@ this file only tracks scope and progress.
 
 ## 10. Admin — Project Management
 - [ ] Project list view with edit/delete
-- [ ] Add/edit project form (title, description, cover image upload to Firebase Storage)
+- [ ] Add/edit project form (title, description, cover image upload to Cloudinary)
 - [ ] Delete confirmation flow
 - [ ] Image upload progress/error handling
 
