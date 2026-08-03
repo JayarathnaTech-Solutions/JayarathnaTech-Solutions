@@ -4,34 +4,22 @@
     --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
-/* Custom scrollbar — matches the dark slate/blue theme instead of the OS default. */
-html,
-body,
-* {
-    scrollbar-width: thin !important;
-    scrollbar-color: #334155 transparent !important;
-}
+@layer base {
+    ::-webkit-scrollbar {
+        width: 10px !important;
+        height: 10px !important;
+    }
 
-::-webkit-scrollbar {
-    width: 10px !important;
-    height: 10px !important;
-}
+    ::-webkit-scrollbar-track {
+        background: #020617 !important; 
+    }
 
-::-webkit-scrollbar-track {
-    background: transparent !important;
-}
+    ::-webkit-scrollbar-thumb {
+        background-color: #334155 !important;
+        border-radius: 9999px !important;
+    }
 
-::-webkit-scrollbar-thumb {
-    background-color: #334155 !important;
-    border-radius: 9999px !important;
-    border: 2px solid #020617 !important;
-    background-clip: padding-box !important;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background-color: #3b82f6 !important;
-}
-
-::-webkit-scrollbar-corner {
-    background: transparent !important;
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: #3b82f6 !important;
+    }
 }
