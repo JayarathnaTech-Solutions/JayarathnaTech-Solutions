@@ -35,9 +35,9 @@ const missionItems = [
 ]
 
 const team = [
-    { name: 'Niduranga Jayarathna', role: 'CEO & Founder' },
-    { name: 'Naduni Tharushika', role: 'UI/UX Designer' },
-    { name: 'Harshani Fernando', role: 'QA Tester' },
+    { name: 'Niduranga Jayarathna', role: 'CEO & Founder', img: 'https://i.ibb.co/7NXPGyh1/IMG-9802-01.jpg' },
+    { name: 'Naduni Tharushika', role: 'UI/UX Designer', img: '' },
+    { name: 'Harshani Fernando', role: 'QA Tester', img: 'https://i.ibb.co/M47SptC/Whats-App-Image-2026-07-26-at-10-07-51.jpg' },
 ]
 
 function Hero() {
@@ -102,11 +102,15 @@ function Team() {
                         key={member.name}
                         className="rounded-xl border border-slate-800 bg-slate-900/40 p-6 text-center"
                     >
-                        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-800 text-lg font-semibold text-slate-300">
-                            {member.name
-                                .split(' ')
-                                .map((part) => part[0])
-                                .join('')}
+                        <div className="mx-auto flex h-40 w-40 items-center justify-center overflow-hidden rounded-full bg-slate-800 text-xl font-semibold text-slate-300">
+                            {member.img ? (
+                                <img src={member.img} alt={member.name} className="h-full w-full rounded-full object-cover" />
+                            ) : (
+                                member.name
+                                    .split(' ')
+                                    .map((part) => part[0])
+                                    .join('')
+                            )}
                         </div>
                         <h3 className="mt-4 font-semibold">{member.name}</h3>
                         <p className="mt-1 text-sm text-slate-400">{member.role}</p>
