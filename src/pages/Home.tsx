@@ -3,8 +3,9 @@ import { Link } from 'react-router'
 import { collection, getDocs, limit, orderBy, query, Timestamp, where } from 'firebase/firestore'
 import { db } from '../firebase/config'
 import { Seo } from '../components/Seo'
-import heroBackground from '../assets/background-image.png'
-import heroGraphic from '../assets/hero-section-image.png'
+import { CtaBanner } from '../components/CtaBanner'
+import { HeroBackdrop } from '../components/HeroBackdrop'
+import heroBackground from '../assets/background-image.jpg'
 import type { Project, Testimonial } from '../types'
 
 function toIsoString(value: unknown): string {
@@ -85,10 +86,7 @@ function useFeaturedTestimonials() {
 function Hero() {
   return (
     <section className="relative overflow-hidden">
-      <div
-        className="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat md:block"
-        style={{ backgroundImage: `url(${heroBackground})` }}
-      />
+      <HeroBackdrop image={heroBackground} />
 
       <div className="relative mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-[1fr_1.3fr] md:items-center md:py-24">
         <div>
@@ -102,7 +100,7 @@ function Hero() {
             <span className="text-blue-500">Real Business Growth</span>
           </h1>
 
-          <p className="mt-5 max-w-xl text-slate-400">
+          <p className="mt-5 max-w-xl text-slate-300">
             From powerful web applications to scalable software systems, we turn ideas into
             high-performance digital products.
           </p>
@@ -141,10 +139,6 @@ function Hero() {
               to deliver digital excellence
             </p>
           </div>
-        </div>
-
-        <div className="hidden md:block">
-          <img src={heroGraphic} alt="" className="w-full" />
         </div>
       </div>
     </section>
@@ -263,38 +257,6 @@ function FeaturedTestimonials({ testimonials }: { testimonials: Testimonial[] | 
   )
 }
 
-function Cta() {
-  return (
-    <section className="mx-auto max-w-7xl px-6 pb-20">
-      <div className="flex flex-col items-start gap-6 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 p-8 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-4">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-white/15">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.75">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M22 2L11 13M22 2l-7 20-4-9-9-4z" />
-            </svg>
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-white sm:text-2xl">
-              Let&apos;s Build Something Amazing Together
-            </h2>
-            <p className="mt-1 text-sm text-blue-100">
-              Have a project in mind? Let&apos;s discuss how we can help you bring your ideas to
-              life.
-            </p>
-          </div>
-        </div>
-        <Link
-          to="/contact"
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-white px-5 py-3 text-sm font-medium text-blue-700 hover:bg-blue-50"
-        >
-          Get in Touch
-          <span aria-hidden="true">&rarr;</span>
-        </Link>
-      </div>
-    </section>
-  )
-}
-
 export function Home() {
   const projects = useFeaturedProjects()
   const testimonials = useFeaturedTestimonials()
@@ -309,7 +271,7 @@ export function Home() {
       <Hero />
       <FeaturedProjects projects={projects} />
       <FeaturedTestimonials testimonials={testimonials} />
-      <Cta />
+      <CtaBanner />
     </>
   )
 }
