@@ -5,6 +5,18 @@ import { auth } from '../firebase/config'
 import { useAuthStatus } from './useAuthStatus'
 import { AuthContext } from './AuthContext'
 
+function CheckingScreen() {
+    return (
+        <div className="flex min-h-screen items-center justify-center bg-slate-950">
+            <div
+                role="status"
+                aria-label="Loading"
+                className="h-10 w-10 animate-spin rounded-full border-2 border-slate-700 border-t-blue-400"
+            />
+        </div>
+    )
+}
+
 function NotStaff() {
     return (
         <div className="flex min-h-screen flex-col items-center justify-center gap-2 bg-slate-950 px-6 text-center text-white">
@@ -27,7 +39,7 @@ function NotStaff() {
 export function RequireAuth({ children }: { children: ReactNode }) {
     const authStatus = useAuthStatus()
 
-    if (authStatus.status === 'checking') return null
+    if (authStatus.status === 'checking') return <CheckingScreen />
     if (authStatus.status === 'signed-out') return <Navigate to="/admin/login" replace />
     if (authStatus.status === 'not-staff') return <NotStaff />
 

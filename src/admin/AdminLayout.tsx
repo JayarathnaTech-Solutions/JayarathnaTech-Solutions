@@ -1,9 +1,12 @@
-import type { ReactNode } from 'react'
-import { NavLink, Outlet } from 'react-router'
+import { useState, type ReactNode } from 'react'
+import { NavLink, Outlet, useLocation } from 'react-router'
+import { AnimatePresence, motion } from 'motion/react'
 import { signOut } from 'firebase/auth'
 import { auth } from '../firebase/config'
 import { useAuth } from './AuthContext'
+import { useEscapeKey } from '../lib/useEscapeKey'
 import { Logo } from '../components/Logo'
+import { ConfirmDialog } from './components/ConfirmDialog'
 
 const navItems = [
     {
@@ -70,11 +73,32 @@ const navItems = [
     },
 ]
 
-function NavItem({ to, end, label, icon }: { to: string; end?: boolean; label: string; icon: ReactNode }) {
+function useCurrentPageLabel() {
+    const { pathname } = useLocation()
+    const match = navItems
+        .filter((item) => (item.end ? pathname === item.to : pathname.startsWith(item.to)))
+        .sort((a, b) => b.to.length - a.to.length)[0]
+    return match?.label ?? 'Dashboard'
+}
+
+function NavItem({
+    to,
+    end,
+    label,
+    icon,
+    onClick,
+}: {
+    to: string
+    end?: boolean
+    label: string
+    icon: ReactNode
+    onClick?: () => void
+}) {
     return (
         <NavLink
             to={to}
             end={end}
+            onClick={onClick}
             className={({ isActive }) =>
                 `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                     isActive ? 'bg-blue-500/10 text-blue-400' : 'text-slate-400 hover:bg-slate-900/60 hover:text-white'
@@ -89,29 +113,90 @@ function NavItem({ to, end, label, icon }: { to: string; end?: boolean; label: s
     )
 }
 
+function NavList({ isAdmin, onNavigate }: { isAdmin: boolean; onNavigate?: () => void }) {
+    return (
+        <nav className="mt-8 flex flex-col gap-1">
+            {navItems
+                .filter((item) => !item.adminOnly || isAdmin)
+                .map((item) => (
+                    <NavItem key={item.to} to={item.to} end={item.end} label={item.label} icon={item.icon} onClick={onNavigate} />
+                ))}
+        </nav>
+    )
+}
+
 function Sidebar({ isAdmin }: { isAdmin: boolean }) {
     return (
         <aside className="hidden w-64 shrink-0 border-r border-slate-800 bg-slate-900/40 px-4 py-6 md:flex md:flex-col">
             <div className="px-2">
                 <Logo />
             </div>
-            <nav className="mt-8 flex flex-col gap-1">
-                {navItems
-                    .filter((item) => !item.adminOnly || isAdmin)
-                    .map((item) => (
-                        <NavItem key={item.to} to={item.to} end={item.end} label={item.label} icon={item.icon} />
-                    ))}
-            </nav>
+            <NavList isAdmin={isAdmin} />
         </aside>
     )
 }
 
-function Topbar({ name }: { name: string }) {
+function MobileNavDrawer({ isAdmin, open, onClose }: { isAdmin: boolean; open: boolean; onClose: () => void }) {
+    useEscapeKey(open, onClose)
+
+    return (
+        <AnimatePresence>
+            {open && (
+                <>
+                    <motion.div
+                        className="fixed inset-0 z-40 bg-slate-950/70 md:hidden"
+                        onClick={onClose}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                    />
+                    <motion.aside
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label="Navigation"
+                        className="fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-slate-800 bg-slate-900 px-4 py-6 md:hidden"
+                        initial={{ x: '-100%' }}
+                        animate={{ x: 0 }}
+                        exit={{ x: '-100%' }}
+                        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                        <div className="px-2">
+                            <Logo />
+                        </div>
+                        <NavList isAdmin={isAdmin} onNavigate={onClose} />
+                    </motion.aside>
+                </>
+            )}
+        </AnimatePresence>
+    )
+}
+
+function Topbar({ name, onMenuClick, mobileNavOpen }: { name: string; onMenuClick: () => void; mobileNavOpen: boolean }) {
     const initial = name.charAt(0).toUpperCase() || '?'
+    const title = useCurrentPageLabel()
+    const [signOutOpen, setSignOutOpen] = useState(false)
 
     return (
         <header className="flex items-center justify-between border-b border-slate-800 bg-slate-900/40 px-6 py-4">
-            <h1 className="text-lg font-semibold">Admin Dashboard</h1>
+            <div className="flex items-center gap-3">
+                <button
+                    type="button"
+                    onClick={onMenuClick}
+                    className="text-slate-300 md:hidden"
+                    aria-label="Toggle navigation"
+                    aria-expanded={mobileNavOpen}
+                >
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+                        {mobileNavOpen ? (
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6L6 18" />
+                        ) : (
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 7h16M4 12h16M4 17h16" />
+                        )}
+                    </svg>
+                </button>
+                <h1 className="text-lg font-semibold">{title}</h1>
+            </div>
 
             <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-500/10 text-sm font-semibold text-blue-400">
@@ -120,24 +205,36 @@ function Topbar({ name }: { name: string }) {
                 <span className="hidden text-sm font-medium sm:inline">{name}</span>
                 <button
                     type="button"
-                    onClick={() => signOut(auth)}
+                    onClick={() => setSignOutOpen(true)}
                     className="text-sm font-medium text-slate-400 hover:text-white"
                 >
                     Sign out
                 </button>
             </div>
+
+            <ConfirmDialog
+                open={signOutOpen}
+                title="Sign out?"
+                message="You'll need to sign in again to access the admin panel."
+                confirmLabel="Sign Out"
+                onConfirm={() => signOut(auth)}
+                onCancel={() => setSignOutOpen(false)}
+            />
         </header>
     )
 }
 
 export function AdminLayout() {
     const { staff } = useAuth()
+    const isAdmin = staff.role === 'admin'
+    const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
     return (
         <div className="flex min-h-screen bg-slate-950 text-white">
-            <Sidebar isAdmin={staff.role === 'admin'} />
+            <Sidebar isAdmin={isAdmin} />
+            <MobileNavDrawer isAdmin={isAdmin} open={mobileNavOpen} onClose={() => setMobileNavOpen(false)} />
             <div className="flex min-w-0 flex-1 flex-col">
-                <Topbar name={staff.name} />
+                <Topbar name={staff.name} onMenuClick={() => setMobileNavOpen((value) => !value)} mobileNavOpen={mobileNavOpen} />
                 <main className="flex-1 px-6 py-8">
                     <Outlet />
                 </main>

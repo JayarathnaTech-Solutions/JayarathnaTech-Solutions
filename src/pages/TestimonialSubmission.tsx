@@ -4,6 +4,7 @@ import { addDoc, collection, doc, getDoc, serverTimestamp, updateDoc } from 'fir
 import { db } from '../firebase/config'
 import { testimonialInviteFromDoc } from '../lib/firestore'
 import { Seo } from '../components/Seo'
+import { inputClass } from '../lib/ui'
 import type { TestimonialInvite } from '../types'
 
 function useInvite(token: string | undefined) {
@@ -178,7 +179,7 @@ function SubmissionForm({ invite }: { invite: TestimonialInvite }) {
                             type="text"
                             placeholder="Enter your name"
                             required
-                            className="w-full rounded-lg border border-slate-800 bg-slate-950/60 px-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
+                            className={inputClass}
                         />
                     </div>
 
@@ -192,7 +193,7 @@ function SubmissionForm({ invite }: { invite: TestimonialInvite }) {
                             rows={5}
                             placeholder="Share your experience working with us..."
                             required
-                            className="w-full rounded-lg border border-slate-800 bg-slate-950/60 px-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
+                            className={inputClass}
                         />
                     </div>
 

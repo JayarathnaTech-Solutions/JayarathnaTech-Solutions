@@ -6,6 +6,8 @@ import { useAuth } from '../AuthContext'
 import { SlidePanel } from '../components/SlidePanel'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { StatusBadge } from '../components/StatusBadge'
+import { inputClass } from '../../lib/ui'
+import { Skeleton } from '../components/Skeleton'
 import type { StaffMember, StaffRole } from '../../types'
 
 function useStaff() {
@@ -91,7 +93,7 @@ function InviteForm({
                     required
                     disabled={!!editing}
                     defaultValue={editing?.email}
-                    className="w-full rounded-lg border border-slate-800 bg-slate-950/60 px-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none disabled:opacity-50"
+                    className={`${inputClass} disabled:opacity-50`}
                 />
             </div>
 
@@ -104,7 +106,7 @@ function InviteForm({
                     name="role"
                     required
                     defaultValue={editing?.role ?? ''}
-                    className="w-full rounded-lg border border-slate-800 bg-slate-950/60 px-4 py-2.5 text-sm text-white focus:border-blue-500 focus:outline-none"
+                    className={inputClass}
                 >
                     <option value="" disabled>
                         Select role
@@ -205,7 +207,16 @@ export function AdminStaff() {
 
             <div className="mt-6 overflow-hidden rounded-xl border border-slate-800 bg-slate-900/40">
                 {staff === null ? (
-                    <div className="p-6 text-sm text-slate-500">Loading…</div>
+                    <div className="divide-y divide-slate-800">
+                        {[0, 1, 2, 3].map((i) => (
+                            <div key={i} className="flex items-center gap-4 px-6 py-4">
+                                <Skeleton className="h-9 w-9 shrink-0 rounded-full" />
+                                <Skeleton className="h-3.5 w-32" />
+                                <Skeleton className="h-3.5 w-40" />
+                                <Skeleton className="ml-auto h-5 w-16 rounded-full" />
+                            </div>
+                        ))}
+                    </div>
                 ) : staff.length === 0 ? (
                     <div className="p-10 text-center text-sm text-slate-500">No staff yet — invite your first teammate.</div>
                 ) : (

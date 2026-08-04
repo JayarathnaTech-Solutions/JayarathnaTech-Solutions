@@ -5,6 +5,7 @@ import { db } from '../firebase/config'
 import { Seo } from '../components/Seo'
 import { siteContact } from '../lib/siteInfo'
 import { staggerItem, staggerContainer, itemTransition } from '../lib/motion'
+import { inputClass } from '../lib/ui'
 
 const WEB3FORMS_ACCESS_KEY = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY as string
 
@@ -113,7 +114,7 @@ function Field({
                 type={type}
                 placeholder={placeholder}
                 required={required}
-                className="w-full rounded-lg border border-slate-800 bg-slate-950/60 px-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
+                className={inputClass}
             />
         </div>
     )
@@ -217,7 +218,7 @@ function ContactForm() {
                             rows={5}
                             placeholder="Tell us about your project..."
                             required
-                            className="w-full rounded-lg border border-slate-800 bg-slate-950/60 px-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
+                            className={inputClass}
                         />
                     </div>
 
