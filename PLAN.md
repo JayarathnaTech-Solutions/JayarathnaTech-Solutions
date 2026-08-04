@@ -31,7 +31,11 @@ this file only tracks scope and progress.
   keep working; the admin add/edit project form (section 10) still needs to be built to
   capture them.
 - **Quotes**: internal admin tool only, exported as PDF (no public shareable quote link).
-- **Contact form**: writes to Firestore only — no email notifications (no Cloud Functions).
+- **Contact form**: submits via Web3Forms (external form-to-email API, access key in
+  `VITE_WEB3FORMS_ACCESS_KEY`) instead of the originally planned Firestore write — this
+  gets working email delivery without needing Cloud Functions, but means submissions do
+  **not** land in Firestore `contactMessages`. Section 13 (Admin — Contact Messages
+  Inbox) will have nothing to show until/unless that's wired up separately.
 - **Testing**: automated tests are required for v1 (not just manual click-through).
 
 ## Assumptions
@@ -107,10 +111,10 @@ this file only tracks scope and progress.
 - [x] SEO meta tags
 
 ## 5. Public — Contact Page
-- [ ] Contact form (name, email, phone optional, message) with client-side validation
-- [ ] Submit → write to Firestore `contactMessages`
-- [ ] Success/error UI states
-- [ ] SEO meta tags
+- [x] Contact form (name, email, phone optional, message) with client-side validation
+- [x] Submit → Web3Forms (see Locked-in decisions — not Firestore `contactMessages`)
+- [x] Success/error UI states
+- [x] SEO meta tags
 
 ## 6. Public — Testimonial Submission Flow
 - [ ] `/testimonial/:token` route, public, no login
@@ -177,10 +181,16 @@ this file only tracks scope and progress.
 - [ ] Public form validation tests (contact + testimonial submission)
 
 ## 16. SEO & Polish
-- [ ] Per-page meta titles/descriptions, Open Graph tags
+- [x] Per-page meta titles/descriptions, Open Graph tags (via shared `Seo` component)
 - [ ] sitemap.xml generation
-- [ ] Favicon, mobile responsiveness pass across all pages
-- [ ] 404 page
+- [ ] Favicon — still the default Vite placeholder icon, not a branded JayarathnaTech mark
+- [x] Mobile responsiveness pass across all public pages
+- [x] 404 page (matches `design/404-page.png`, now rendered inside `PublicLayout` so it
+      gets the same Navbar/Footer as every other page)
+- [x] Site-wide footer — logo/tagline, quick links, services, contact info, GitHub link
+- [x] Unified typography system — Inter font loaded site-wide, consistent H1/H2/H3 and
+      body-text scale across every page
+- [x] Custom scrollbar styling matching the dark theme
 
 ## 17. Deployment
 - [ ] Firebase Auth providers enabled, Firestore/Storage rules deployed
