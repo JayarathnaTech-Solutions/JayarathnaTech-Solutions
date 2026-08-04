@@ -6,12 +6,29 @@ rules_version = '2';
 // PLAN.md step 8 — do not treat this as the final security posture.
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isStaff() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/staff/$(request.auth.uid));
+    }
+
+    match /staff/{staffId} {
+      allow get: if request.auth != null && request.auth.uid == staffId;
+    }
+
     match /projects/{projectId} {
       allow read: if true;
     }
 
+    match /quotes/{quoteId} {
+      allow read: if isStaff();
+    }
+
+    match /contactMessages/{messageId} {
+      allow read: if isStaff();
+    }
+
     match /testimonials/{testimonialId} {
-      allow read: if resource.data.status == 'approved';
+      allow read: if resource.data.status == 'approved' || isStaff();
       allow create: if request.resource.data.status == 'pending'
         && request.resource.data.clientName is string
         && request.resource.data.clientName.size() > 0
