@@ -172,9 +172,6 @@ function ContactForm() {
             if (result.success) {
                 form.reset()
                 setStatus('success')
-                // Web3Forms handles email delivery (the critical path); mirroring
-                // into Firestore so it shows up in the admin inbox is best-effort
-                // and shouldn't affect the user-facing success state if it fails.
                 void addDoc(collection(db, 'contactMessages'), {
                     name,
                     email,
@@ -234,7 +231,6 @@ function ContactForm() {
                         className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-500 disabled:opacity-60"
                     >
                         {status === 'submitting' ? 'Sending…' : 'Send Message'}
-                        {status !== 'submitting' && <span aria-hidden="true">&rarr;</span>}
                     </motion.button>
                 </form>
             )}

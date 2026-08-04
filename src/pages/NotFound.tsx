@@ -2,7 +2,6 @@ import { motion } from 'motion/react'
 import { Seo } from '../components/Seo'
 import { MotionLink } from '../components/MotionLink'
 import { staggerItem, staggerContainer, itemTransition } from '../lib/motion'
-import bg from '../assets/404-error-bg.png'
 
 export function NotFound() {
     return (
@@ -15,7 +14,6 @@ export function NotFound() {
             <section className="relative overflow-hidden">
                 <div
                     className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-70"
-                    style={{ backgroundImage: `url(${bg})` }}
                     aria-hidden="true"
                 />
                 <div
@@ -54,7 +52,6 @@ export function NotFound() {
                         whileTap={{ scale: 0.97 }}
                         className="mt-8 inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-500"
                     >
-                        <span aria-hidden="true">&larr;</span>
                         Back to Home
                     </MotionLink>
                 </motion.div>

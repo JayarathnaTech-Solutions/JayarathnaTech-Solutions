@@ -4,7 +4,7 @@ import { Seo } from '../components/Seo'
 import { CtaBanner } from '../components/CtaBanner'
 import { Reveal, StaggerGroup } from '../components/motion'
 import { staggerItem, staggerContainer, itemTransition } from '../lib/motion'
-import heroBackground from '../assets/about-background-image.jpg'
+import heroBackground from '../assets/services-background-image.png'
 import {HeroBackdrop} from "../components/HeroBackdrop.tsx";
 
 const services = [
@@ -175,7 +175,6 @@ function ServicesGrid() {
                             className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-blue-400 hover:text-blue-300"
                         >
                             Learn more
-                            <span aria-hidden="true">&rarr;</span>
                         </Link>
                     </motion.div>
                 ))}

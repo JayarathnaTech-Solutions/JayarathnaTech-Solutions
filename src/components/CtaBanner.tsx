@@ -28,7 +28,6 @@ export function CtaBanner() {
           className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-white px-5 py-3 text-sm font-medium text-blue-700 hover:bg-blue-50"
         >
           Get in Touch
-          <span aria-hidden="true">&rarr;</span>
         </MotionLink>
       </Reveal>
     </section>

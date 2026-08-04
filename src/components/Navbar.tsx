@@ -37,7 +37,6 @@ export function Navbar() {
           className="hidden items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-500 md:inline-flex"
         >
           Get a Quote
-          <span aria-hidden="true">&rarr;</span>
         </Link>
 
         <button

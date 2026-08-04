@@ -241,7 +241,6 @@ function Hero() {
                             className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-500"
                         >
                             View Projects
-                            <span aria-hidden="true">&rarr;</span>
                         </MotionLink>
                         <MotionLink
                             to="/contact"
@@ -250,7 +249,6 @@ function Hero() {
                             className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 px-5 py-3 text-sm font-medium text-white transition-colors hover:border-slate-500"
                         >
                             Get a Quote
-                            <span aria-hidden="true">&rarr;</span>
                         </MotionLink>
                     </motion.div>
 
@@ -324,7 +322,6 @@ function Services() {
                         <p className="mt-2 text-sm text-slate-400">{service.description}</p>
                         <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-blue-400 group-hover:text-blue-300">
                             Learn more
-                            <span aria-hidden="true">&rarr;</span>
                         </span>
                     </MotionLink>
                 ))}
