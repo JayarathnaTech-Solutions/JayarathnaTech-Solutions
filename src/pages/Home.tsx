@@ -192,7 +192,7 @@ function Hero() {
     }, [])
 
     return (
-        <section className="relative overflow-hidden">
+        <section className="relative flex min-h-[92vh] items-center overflow-hidden">
             {heroImages.map((image, index) => (
                 <div
                     key={index}
@@ -200,11 +200,11 @@ function Hero() {
                         index === currentImageIndex ? 'opacity-100 z-0' : 'opacity-0 -z-10'
                     }`}
                 >
-                    <HeroBackdrop image={image} />
+                    <HeroBackdrop image={image} fadeClassName="h-56" />
                 </div>
             ))}
 
-            <div className="relative z-10 mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-[3fr_2fr] md:items-center md:py-24">
+            <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-12 px-6 py-24 md:grid-cols-[3fr_2fr] md:items-center">
                 <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
                     <motion.span
                         variants={staggerItem}
@@ -273,6 +273,18 @@ function Hero() {
                     </motion.div>
                 </motion.div>
             </div>
+
+            <motion.div
+                className="absolute inset-x-0 bottom-8 z-10 flex flex-col items-center gap-2 text-slate-400"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1, y: [0, 8, 0] }}
+                transition={{ opacity: { duration: 0.6, delay: 1 }, y: { duration: 1.8, repeat: Infinity, ease: 'easeInOut', delay: 1 } }}
+            >
+                <span className="text-xs font-medium tracking-wide uppercase">Scroll</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m6 9 6 6 6-6" />
+                </svg>
+            </motion.div>
         </section>
     )
 }

@@ -2,7 +2,7 @@
  * Photo background for the page heroes, with a dark scrim layered on top so the
  * headline/body copy stays legible regardless of how bright the photo is.
  */
-export function HeroBackdrop({ image }: { image: string }) {
+export function HeroBackdrop({ image, fadeClassName = 'h-32' }: { image: string; fadeClassName?: string }) {
   return (
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
           <div
@@ -17,7 +17,7 @@ export function HeroBackdrop({ image }: { image: string }) {
           <div className="absolute inset-0 bg-linear-to-r from-slate-950/95 via-slate-950/30 to-transparent w-3/5" />
 
           {/* Bottom fade so the hero blends into the page background. */}
-          <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-slate-950 to-transparent" />
+          <div className={`absolute inset-x-0 bottom-0 bg-linear-to-t from-slate-950 to-transparent ${fadeClassName}`} />
       </div>
   )
 }
