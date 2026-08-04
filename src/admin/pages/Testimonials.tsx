@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { addDoc, collection, doc, getCountFromServer, getDocs, query, serverTimestamp, updateDoc, where } from 'firebase/firestore'
 import { db } from '../../firebase/config'
 import { toIsoString } from '../../lib/firestore'
-import { Skeleton } from '../components/Skeleton'
+import { Skeleton } from '../../components/Skeleton'
 import type { Testimonial, TestimonialStatus } from '../../types'
 
 function usePendingCount(version: number) {

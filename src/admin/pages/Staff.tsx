@@ -3,11 +3,11 @@ import { collection, deleteDoc, doc, getDocs, orderBy, query, serverTimestamp, s
 import { db } from '../../firebase/config'
 import { staffMemberFromDoc } from '../../lib/firestore'
 import { useAuth } from '../AuthContext'
-import { SlidePanel } from '../components/SlidePanel'
-import { ConfirmDialog } from '../components/ConfirmDialog'
-import { StatusBadge } from '../components/StatusBadge'
+import { SlidePanel } from '../../components/SlidePanel'
+import { ConfirmDialog } from '../../components/ConfirmDialog'
+import { StatusBadge } from '../../components/StatusBadge'
 import { inputClass } from '../../lib/ui'
-import { Skeleton } from '../components/Skeleton'
+import { Skeleton } from '../../components/Skeleton'
 import type { StaffMember, StaffRole } from '../../types'
 
 function useStaff() {
@@ -113,6 +113,7 @@ function InviteForm({
                     </option>
                     <option value="admin">Admin</option>
                     <option value="editor">Editor</option>
+                    <option value="developer">Developer</option>
                 </select>
             </div>
 

@@ -1,4 +1,4 @@
-export type StaffRole = 'admin' | 'editor'
+export type StaffRole = 'admin' | 'editor' | 'developer'
 
 export interface StaffMember {
   id: string
@@ -41,8 +41,10 @@ export interface TestimonialInvite {
   createdAt: string
 }
 
+export type Currency = 'USD' | 'LKR'
+
 export type QuoteStatus = 'draft' | 'sent' | 'accepted' | 'rejected'
-export type QuoteCurrency = 'USD' | 'LKR'
+export type QuoteCurrency = Currency
 
 export interface QuoteLineItem {
   description: string
@@ -70,5 +72,108 @@ export interface ContactMessage {
   phone?: string
   message: string
   read: boolean
+  createdAt: string
+}
+
+// Single global doc at settings/bankDetails — one bank account for the whole
+// business, shown to every customer paying by bank transfer.
+export interface BankDetails {
+  bankName: string
+  accountName: string
+  accountNumber: string
+  branchSwift: string
+}
+
+// `customers` doc id is the Auth uid — unlike `staff` (keyed by email, since
+// invites predate sign-in), a customer's uid is already known at the moment
+// the admin action that creates them runs (see src/lib/customerProvisioning.ts).
+export interface Customer {
+  id: string
+  uid: string
+  email: string
+  name: string
+  company?: string
+  mustChangePassword: boolean
+  createdBy: string
+  createdAt: string
+}
+
+export type EngagementStatus = 'pending_advance' | 'in_progress' | 'delivered'
+
+export type PhaseStatus = 'not_started' | 'in_progress' | 'completed'
+
+// A phase within a sprint (e.g. Analysis, Design, Development, Testing,
+// Deploy). Tracked independently — more than one phase can be in_progress at
+// once, within a sprint or across sprints.
+export interface Phase {
+  name: string
+  status: PhaseStatus
+}
+
+// A sprint is a named group of phases (e.g. "Sprint 1" containing its own
+// Analysis→Deploy checklist). Admin can add more sprints as the project
+// grows, each with its own phase checklist.
+export interface Sprint {
+  name: string
+  /** The last phase of the last sprint is conventionally "Deploy"/delivery. */
+  phases: Phase[]
+}
+
+export interface Engagement {
+  id: string
+  customerId: string
+  customerEmail: string
+  title: string
+  description: string
+  totalValue: number
+  currency: Currency
+  status: EngagementStatus
+  assignedDeveloperEmails: string[]
+  sprints: Sprint[]
+  advanceInvoiceId: string
+  finalInvoiceId: string
+  createdBy: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type InvoiceType = 'advance' | 'final'
+export type InvoiceStatus = 'pending' | 'proof_submitted' | 'verified'
+export type PaymentMethod = 'bank_transfer' | 'paypal'
+
+export interface InvoiceFeeLineItem {
+  label: string
+  amount: number
+}
+
+export interface Invoice {
+  id: string
+  engagementId: string
+  customerId: string
+  type: InvoiceType
+  amount: number
+  currency: Currency
+  paymentMethod: PaymentMethod
+  status: InvoiceStatus
+  /** Reserved for a future PayPal processing fee — unused while PayPal checkout isn't implemented. */
+  feeLineItem?: InvoiceFeeLineItem
+  proofUrl?: string
+  proofSubmittedAt?: string
+  verifiedBy?: string
+  verifiedAt?: string
+  createdAt: string
+}
+
+export type ChatSenderRole = 'admin' | 'developer' | 'customer'
+
+export interface ChatMessage {
+  id: string
+  senderId: string
+  senderEmail: string
+  senderName: string
+  senderRole: ChatSenderRole
+  text?: string
+  attachmentUrl?: string
+  attachmentType?: 'image' | 'file'
   createdAt: string
 }

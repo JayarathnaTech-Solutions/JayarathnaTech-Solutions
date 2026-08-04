@@ -120,6 +120,23 @@ describe('staff', () => {
         await assertFails(deleteDoc(doc(editorDb(), 'staff', ADMIN_EMAIL)))
         await assertSucceeds(deleteDoc(doc(adminDb(), 'staff', EDITOR_EMAIL)))
     })
+
+    it('lets an admin create a developer', async () => {
+        await assertSucceeds(
+            setDoc(doc(adminDb(), 'staff', 'newdev@example.com'), {
+                email: 'newdev@example.com', name: '', role: 'developer', invitedBy: ADMIN_EMAIL, createdAt: new Date(),
+            }),
+        )
+    })
+
+    it('rejects creating or promoting to an invalid role', async () => {
+        await assertFails(
+            setDoc(doc(adminDb(), 'staff', 'bogus@example.com'), {
+                email: 'bogus@example.com', name: '', role: 'superadmin', invitedBy: ADMIN_EMAIL, createdAt: new Date(),
+            }),
+        )
+        await assertFails(updateDoc(doc(adminDb(), 'staff', EDITOR_EMAIL), { role: 'superadmin' }))
+    })
 })
 
 describe('projects', () => {
