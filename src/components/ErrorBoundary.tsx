@@ -27,10 +27,12 @@ export class ErrorBoundary extends Component<Props, State> {
             return (
                 <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-950 px-6 text-center text-white">
                     <h1 className="text-2xl font-bold">Something went wrong</h1>
-                    <pre className="max-w-xl overflow-auto whitespace-pre-wrap rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-left text-xs text-red-300">
-                        {this.state.error.message}
-                        {this.state.error.stack ? `\n\n${this.state.error.stack}` : ''}
-                    </pre>
+                    {import.meta.env.DEV && (
+                        <pre className="max-w-xl overflow-auto whitespace-pre-wrap rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-left text-xs text-red-300">
+                            {this.state.error.message}
+                            {this.state.error.stack ? `\n\n${this.state.error.stack}` : ''}
+                        </pre>
+                    )}
                     <button
                         type="button"
                         onClick={() => window.location.reload()}

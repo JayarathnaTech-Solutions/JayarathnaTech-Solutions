@@ -299,7 +299,7 @@ function Services() {
                     <h2 className="mt-2 text-2xl font-bold sm:text-3xl">Our Services</h2>
                 </div>
                 <Link to="/services" className="text-sm font-medium text-blue-400 hover:text-blue-300">
-                    View all services &rarr;
+                    View all services
                 </Link>
             </Reveal>
 
@@ -375,7 +375,7 @@ function FeaturedProjects({ projects }: { projects: Project[] | null }) {
                     <h2 className="mt-2 text-2xl font-bold sm:text-3xl">Featured Projects</h2>
                 </div>
                 <Link to="/projects" className="text-sm font-medium text-blue-400 hover:text-blue-300">
-                    View all projects &rarr;
+                    View all projects
                 </Link>
             </Reveal>
 

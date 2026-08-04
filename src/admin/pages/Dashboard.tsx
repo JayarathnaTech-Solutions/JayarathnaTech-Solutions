@@ -241,7 +241,7 @@ function RecentMessages({ messages }: { messages: ContactMessage[] }) {
             <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold">Recent Messages</h2>
                 <Link to="/admin/inbox" className="text-sm font-medium text-blue-400 hover:text-blue-300">
-                    View all messages &rarr;
+                    View all messages
                 </Link>
             </div>
 
@@ -273,7 +273,7 @@ function PendingTestimonials({ testimonials }: { testimonials: Testimonial[] }) 
             <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold">Pending Testimonials</h2>
                 <Link to="/admin/testimonials" className="text-sm font-medium text-blue-400 hover:text-blue-300">
-                    View all testimonials &rarr;
+                    View all testimonials
                 </Link>
             </div>
 

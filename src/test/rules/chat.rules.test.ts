@@ -79,6 +79,10 @@ function messageFrom(uid: string, email: string, role: 'admin' | 'developer' | '
     return { senderId: uid, senderEmail: email, senderName: 'Someone', senderRole: role, text: 'hi', createdAt: new Date() }
 }
 
+function attachmentMessageFrom(uid: string, email: string, role: 'admin' | 'developer' | 'customer', attachmentUrl: string) {
+    return { senderId: uid, senderEmail: email, senderName: 'Someone', senderRole: role, attachmentUrl, attachmentType: 'file', createdAt: new Date() }
+}
+
 describe('engagement chat', () => {
     it('lets admin, the assigned developer, and the owning customer read and post', async () => {
         await assertSucceeds(getDocs(collection(adminDb(), 'engagements', ENGAGEMENT_ID, 'messages')))
@@ -106,6 +110,26 @@ describe('engagement chat', () => {
     it('rejects a message with a spoofed senderId or senderEmail', async () => {
         await assertFails(setDoc(doc(customerDb(), 'engagements', ENGAGEMENT_ID, 'messages', 'm7'), messageFrom('admin-uid', ADMIN_EMAIL, 'admin')))
         await assertFails(setDoc(doc(customerDb(), 'engagements', ENGAGEMENT_ID, 'messages', 'm8'), messageFrom(CUSTOMER_UID, 'spoofed@example.com', 'customer')))
+    })
+
+    it('rejects a message with a spoofed senderRole, even with a correct senderId/senderEmail', async () => {
+        await assertFails(setDoc(doc(customerDb(), 'engagements', ENGAGEMENT_ID, 'messages', 'm9'), messageFrom(CUSTOMER_UID, CUSTOMER_EMAIL, 'admin')))
+        await assertFails(setDoc(doc(developerDb(), 'engagements', ENGAGEMENT_ID, 'messages', 'm10'), messageFrom('dev-uid', DEVELOPER_EMAIL, 'admin')))
+    })
+
+    it('rejects a non-https attachmentUrl and accepts an https one', async () => {
+        await assertFails(
+            setDoc(doc(customerDb(), 'engagements', ENGAGEMENT_ID, 'messages', 'm11'), attachmentMessageFrom(CUSTOMER_UID, CUSTOMER_EMAIL, 'customer', 'javascript:alert(1)')),
+        )
+        await assertFails(
+            setDoc(doc(customerDb(), 'engagements', ENGAGEMENT_ID, 'messages', 'm12'), attachmentMessageFrom(CUSTOMER_UID, CUSTOMER_EMAIL, 'customer', 'data:text/html,evil')),
+        )
+        await assertSucceeds(
+            setDoc(
+                doc(customerDb(), 'engagements', ENGAGEMENT_ID, 'messages', 'm13'),
+                attachmentMessageFrom(CUSTOMER_UID, CUSTOMER_EMAIL, 'customer', 'https://res.cloudinary.com/demo/receipt.png'),
+            ),
+        )
     })
 
     it('never allows editing or deleting a posted message, for any role', async () => {

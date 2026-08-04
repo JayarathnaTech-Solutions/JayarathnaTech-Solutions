@@ -39,7 +39,6 @@ function BackLink() {
             to="/projects"
             className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-400 hover:text-slate-200"
         >
-            <span aria-hidden="true">&larr;</span>
             Back to Projects
         </Link>
     )
@@ -95,7 +94,6 @@ function QuoteCta() {
                 className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-white px-4 py-2.5 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-50"
             >
                 Get a Quote
-                <span aria-hidden="true">&rarr;</span>
             </MotionLink>
         </div>
     )
@@ -205,7 +203,7 @@ function NotFound() {
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">Project not found</h1>
             <p className="mt-3 text-slate-400">This project may have been removed or the link is incorrect.</p>
             <Link to="/projects" className="mt-6 inline-block text-sm font-medium text-blue-400 hover:text-blue-300">
-                &larr; Back to Projects
+                Back to Projects
             </Link>
         </section>
     )
