@@ -6,6 +6,7 @@ import { uploadImage } from '../../lib/cloudinary'
 import { SlidePanel } from '../components/SlidePanel'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { Field, TextAreaField } from '../components/FormField'
+import { Skeleton } from '../components/Skeleton'
 import type { Project } from '../../types'
 
 function useProjects() {
@@ -36,6 +37,7 @@ function CoverImageUpload({
     const [uploading, setUploading] = useState(false)
     const [progress, setProgress] = useState(0)
     const [error, setError] = useState(false)
+    const [dragActive, setDragActive] = useState(false)
     const inputRef = useRef<HTMLInputElement>(null)
 
     async function handleFile(file: File) {
@@ -68,7 +70,23 @@ function CoverImageUpload({
             <button
                 type="button"
                 onClick={() => inputRef.current?.click()}
-                className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-slate-700 bg-slate-950/60 px-4 py-6 text-center transition-colors hover:border-slate-600"
+                onDragOver={(event) => {
+                    event.preventDefault()
+                    setDragActive(true)
+                }}
+                onDragLeave={(event) => {
+                    event.preventDefault()
+                    setDragActive(false)
+                }}
+                onDrop={(event) => {
+                    event.preventDefault()
+                    setDragActive(false)
+                    const file = event.dataTransfer.files?.[0]
+                    if (file) void handleFile(file)
+                }}
+                className={`flex w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed px-4 py-6 text-center transition-colors ${
+                    dragActive ? 'border-blue-500 bg-blue-500/5' : 'border-slate-700 bg-slate-950/60 hover:border-slate-600'
+                }`}
             >
                 {value && !uploading ? (
                     <img src={value} alt="" className="h-24 w-full rounded object-cover" />
@@ -257,7 +275,16 @@ export function AdminProjects() {
 
             <div className="mt-6 overflow-hidden rounded-xl border border-slate-800 bg-slate-900/40">
                 {projects === null ? (
-                    <div className="p-6 text-sm text-slate-500">Loading…</div>
+                    <div className="divide-y divide-slate-800">
+                        {[0, 1, 2, 3].map((i) => (
+                            <div key={i} className="flex items-center gap-4 px-6 py-4">
+                                <Skeleton className="h-10 w-16 shrink-0 rounded" />
+                                <Skeleton className="h-3.5 w-40" />
+                                <Skeleton className="h-3.5 w-24" />
+                                <Skeleton className="ml-auto h-3.5 w-20" />
+                            </div>
+                        ))}
+                    </div>
                 ) : projects.length === 0 ? (
                     <div className="p-10 text-center text-sm text-slate-500">No projects yet — add your first one.</div>
                 ) : (

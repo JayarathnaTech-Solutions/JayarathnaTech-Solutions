@@ -14,10 +14,9 @@ import {
 } from '../../lib/quote'
 import { SlidePanel } from '../components/SlidePanel'
 import { StatusBadge } from '../components/StatusBadge'
+import { inputClass } from '../../lib/ui'
+import { Skeleton } from '../components/Skeleton'
 import type { Quote, QuoteCurrency, QuoteLineItem, QuoteStatus } from '../../types'
-
-const inputClass =
-    'w-full rounded-lg border border-slate-800 bg-slate-950/60 px-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none'
 
 const filterTabs: { value: QuoteStatus | 'all'; label: string }[] = [
     { value: 'all', label: 'All' },
@@ -428,7 +427,16 @@ export function AdminQuotes() {
 
             <div className="mt-6 overflow-hidden rounded-xl border border-slate-800 bg-slate-900/40">
                 {quotes === null ? (
-                    <div className="p-6 text-sm text-slate-500">Loading…</div>
+                    <div className="divide-y divide-slate-800">
+                        {[0, 1, 2, 3].map((i) => (
+                            <div key={i} className="flex items-center gap-4 px-6 py-4">
+                                <Skeleton className="h-3.5 w-32" />
+                                <Skeleton className="h-3.5 w-24" />
+                                <Skeleton className="h-3.5 w-20" />
+                                <Skeleton className="ml-auto h-5 w-16 rounded-full" />
+                            </div>
+                        ))}
+                    </div>
                 ) : quotes.length === 0 ? (
                     <div className="p-10 text-center text-sm text-slate-500">No quotes yet — create your first one.</div>
                 ) : (

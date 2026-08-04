@@ -30,9 +30,9 @@ function renderWithStatus(status: AuthStatus) {
 }
 
 describe('RequireAuth', () => {
-    it('renders nothing while checking auth state', () => {
-        const { container } = renderWithStatus({ status: 'checking' })
-        expect(container).toBeEmptyDOMElement()
+    it('shows a loading spinner while checking auth state', () => {
+        renderWithStatus({ status: 'checking' })
+        expect(screen.getByRole('status')).toBeInTheDocument()
     })
 
     it('redirects to /admin/login when signed out', () => {

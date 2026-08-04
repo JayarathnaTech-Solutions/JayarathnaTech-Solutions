@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { addDoc, collection, doc, getCountFromServer, getDocs, query, serverTimestamp, updateDoc, where } from 'firebase/firestore'
 import { db } from '../../firebase/config'
 import { toIsoString } from '../../lib/firestore'
+import { Skeleton } from '../components/Skeleton'
 import type { Testimonial, TestimonialStatus } from '../../types'
 
 function usePendingCount(version: number) {
@@ -126,13 +127,20 @@ function PendingCard({ testimonial, onDecided }: { testimonial: Testimonial; onD
     )
 }
 
-function ApprovedCard({ testimonial, onUnpublished }: { testimonial: Testimonial; onUnpublished: () => void }) {
+function TestimonialActionCard({
+    testimonial,
+    actionLabel,
+    onAction,
+}: {
+    testimonial: Testimonial
+    actionLabel: string
+    onAction: () => void
+}) {
     const [busy, setBusy] = useState(false)
 
-    async function unpublish() {
+    function handleAction() {
         setBusy(true)
-        await updateDoc(doc(db, 'testimonials', testimonial.id), { status: 'rejected' })
-        onUnpublished()
+        onAction()
     }
 
     return (
@@ -151,10 +159,10 @@ function ApprovedCard({ testimonial, onUnpublished }: { testimonial: Testimonial
             <button
                 type="button"
                 disabled={busy}
-                onClick={unpublish}
+                onClick={handleAction}
                 className="shrink-0 rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-slate-600 disabled:opacity-50"
             >
-                Unpublish
+                {actionLabel}
             </button>
         </div>
     )
@@ -238,6 +246,15 @@ function Tabs({
             >
                 Approved
             </button>
+            <button
+                type="button"
+                onClick={() => onChange('rejected')}
+                className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                    active === 'rejected' ? 'bg-blue-600 text-white' : 'border border-slate-800 text-slate-300 hover:border-slate-700'
+                }`}
+            >
+                Rejected
+            </button>
         </div>
     )
 }
@@ -253,6 +270,11 @@ export function AdminTestimonials() {
         setVersion((v) => v + 1)
     }
 
+    async function setStatus(testimonial: Testimonial, status: TestimonialStatus) {
+        await updateDoc(doc(db, 'testimonials', testimonial.id), { status })
+        refreshAll()
+    }
+
     return (
         <div>
             <div className="flex items-center justify-between">
@@ -266,18 +288,45 @@ export function AdminTestimonials() {
 
             <div className="mt-6 space-y-4">
                 {testimonials === null ? (
-                    <p className="text-sm text-slate-500">Loading…</p>
+                    [0, 1, 2].map((i) => (
+                        <div key={i} className="flex items-start gap-3 rounded-xl border border-slate-800 bg-slate-900/40 p-5">
+                            <Skeleton className="h-10 w-10 shrink-0 rounded-full" />
+                            <div className="min-w-0 flex-1 space-y-2.5">
+                                <Skeleton className="h-3.5 w-1/3" />
+                                <Skeleton className="h-3 w-full" />
+                                <Skeleton className="h-3 w-2/3" />
+                            </div>
+                        </div>
+                    ))
                 ) : testimonials.length === 0 ? (
                     <p className="text-sm text-slate-500">
-                        {activeTab === 'pending' ? 'No pending testimonials.' : 'No approved testimonials yet.'}
+                        {activeTab === 'pending'
+                            ? 'No pending testimonials.'
+                            : activeTab === 'approved'
+                              ? 'No approved testimonials yet.'
+                              : 'No rejected testimonials.'}
                     </p>
                 ) : activeTab === 'pending' ? (
                     testimonials.map((testimonial) => (
                         <PendingCard key={testimonial.id} testimonial={testimonial} onDecided={refreshAll} />
                     ))
+                ) : activeTab === 'approved' ? (
+                    testimonials.map((testimonial) => (
+                        <TestimonialActionCard
+                            key={testimonial.id}
+                            testimonial={testimonial}
+                            actionLabel="Unpublish"
+                            onAction={() => setStatus(testimonial, 'rejected')}
+                        />
+                    ))
                 ) : (
                     testimonials.map((testimonial) => (
-                        <ApprovedCard key={testimonial.id} testimonial={testimonial} onUnpublished={refreshAll} />
+                        <TestimonialActionCard
+                            key={testimonial.id}
+                            testimonial={testimonial}
+                            actionLabel="Re-approve"
+                            onAction={() => setStatus(testimonial, 'approved')}
+                        />
                     ))
                 )}
             </div>

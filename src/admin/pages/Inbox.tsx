@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { collection, doc, getDocs, orderBy, query, updateDoc } from 'firebase/firestore'
 import { db } from '../../firebase/config'
 import { toIsoString } from '../../lib/firestore'
+import { inputClass } from '../../lib/ui'
+import { Skeleton } from '../components/Skeleton'
 import type { ContactMessage } from '../../types'
 
 function useMessages() {
@@ -86,9 +88,27 @@ function MessageListItem({
     )
 }
 
-function MessageDetail({ message, onToggleRead }: { message: ContactMessage; onToggleRead: () => void }) {
+function MessageDetail({
+    message,
+    onToggleRead,
+    onBack,
+}: {
+    message: ContactMessage
+    onToggleRead: () => void
+    onBack: () => void
+}) {
     return (
         <div className="flex h-full flex-col p-6">
+            <button
+                type="button"
+                onClick={onBack}
+                className="mb-4 flex items-center gap-1 text-sm font-medium text-slate-400 hover:text-white md:hidden"
+            >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                Back
+            </button>
             <div>
                 <h2 className="text-lg font-semibold">{message.name}</h2>
                 <p className="mt-1 text-sm text-slate-400">{message.email}</p>
@@ -155,19 +175,29 @@ export function AdminInbox() {
             <h1 className="text-2xl font-bold">Messages</h1>
 
             <div className="mt-6 flex h-[calc(100vh-13rem)] min-h-[28rem] overflow-hidden rounded-xl border border-slate-800 bg-slate-900/40">
-                <div className="flex w-full max-w-sm flex-col border-r border-slate-800">
+                <div className={`${selected ? 'hidden md:flex' : 'flex'} w-full max-w-sm flex-col border-r border-slate-800`}>
                     <div className="border-b border-slate-800 p-3">
                         <input
                             type="search"
                             value={search}
                             onChange={(event) => setSearch(event.target.value)}
                             placeholder="Search messages..."
-                            className="w-full rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
+                            className={inputClass}
                         />
                     </div>
                     <div className="flex-1 overflow-y-auto">
                         {filtered === null ? (
-                            <p className="p-4 text-sm text-slate-500">Loading…</p>
+                            <div className="space-y-1 p-3">
+                                {[0, 1, 2, 3, 4].map((i) => (
+                                    <div key={i} className="flex items-start gap-3 p-1 py-2">
+                                        <Skeleton className="h-9 w-9 shrink-0 rounded-full" />
+                                        <div className="min-w-0 flex-1 space-y-2">
+                                            <Skeleton className="h-3.5 w-2/3" />
+                                            <Skeleton className="h-3 w-full" />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         ) : filtered.length === 0 ? (
                             <p className="p-4 text-sm text-slate-500">No messages yet.</p>
                         ) : (
@@ -183,11 +213,11 @@ export function AdminInbox() {
                     </div>
                 </div>
 
-                <div className="hidden flex-1 md:block">
+                <div className={`${selected ? 'flex' : 'hidden'} w-full flex-1 md:flex`}>
                     {selected ? (
-                        <MessageDetail message={selected} onToggleRead={handleToggleRead} />
+                        <MessageDetail message={selected} onToggleRead={handleToggleRead} onBack={() => setSelectedId(null)} />
                     ) : (
-                        <div className="flex h-full items-center justify-center text-sm text-slate-500">
+                        <div className="flex mx-auto h-full items-center justify-center text-sm text-slate-500">
                             Select a message to view it
                         </div>
                     )}

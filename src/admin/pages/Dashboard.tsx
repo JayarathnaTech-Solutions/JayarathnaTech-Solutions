@@ -25,6 +25,7 @@ const emptyData: DashboardData = {
 
 function useDashboardData() {
     const [data, setData] = useState<DashboardData | null>(null)
+    const [error, setError] = useState(false)
 
     useEffect(() => {
         let cancelled = false
@@ -80,7 +81,10 @@ function useDashboardData() {
         }
 
         load().catch(() => {
-            if (!cancelled) setData(emptyData)
+            if (!cancelled) {
+                setError(true)
+                setData(emptyData)
+            }
         })
 
         return () => {
@@ -88,7 +92,7 @@ function useDashboardData() {
         }
     }, [])
 
-    return data
+    return { data, error }
 }
 
 function timeAgo(iso: string): string {
@@ -255,6 +259,19 @@ function PendingTestimonials({ testimonials }: { testimonials: Testimonial[] }) 
     )
 }
 
+function ErrorBanner({ onDismiss }: { onDismiss: () => void }) {
+    return (
+        <div className="mb-6 flex items-center justify-between gap-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+            <span>Couldn&rsquo;t load dashboard data — try refreshing.</span>
+            <button type="button" onClick={onDismiss} aria-label="Dismiss" className="text-red-300 hover:text-red-200">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6 6 18" />
+                </svg>
+            </button>
+        </div>
+    )
+}
+
 function Loading() {
     return (
         <div className="space-y-6">
@@ -272,13 +289,15 @@ function Loading() {
 }
 
 export function Dashboard() {
-    const data = useDashboardData()
+    const { data, error } = useDashboardData()
+    const [dismissed, setDismissed] = useState(false)
 
     return (
         <div>
             <h1 className="text-2xl font-bold">Dashboard</h1>
 
             <div className="mt-6">
+                {error && !dismissed && <ErrorBanner onDismiss={() => setDismissed(true)} />}
                 {data === null ? (
                     <Loading />
                 ) : (
