@@ -32,14 +32,22 @@ tracking progress elsewhere.
 ## Commands
 
 - `npm run dev` — start Vite dev server
-- `npm run build` — `tsc -b && vite build`
+- `npm run build` — generates `public/sitemap.xml` from live Firestore project data,
+  then `tsc -b && vite build`
 - `npm run lint` — ESLint
 - `npm run preview` — preview a production build
-- `npm test` — run the test suite once (Vitest)
-- `npm run test:watch` — Vitest in watch mode
-- `npm run emulators` — start the Firebase Local Emulator Suite (Auth :9099,
-  Firestore :8080, Emulator UI :4000). Requires a JRE on PATH for the Firestore
-  emulator.
+- `npm test` — run the app test suite once (Vitest, jsdom, Firebase SDK mocked —
+  no emulator needed)
+- `npm run test:watch` — Vitest in watch mode (same suite as `npm test`)
+- `npm run test:rules` — Firestore security-rules test suite
+  (`src/test/rules/firestore.rules.test.ts`, `@firebase/rules-unit-testing`,
+  separate Vitest config). Runs via `firebase emulators:exec`, which starts the
+  Firestore emulator, runs the tests, then shuts it down — no manual emulator
+  step needed. First run downloads the emulator jar (~150MB), which can be slow
+  on some networks.
+- `npm run emulators` — start the Firebase Local Emulator Suite standalone (Auth
+  :9099, Firestore :8080, Emulator UI :4000), e.g. for manual/interactive testing.
+  Requires a JRE on PATH for the Firestore emulator.
 
 ## Code style
 
@@ -52,18 +60,22 @@ tracking progress elsewhere.
 ## Firebase notes
 
 - Real project config lives in `.env` (gitignored); `.env.example` documents the
-  `VITE_FIREBASE_*` / `VITE_CLOUDINARY_*` vars
+  `VITE_FIREBASE_*` / `VITE_CLOUDINARY_*` / `VITE_WEB3FORMS_ACCESS_KEY` vars
 - `VITE_USE_FIREBASE_EMULATORS` in `.env` controls whether the app talks to the local
   emulators or the live project. Currently `false` — day-to-day dev writes directly to
-  the live project, since the Firestore emulator's first-time jar download is very
-  slow on this network. `npm run emulators` is still configured (`firebase.json`) for
-  when security-rule tests are written (`@firebase/rules-unit-testing` requires the
-  emulator, it can't target the live project)
+  the live project. The emulator is only used for `npm run test:rules` (see Commands)
 - No Cloud Functions on Spark plan — Firestore security rules (`firestore.rules`) are
-  the *only* backend safeguard, so treat rules changes as security-sensitive and test
-  them against the emulator with `@firebase/rules-unit-testing`
-- `firestore.rules` currently denies all reads/writes by default (placeholder) —
-  real per-collection rules land in PLAN.md step 8
+  the *only* backend safeguard, so treat rules changes as security-sensitive: they're
+  covered by `npm run test:rules`, but changes still need careful review since a
+  mistake there is a direct data-leak or privilege-escalation risk
+- `firestore.rules` implements full per-collection rules (staff/projects/testimonials/
+  testimonialInvites/quotes/contactMessages — see PLAN.md step 8) and is deployed to
+  the live project. Changes to `firestore.rules` or `firestore.indexes.json` are
+  **not live** until explicitly deployed (`firebase deploy --only firestore --project
+  jayarathnatech-solutions`) — editing the file locally has no effect on the live app
+  until that runs
+- `staff` collection doc id is the person's **email**, not uid (see PLAN.md
+  Assumptions) — invites are created by email before the invitee has ever signed in
 - Auth providers (Google sign-in) and Firestore database creation are managed via
   `firebase` CLI / console, not in application code
 

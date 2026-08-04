@@ -1,4 +1,6 @@
 import { useState, type FormEvent } from 'react'
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { db } from '../firebase/config'
 import { Seo } from '../components/Seo'
 import { siteContact } from '../lib/siteInfo'
 
@@ -141,6 +143,11 @@ function ContactForm() {
 
         const form = event.currentTarget
         const formData = new FormData(form)
+        const name = String(formData.get('name') ?? '').trim()
+        const email = String(formData.get('email') ?? '').trim()
+        const phone = String(formData.get('phone') ?? '').trim()
+        const message = String(formData.get('message') ?? '').trim()
+
         formData.append('access_key', WEB3FORMS_ACCESS_KEY)
 
         try {
@@ -154,6 +161,17 @@ function ContactForm() {
             if (result.success) {
                 form.reset()
                 setStatus('success')
+                // Web3Forms handles email delivery (the critical path); mirroring
+                // into Firestore so it shows up in the admin inbox is best-effort
+                // and shouldn't affect the user-facing success state if it fails.
+                void addDoc(collection(db, 'contactMessages'), {
+                    name,
+                    email,
+                    message,
+                    ...(phone ? { phone } : {}),
+                    read: false,
+                    createdAt: serverTimestamp(),
+                }).catch(() => {})
             } else {
                 setStatus('error')
             }

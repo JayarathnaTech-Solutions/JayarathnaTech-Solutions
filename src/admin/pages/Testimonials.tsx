@@ -1,3 +1,286 @@
+import { useEffect, useState } from 'react'
+import { addDoc, collection, doc, getCountFromServer, getDocs, query, serverTimestamp, updateDoc, where } from 'firebase/firestore'
+import { db } from '../../firebase/config'
+import { toIsoString } from '../../lib/firestore'
+import type { Testimonial, TestimonialStatus } from '../../types'
+
+function usePendingCount(version: number) {
+    const [count, setCount] = useState(0)
+
+    useEffect(() => {
+        getCountFromServer(query(collection(db, 'testimonials'), where('status', '==', 'pending')))
+            .then((snapshot) => setCount(snapshot.data().count))
+            .catch(() => setCount(0))
+    }, [version])
+
+    return count
+}
+
+function useTestimonials(status: TestimonialStatus) {
+    const [testimonials, setTestimonials] = useState<Testimonial[] | null>(null)
+
+    const reload = () => {
+        getDocs(query(collection(db, 'testimonials'), where('status', '==', status)))
+            .then((snapshot) => {
+                setTestimonials(
+                    snapshot.docs
+                        .map((snap) => {
+                            const data = snap.data()
+                            return {
+                                id: snap.id,
+                                clientName: data.clientName,
+                                message: data.message,
+                                rating: data.rating,
+                                status: data.status,
+                                createdAt: toIsoString(data.createdAt),
+                            } satisfies Testimonial
+                        })
+                        .sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
+                )
+            })
+            .catch(() => setTestimonials([]))
+    }
+
+    useEffect(reload, [status])
+
+    return { testimonials, reload }
+}
+
+function timeAgo(iso: string): string {
+    const minutes = Math.floor((Date.now() - new Date(iso).getTime()) / 60000)
+    if (minutes < 1) return 'just now'
+    if (minutes < 60) return `${minutes}m ago`
+    const hours = Math.floor(minutes / 60)
+    if (hours < 24) return `${hours}h ago`
+    return `${Math.floor(hours / 24)}d ago`
+}
+
+function Stars({ rating }: { rating?: number }) {
+    if (!rating) return null
+    return (
+        <div className="flex gap-0.5 text-amber-400">
+            {Array.from({ length: 5 }, (_, i) => (
+                <svg key={i} width="13" height="13" viewBox="0 0 20 20" fill={i < rating ? 'currentColor' : 'none'} stroke="currentColor">
+                    <path d="M10 1.5l2.6 5.27 5.82.85-4.21 4.1.99 5.8L10 14.9l-5.2 2.72.99-5.8-4.21-4.1 5.82-.85z" />
+                </svg>
+            ))}
+        </div>
+    )
+}
+
+function Avatar({ name }: { name: string }) {
+    return (
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-800 text-sm font-semibold text-slate-300">
+            {name.charAt(0).toUpperCase() || '?'}
+        </div>
+    )
+}
+
+function PendingCard({ testimonial, onDecided }: { testimonial: Testimonial; onDecided: () => void }) {
+    const [busy, setBusy] = useState(false)
+
+    async function decide(status: TestimonialStatus) {
+        setBusy(true)
+        await updateDoc(doc(db, 'testimonials', testimonial.id), { status })
+        onDecided()
+    }
+
+    return (
+        <div className="flex items-start gap-3 rounded-xl border border-slate-800 bg-slate-900/40 p-5">
+            <Avatar name={testimonial.clientName} />
+            <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-2">
+                    <p className="font-medium">{testimonial.clientName}</p>
+                    <span className="shrink-0 text-xs text-slate-500">{timeAgo(testimonial.createdAt)}</span>
+                </div>
+                <p className="mt-1 text-sm text-slate-400">{testimonial.message}</p>
+                <div className="mt-2">
+                    <Stars rating={testimonial.rating} />
+                </div>
+            </div>
+            <div className="flex shrink-0 gap-2">
+                <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() => decide('approved')}
+                    aria-label="Approve"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 disabled:opacity-50"
+                >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m5 13 4 4L19 7" />
+                    </svg>
+                </button>
+                <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() => decide('rejected')}
+                    aria-label="Reject"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 disabled:opacity-50"
+                >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m6 6 12 12M18 6 6 18" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    )
+}
+
+function ApprovedCard({ testimonial, onUnpublished }: { testimonial: Testimonial; onUnpublished: () => void }) {
+    const [busy, setBusy] = useState(false)
+
+    async function unpublish() {
+        setBusy(true)
+        await updateDoc(doc(db, 'testimonials', testimonial.id), { status: 'rejected' })
+        onUnpublished()
+    }
+
+    return (
+        <div className="flex items-start gap-3 rounded-xl border border-slate-800 bg-slate-900/40 p-5">
+            <Avatar name={testimonial.clientName} />
+            <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-2">
+                    <p className="font-medium">{testimonial.clientName}</p>
+                    <span className="shrink-0 text-xs text-slate-500">{timeAgo(testimonial.createdAt)}</span>
+                </div>
+                <p className="mt-1 text-sm text-slate-400">{testimonial.message}</p>
+                <div className="mt-2">
+                    <Stars rating={testimonial.rating} />
+                </div>
+            </div>
+            <button
+                type="button"
+                disabled={busy}
+                onClick={unpublish}
+                className="shrink-0 rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-slate-600 disabled:opacity-50"
+            >
+                Unpublish
+            </button>
+        </div>
+    )
+}
+
+function GenerateInviteButton() {
+    const [link, setLink] = useState<string | null>(null)
+    const [generating, setGenerating] = useState(false)
+    const [copied, setCopied] = useState(false)
+
+    async function generate() {
+        setGenerating(true)
+        setCopied(false)
+        try {
+            const inviteRef = await addDoc(collection(db, 'testimonialInvites'), {
+                used: false,
+                createdAt: serverTimestamp(),
+            })
+            setLink(`${window.location.origin}/testimonial/${inviteRef.id}`)
+        } finally {
+            setGenerating(false)
+        }
+    }
+
+    return (
+        <div className="flex flex-col items-end gap-2">
+            <button
+                type="button"
+                onClick={generate}
+                disabled={generating}
+                className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 disabled:opacity-60"
+            >
+                {generating ? 'Generating…' : 'Generate Invite Link'}
+            </button>
+
+            {link && (
+                <div className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2 text-xs">
+                    <span className="max-w-xs truncate text-slate-300">{link}</span>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            void navigator.clipboard.writeText(link)
+                            setCopied(true)
+                        }}
+                        className="font-medium text-blue-400 hover:text-blue-300"
+                    >
+                        {copied ? 'Copied!' : 'Copy'}
+                    </button>
+                </div>
+            )}
+        </div>
+    )
+}
+
+function Tabs({
+    active,
+    onChange,
+    pendingCount,
+}: {
+    active: TestimonialStatus
+    onChange: (status: TestimonialStatus) => void
+    pendingCount: number
+}) {
+    return (
+        <div className="flex gap-2">
+            <button
+                type="button"
+                onClick={() => onChange('pending')}
+                className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                    active === 'pending' ? 'bg-blue-600 text-white' : 'border border-slate-800 text-slate-300 hover:border-slate-700'
+                }`}
+            >
+                Pending {pendingCount > 0 && `(${pendingCount})`}
+            </button>
+            <button
+                type="button"
+                onClick={() => onChange('approved')}
+                className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                    active === 'approved' ? 'bg-blue-600 text-white' : 'border border-slate-800 text-slate-300 hover:border-slate-700'
+                }`}
+            >
+                Approved
+            </button>
+        </div>
+    )
+}
+
 export function AdminTestimonials() {
-  return <h1>Manage testimonials</h1>
+    const [activeTab, setActiveTab] = useState<TestimonialStatus>('pending')
+    const [version, setVersion] = useState(0)
+    const { testimonials, reload } = useTestimonials(activeTab)
+    const pendingCount = usePendingCount(version)
+
+    function refreshAll() {
+        reload()
+        setVersion((v) => v + 1)
+    }
+
+    return (
+        <div>
+            <div className="flex items-center justify-between">
+                <h1 className="text-2xl font-bold">Testimonials</h1>
+                <GenerateInviteButton />
+            </div>
+
+            <div className="mt-6">
+                <Tabs active={activeTab} onChange={setActiveTab} pendingCount={pendingCount} />
+            </div>
+
+            <div className="mt-6 space-y-4">
+                {testimonials === null ? (
+                    <p className="text-sm text-slate-500">Loading…</p>
+                ) : testimonials.length === 0 ? (
+                    <p className="text-sm text-slate-500">
+                        {activeTab === 'pending' ? 'No pending testimonials.' : 'No approved testimonials yet.'}
+                    </p>
+                ) : activeTab === 'pending' ? (
+                    testimonials.map((testimonial) => (
+                        <PendingCard key={testimonial.id} testimonial={testimonial} onDecided={refreshAll} />
+                    ))
+                ) : (
+                    testimonials.map((testimonial) => (
+                        <ApprovedCard key={testimonial.id} testimonial={testimonial} onUnpublished={refreshAll} />
+                    ))
+                )}
+            </div>
+        </div>
+    )
 }

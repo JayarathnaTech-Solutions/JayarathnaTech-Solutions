@@ -32,35 +32,39 @@ this file only tracks scope and progress.
   capture them.
 - **Quotes**: internal admin tool only, exported as PDF (no public shareable quote link).
 - **Contact form**: submits via Web3Forms (external form-to-email API, access key in
-  `VITE_WEB3FORMS_ACCESS_KEY`) instead of the originally planned Firestore write — this
-  gets working email delivery without needing Cloud Functions, but means submissions do
-  **not** land in Firestore `contactMessages`. Section 13 (Admin — Contact Messages
-  Inbox) will have nothing to show until/unless that's wired up separately.
+  `VITE_WEB3FORMS_ACCESS_KEY`) for email delivery, and — on a successful Web3Forms
+  submission — also writes the same message to Firestore `contactMessages` (client-side,
+  best-effort; a Firestore write failure doesn't affect the user-facing success state)
+  so it shows up in the admin inbox (Section 13).
 - **Testing**: automated tests are required for v1 (not just manual click-through).
 
 ## Assumptions
 
 - First-ever Admin account is bootstrapped manually (seeded directly in the Firebase
   console or via a one-off script) — there's no in-app way to create the first admin.
-  Concretely: the `staff` collection's doc id is the person's Firebase Auth **uid**
-  (not email — simpler security rules, `request.auth.uid == staffId`), so bootstrap is:
-  1) have the person sign in once at `/admin/login` with Google (they'll land on the
-  "Access restricted" screen since no `staff` doc exists yet), 2) find their uid in
-  Firebase Console → Authentication → Users, 3) manually create a doc at
-  `staff/{uid}` with fields `email`, `name`, `role: "admin"`, `invitedBy`, `createdAt`.
-- PDF export uses a client-side library (e.g. `@react-pdf/renderer`), not server-rendered.
+  Concretely: the `staff` collection's doc id is the person's **email** (not uid —
+  Section 14 invites people by email before they've ever signed in, so the uid isn't
+  known yet; the security rule checks `request.auth.token.email == staffId` instead,
+  and the invitee's display name is auto-backfilled into the doc on their first
+  sign-in). Bootstrap is: manually create a doc at `staff/{email}` with fields
+  `email`, `name`, `role: "admin"`, `invitedBy`, `createdAt` — no prior sign-in needed.
+- PDF export uses a client-side library (`@react-pdf/renderer`), not server-rendered
+  — lazy-loaded (dynamic `import()`) so it doesn't bloat the public site's bundle.
 - Single Firebase project for v1 (no separate staging project). Day-to-day local dev
   connects directly to the live project (`VITE_USE_FIREBASE_EMULATORS=false`) — the
-  Local Emulator Suite is configured (`firebase.json`, `npm run emulators`) but not
-  used by default since the Firestore emulator's first-time jar download is very slow
-  on this network. Revisit using it once security rules exist to test.
-- Test stack: Vitest + React Testing Library, plus `@firebase/rules-unit-testing`
-  for security-rule tests — these specifically require the Local Emulator Suite
-  (they can't run against the live project), so budget time for that jar download
-  when step 8 (Firestore Security Rules) starts.
+  Local Emulator Suite is only used for the rules test suite (see below), not for
+  everyday dev.
+- Test stack: Vitest + React Testing Library for app code (`npm test`, no emulator
+  needed — Firebase SDK calls are mocked), plus `@firebase/rules-unit-testing` for
+  security-rule tests (`npm run test:rules`), which specifically requires the Local
+  Emulator Suite and is kept in a separate Vitest config/npm script so `npm test`
+  doesn't depend on it. The Firestore emulator jar (~150MB) is a slow first-time
+  download on some networks — `npm run test:rules` triggers it automatically via
+  `firebase emulators:exec` if not already cached.
 - Vercel free tier is sufficient for hosting.
 - Contact/testimonial forms use standard fields (name, email, phone optional, message).
-- Quotes use a single currency (exact default TBD, e.g. USD or LKR).
+- Quotes are per-quote USD or LKR (selectable in the quote form, defaults to USD)
+  rather than one fixed site-wide currency.
 - Testimonial invite links don't expire by default; admin manages validity manually.
 
 ## Open risks
@@ -131,65 +135,68 @@ this file only tracks scope and progress.
 
 ## 7. Auth & Access Control
 - [x] Firebase Auth Google sign-in for `/admin/login`
-- [x] `staff` Firestore collection (doc id = **uid**; fields: email, name, role, invitedBy, createdAt)
+- [x] `staff` Firestore collection (doc id = **email**; fields: email, name, role, invitedBy, createdAt)
 - [x] Auth guard: require signed-in + present in `staff` before allowing `/admin/*`
 - [x] Role-based UI gating: Admin vs Editor (hide staff-management from Editors)
 - [x] Document the manual bootstrap step for the first Admin (Firebase console seed)
 
 ## 8. Firestore Security Rules
-- [ ] `staff` — Admins write; staff can read their own doc
-- [ ] `projects` — public read, any staff write
-- [ ] `testimonials` — public read (approved only), public create via valid invite token, staff approve/update
-- [ ] `testimonialInvites` — staff-only list, public get-by-exact-id-only (no `list`) for token validation
-- [ ] `quotes` — staff-only read/write
-- [ ] `contactMessages` — public create only, staff-only read/update
-- [ ] Write rules tests using `@firebase/rules-unit-testing` against the emulator
+- [x] `staff` — Admins write; staff can read their own doc
+- [x] `projects` — public read, any staff write
+- [x] `testimonials` — public read (approved only), public create via valid invite token, staff approve/update
+- [x] `testimonialInvites` — staff-only list, public get-by-exact-id-only (no `list`) for token validation
+- [x] `quotes` — staff-only read/write
+- [x] `contactMessages` — public create only, staff-only read/update
+- [x] Write rules tests using `@firebase/rules-unit-testing` against the emulator
+      (27 tests, `npm run test:rules` — auto-starts/stops the Firestore emulator
+      via `firebase emulators:exec`, separate from `npm test` since it needs the
+      emulator jar; see `src/test/rules/firestore.rules.test.ts`)
 
 ## 9. Admin — Dashboard
 - [x] Admin layout/shell (nav, protected route wrapper)
 - [x] Dashboard landing page (pending testimonials, open quotes, unread messages counts)
 
 ## 10. Admin — Project Management
-- [ ] Project list view with edit/delete
-- [ ] Add/edit project form — title, description, cover image upload to Cloudinary,
+- [x] Project list view with edit/delete
+- [x] Add/edit project form — title, description, cover image upload to Cloudinary,
       plus category, client, technologies (tag list), challenge, solution, and key
       features (see extended Project schema in Locked-in decisions)
-- [ ] Delete confirmation flow
-- [ ] Image upload progress/error handling
+- [x] Delete confirmation flow
+- [x] Image upload progress/error handling
 
 ## 11. Admin — Testimonials
-- [ ] Generate invite link UI (creates `testimonialInvites` doc, produces shareable URL)
-- [ ] Pending testimonials queue (approve/reject)
-- [ ] Approved testimonials list (unpublish option)
+- [x] Generate invite link UI (creates `testimonialInvites` doc, produces shareable URL)
+- [x] Pending testimonials queue (approve/reject)
+- [x] Approved testimonials list (unpublish option)
 
 ## 12. Admin — Quote Builder
-- [ ] Quote list view with status filter (Draft/Sent/Accepted/Rejected)
-- [ ] Create/edit form: client info, dynamic line items, auto-calculated total
-- [ ] Status transitions
-- [ ] Client-side PDF export with branded template
-- [ ] Unit tests for total calculation logic
+- [x] Quote list view with status filter (Draft/Sent/Accepted/Rejected)
+- [x] Create/edit form: client info, dynamic line items, auto-calculated total
+- [x] Status transitions
+- [x] Client-side PDF export with branded template
+- [x] Unit tests for total calculation logic
 
 ## 13. Admin — Contact Messages Inbox
-- [ ] List of submitted messages, newest first
-- [ ] Mark as read/unread
-- [ ] Basic filtering/search (optional)
+- [x] List of submitted messages, newest first
+- [x] Mark as read/unread
+- [x] Basic filtering/search (optional)
 
 ## 14. Admin — Staff Management (Admin-only)
-- [ ] Staff list view
-- [ ] Invite staff form (add email + role to `staff` collection)
-- [ ] Edit role / remove staff member
-- [ ] Access restricted to Admin role only (UI + rules)
+- [x] Staff list view
+- [x] Invite staff form (add email + role to `staff` collection)
+- [x] Edit role / remove staff member
+- [x] Access restricted to Admin role only (UI + rules)
 
 ## 15. Testing
-- [ ] Auth/admin route guard tests
-- [ ] Firestore security rules tests (emulator-based)
-- [ ] Quote total calculation unit tests
-- [ ] Public form validation tests (contact + testimonial submission)
+- [x] Auth/admin route guard tests (`RequireAuth` states + `AdminStaff` role gate)
+- [x] Firestore security rules tests (emulator-based) — see Section 8
+- [x] Quote total calculation unit tests
+- [x] Public form validation tests (contact + testimonial submission)
 
 ## 16. SEO & Polish
 - [x] Per-page meta titles/descriptions, Open Graph tags (via shared `Seo` component)
-- [ ] sitemap.xml generation
-- [ ] Favicon — still the default Vite placeholder icon, not a branded JayarathnaTech mark
+- [x] sitemap.xml generation
+- [x] Favicon — branded JayarathnaTech "J" mark matching `Logo.tsx`
 - [x] Mobile responsiveness pass across all public pages
 - [x] 404 page (matches `design/404-page.png`, now rendered inside `PublicLayout` so it
       gets the same Navbar/Footer as every other page)
@@ -199,7 +206,17 @@ this file only tracks scope and progress.
 - [x] Custom scrollbar styling matching the dark theme
 
 ## 17. Deployment
-- [ ] Firebase Auth providers enabled, Firestore/Storage rules deployed
-- [ ] Environment variables set in Vercel
-- [ ] Vercel deployment connected to repo, production build verified
+- [x] Firebase Auth providers enabled (Google sign-in), Firestore rules deployed
+      (no Storage — not used, see Locked-in decisions)
+- [x] `vercel.json` SPA rewrite (`/(.*) → /index.html`) so client-side routes
+      (e.g. `/admin/login`, `/projects/:id`) don't 404 on direct load/refresh
+- [ ] Environment variables set in Vercel — the 9 `VITE_*` vars from `.env.example`:
+      `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID`,
+      `VITE_FIREBASE_MESSAGING_SENDER_ID`, `VITE_FIREBASE_APP_ID`,
+      `VITE_USE_FIREBASE_EMULATORS` (set to `false`), `VITE_CLOUDINARY_CLOUD_NAME`,
+      `VITE_CLOUDINARY_UPLOAD_PRESET`, `VITE_WEB3FORMS_ACCESS_KEY` — same values as
+      the local `.env` (not committed to git)
+- [ ] Vercel deployment connected to repo, production build verified — requires the
+      account owner (Vercel dashboard access not available to the assistant); Vite
+      framework preset auto-detects `npm run build` / `dist` output
 - [ ] Post-deploy smoke test of all public pages + admin login

@@ -1,20 +1,32 @@
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
 
-export async function uploadImage(file: File): Promise<string> {
+export function uploadImage(file: File, onProgress?: (percent: number) => void): Promise<string> {
   const formData = new FormData()
   formData.append('file', file)
   formData.append('upload_preset', UPLOAD_PRESET)
 
-  const response = await fetch(
-    `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-    { method: 'POST', body: formData },
-  )
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`)
 
-  if (!response.ok) {
-    throw new Error(`Cloudinary upload failed: ${response.status} ${response.statusText}`)
-  }
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable && onProgress) {
+        onProgress(Math.round((event.loaded / event.total) * 100))
+      }
+    }
 
-  const data = (await response.json()) as { secure_url: string }
-  return data.secure_url
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const data = JSON.parse(xhr.responseText) as { secure_url: string }
+        resolve(data.secure_url)
+      } else {
+        reject(new Error(`Cloudinary upload failed: ${xhr.status} ${xhr.statusText}`))
+      }
+    }
+
+    xhr.onerror = () => reject(new Error('Cloudinary upload failed: network error'))
+
+    xhr.send(formData)
+  })
 }

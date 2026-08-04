@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { onAuthStateChanged, type User } from 'firebase/auth'
-import { doc, getDoc } from 'firebase/firestore'
+import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { auth, db } from '../firebase/config'
 import { staffMemberFromDoc } from '../lib/firestore'
 import type { StaffMember } from '../types'
@@ -16,18 +16,28 @@ export function useAuthStatus(): AuthStatus {
 
     useEffect(() => {
         return onAuthStateChanged(auth, (user) => {
-            if (!user) {
+            if (!user || !user.email) {
                 setState({ status: 'signed-out' })
                 return
             }
 
-            getDoc(doc(db, 'staff', user.uid))
+            const staffRef = doc(db, 'staff', user.email)
+
+            getDoc(staffRef)
                 .then((snapshot) => {
-                    setState(
-                        snapshot.exists()
-                            ? { status: 'authorized', user, staff: staffMemberFromDoc(snapshot) }
-                            : { status: 'not-staff' },
-                    )
+                    if (!snapshot.exists()) {
+                        setState({ status: 'not-staff' })
+                        return
+                    }
+
+                    const staff = staffMemberFromDoc(snapshot)
+                    setState({ status: 'authorized', user, staff })
+
+                    // Invites are created with only an email + role — backfill the
+                    // display name from Google on the invitee's first sign-in.
+                    if (!staff.name && user.displayName) {
+                        void updateDoc(staffRef, { name: user.displayName })
+                    }
                 })
                 .catch(() => setState({ status: 'not-staff' }))
         })

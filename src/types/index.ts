@@ -42,6 +42,7 @@ export interface TestimonialInvite {
 }
 
 export type QuoteStatus = 'draft' | 'sent' | 'accepted' | 'rejected'
+export type QuoteCurrency = 'USD' | 'LKR'
 
 export interface QuoteLineItem {
   description: string
@@ -55,6 +56,10 @@ export interface Quote {
   clientEmail: string
   lineItems: QuoteLineItem[]
   status: QuoteStatus
+  currency: QuoteCurrency
+  /** Internal buffer/contingency % and profit margin %, both rolled silently into the client-facing total — never shown to the client. */
+  bufferPercent: number
+  profitPercent: number
   createdAt: string
 }
 
