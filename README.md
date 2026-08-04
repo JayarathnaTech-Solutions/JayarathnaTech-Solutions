@@ -1,75 +1,77 @@
-# React + TypeScript + Vite
+# JayarathnaTech Solutions
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The marketing site and admin dashboard for JayarathnaTech Solutions, a web & software
+development agency. One React app, route-segmented into a public site and a guarded
+`/admin` dashboard — not a monorepo.
 
-Currently, two official plugins are available:
+## Public site
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Home, About, Services, Projects, Project Detail, Contact** — the marketing site
+- **Testimonial submission** — a tokenized link (`/testimonial/:token`) clients use to
+  leave a review after an admin generates an invite
 
-## React Compiler
+## Admin dashboard (`/admin`, Google sign-in, invite-only)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Dashboard** — pending testimonials, open quotes, unread messages, and project counts
+  at a glance
+- **Projects** — manage the portfolio shown on the public Projects page, with Cloudinary
+  cover-image uploads
+- **Testimonials** — approve, reject, or re-approve submissions, and generate invite links
+- **Quotes** — build client quotes with line items, margin/profit buffers, and PDF export
+- **Inbox** — contact form submissions from the public site
+- **Staff** — invite and manage teammates by role (admin-only)
 
-## Expanding the ESLint configuration
+## Tech stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **React 19** + **TypeScript**, built with **Vite 8**
+- **Tailwind CSS 4** (`@tailwindcss/vite`), mobile-first
+- **React Router 8** — public routes open, `/admin/*` guarded by `RequireAuth`
+- **Motion** (Framer Motion) for scroll reveals, page transitions, and micro-interactions
+- **Firebase** — Google-sign-in Auth (admin-invited, no self-signup) + Firestore. Spark
+  (free) tier — no Cloud Functions; all logic lives in the client and Firestore security
+  rules
+- **Cloudinary** — unsigned client-side image uploads (no Firebase Storage, which requires
+  the paid Blaze plan)
+- **Web3Forms** — contact form delivery
+- **Vitest + React Testing Library + `@firebase/rules-unit-testing`** for tests
+- **Vercel** for hosting
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Getting started
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm install
+cp .env.example .env   # fill in Firebase / Cloudinary / Web3Forms keys
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Scripts
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the Vite dev server |
+| `npm run build` | Generate `public/sitemap.xml` from live project data, then typecheck and build |
+| `npm run lint` | ESLint |
+| `npm run preview` | Preview a production build locally |
+| `npm test` | Run the app test suite once (jsdom, Firebase SDK mocked — no emulator needed) |
+| `npm run test:watch` | Same suite, watch mode |
+| `npm run test:rules` | Firestore security-rules tests against the local emulator |
+| `npm run emulators` | Start the Firebase Local Emulator Suite (Auth, Firestore, Emulator UI) |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Project structure
 
 ```
+src/
+  pages/        Public routes
+  admin/        Admin routes, layout, RequireAuth guard, admin-only components
+  components/   Shared UI (Navbar, Footer, motion primitives, ...)
+  lib/          Cross-cutting helpers shared by both public and admin code
+  firebase/     Firebase SDK init/config
+  types/        Shared TypeScript types
+  test/         Vitest setup and test suites
+```
+
+See `AGENTS.md` for conventions and `PLAN.md` for the feature/architecture history.
+
+## License
+
+Proprietary — see [LICENSE.md](./LICENSE.md).
