@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
+import { motion } from 'motion/react'
 import { collection, getDocs, limit, orderBy, query, where } from 'firebase/firestore'
 import { db } from '../firebase/config'
 import { toIsoString, projectFromDoc } from '../lib/firestore'
@@ -7,6 +8,9 @@ import { Seo } from '../components/Seo'
 import { CtaBanner } from '../components/CtaBanner'
 import { EmptyState } from '../components/EmptyState'
 import { HeroBackdrop } from '../components/HeroBackdrop'
+import { Reveal, StaggerGroup } from '../components/motion'
+import { MotionLink } from '../components/MotionLink'
+import { staggerItem, staggerContainer, itemTransition } from '../lib/motion'
 import heroBackground from '../assets/background-image1.jpg'
 import heroBackground2 from '../assets/background-image2.jpg'
 import heroBackground3 from '../assets/background-image3.jpg'
@@ -201,40 +205,56 @@ function Hero() {
             ))}
 
             <div className="relative z-10 mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-[3fr_2fr] md:items-center md:py-24">
-                <div>
-                    <span className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400">
+                <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
+                    <motion.span
+                        variants={staggerItem}
+                        transition={itemTransition}
+                        className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400"
+                    >
                       <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
                       Building the Future, Together
-                    </span>
+                    </motion.span>
 
-                    <h1 className="mt-5 text-4xl font-bold tracking-tight sm:text-6xl">
+                    <motion.h1
+                        variants={staggerItem}
+                        transition={itemTransition}
+                        className="mt-5 text-4xl font-bold tracking-tight sm:text-6xl"
+                    >
                         We Build Digital Solutions That Drive{' '}
                         <span className="text-blue-500">Real Business Growth</span>
-                    </h1>
+                    </motion.h1>
 
-                    <p className="mt-5 max-w-xl text-lg text-slate-300">
+                    <motion.p
+                        variants={staggerItem}
+                        transition={itemTransition}
+                        className="mt-5 max-w-xl text-lg text-slate-300"
+                    >
                         From powerful web applications to scalable software systems, we turn ideas into
                         high-performance digital products.
-                    </p>
+                    </motion.p>
 
-                    <div className="mt-8 flex flex-wrap gap-4">
-                        <Link
+                    <motion.div variants={staggerItem} transition={itemTransition} className="mt-8 flex flex-wrap gap-4">
+                        <MotionLink
                             to="/projects"
+                            whileHover={{ scale: 1.04 }}
+                            whileTap={{ scale: 0.97 }}
                             className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-500"
                         >
                             View Projects
                             <span aria-hidden="true">&rarr;</span>
-                        </Link>
-                        <Link
+                        </MotionLink>
+                        <MotionLink
                             to="/contact"
+                            whileHover={{ scale: 1.04 }}
+                            whileTap={{ scale: 0.97 }}
                             className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 px-5 py-3 text-sm font-medium text-white transition-colors hover:border-slate-500"
                         >
                             Get a Quote
                             <span aria-hidden="true">&rarr;</span>
-                        </Link>
-                    </div>
+                        </MotionLink>
+                    </motion.div>
 
-                    <div className="mt-10 flex items-center gap-3">
+                    <motion.div variants={staggerItem} transition={itemTransition} className="mt-10 flex items-center gap-3">
                         <div className="flex -space-x-3">
                             {['N', 'T', 'K'].map((initial) => (
                                 <div
@@ -250,8 +270,8 @@ function Hero() {
                             <br />
                             to deliver digital excellence
                         </p>
-                    </div>
-                </div>
+                    </motion.div>
+                </motion.div>
             </div>
         </section>
     )
@@ -260,7 +280,7 @@ function Hero() {
 function Services() {
     return (
         <section className="mx-auto max-w-7xl px-6 py-16">
-            <div className="flex flex-wrap items-end justify-between gap-4">
+            <Reveal className="flex flex-wrap items-end justify-between gap-4">
                 <div>
           <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-400">
             <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
@@ -271,13 +291,16 @@ function Services() {
                 <Link to="/services" className="text-sm font-medium text-blue-400 hover:text-blue-300">
                     View all services &rarr;
                 </Link>
-            </div>
+            </Reveal>
 
-            <div className="mt-8 grid gap-6 md:grid-cols-3">
+            <StaggerGroup className="mt-8 grid gap-6 md:grid-cols-3">
                 {services.map((service) => (
-                    <Link
+                    <MotionLink
                         key={service.title}
                         to="/services"
+                        variants={staggerItem}
+                        transition={itemTransition}
+                        whileHover={{ y: -4 }}
                         className="group rounded-xl border border-slate-800 bg-slate-900/40 p-6 transition-colors hover:border-slate-700"
                     >
                         <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
@@ -291,9 +314,9 @@ function Services() {
                             Learn more
                             <span aria-hidden="true">&rarr;</span>
                         </span>
-                    </Link>
+                    </MotionLink>
                 ))}
-            </div>
+            </StaggerGroup>
         </section>
     )
 }
@@ -301,15 +324,22 @@ function Services() {
 function WhyChooseUs() {
     return (
         <section className="mx-auto max-w-7xl px-6 py-16">
+            <Reveal>
       <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-400">
         <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
         Why Choose Us
       </span>
-            <h2 className="mt-2 text-2xl font-bold sm:text-3xl">Built for Your Business Goals</h2>
+                <h2 className="mt-2 text-2xl font-bold sm:text-3xl">Built for Your Business Goals</h2>
+            </Reveal>
 
-            <div className="mt-8 grid gap-6 sm:grid-cols-2">
+            <StaggerGroup className="mt-8 grid gap-6 sm:grid-cols-2">
                 {whyChooseUsItems.map((item) => (
-                    <div key={item.title} className="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
+                    <motion.div
+                        key={item.title}
+                        variants={staggerItem}
+                        transition={itemTransition}
+                        className="rounded-xl border border-slate-800 bg-slate-900/40 p-6"
+                    >
                         <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                                 {item.icon}
@@ -317,9 +347,9 @@ function WhyChooseUs() {
                         </div>
                         <h3 className="mt-4 text-lg font-semibold">{item.title}</h3>
                         <p className="mt-2 text-sm text-slate-400">{item.description}</p>
-                    </div>
+                    </motion.div>
                 ))}
-            </div>
+            </StaggerGroup>
         </section>
     )
 }
@@ -327,7 +357,7 @@ function WhyChooseUs() {
 function FeaturedProjects({ projects }: { projects: Project[] | null }) {
     return (
         <section className="mx-auto max-w-7xl px-6 py-16">
-            <div className="flex flex-wrap items-end justify-between gap-4">
+            <Reveal className="flex flex-wrap items-end justify-between gap-4">
                 <div>
           <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-400">
             <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
@@ -338,7 +368,7 @@ function FeaturedProjects({ projects }: { projects: Project[] | null }) {
                 <Link to="/projects" className="text-sm font-medium text-blue-400 hover:text-blue-300">
                     View all projects &rarr;
                 </Link>
-            </div>
+            </Reveal>
 
             {projects === null ? (
                 <div className="mt-8 grid gap-6 md:grid-cols-3">
@@ -359,11 +389,14 @@ function FeaturedProjects({ projects }: { projects: Project[] | null }) {
                     message="We're just getting started — new work will appear here as we ship it."
                 />
             ) : (
-                <div className="mt-8 grid gap-6 md:grid-cols-3">
+                <StaggerGroup className="mt-8 grid gap-6 md:grid-cols-3">
                     {projects.map((project) => (
-                        <Link
+                        <MotionLink
                             key={project.id}
                             to={`/projects/${project.id}`}
+                            variants={staggerItem}
+                            transition={itemTransition}
+                            whileHover={{ y: -4 }}
                             className="group overflow-hidden rounded-xl border border-slate-800 bg-slate-900/40 transition-colors hover:border-slate-700"
                         >
                             <div className="aspect-video overflow-hidden bg-slate-800">
@@ -379,9 +412,9 @@ function FeaturedProjects({ projects }: { projects: Project[] | null }) {
                                 <h3 className="text-lg font-semibold">{project.title}</h3>
                                 <p className="mt-2 line-clamp-2 text-sm text-slate-400">{project.description}</p>
                             </div>
-                        </Link>
+                        </MotionLink>
                     ))}
-                </div>
+                </StaggerGroup>
             )}
         </section>
     )
@@ -410,11 +443,13 @@ function StarRating({ rating = 5 }: { rating?: number }) {
 function FeaturedTestimonials({ testimonials }: { testimonials: Testimonial[] | null }) {
     return (
         <section className="mx-auto max-w-7xl px-6 py-16">
+            <Reveal>
       <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-400">
         <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
         Testimonials
       </span>
-            <h2 className="mt-2 text-2xl font-bold sm:text-3xl">What Our Clients Say</h2>
+                <h2 className="mt-2 text-2xl font-bold sm:text-3xl">What Our Clients Say</h2>
+            </Reveal>
 
             {testimonials === null ? (
                 <div className="mt-8 grid gap-6 md:grid-cols-3">
@@ -435,18 +470,23 @@ function FeaturedTestimonials({ testimonials }: { testimonials: Testimonial[] | 
                     message="We're collecting feedback from our early clients — check back soon."
                 />
             ) : (
-                <div className="mt-8 grid gap-6 md:grid-cols-3">
+                <StaggerGroup className="mt-8 grid gap-6 md:grid-cols-3">
                     {testimonials.map((testimonial) => (
-                        <div key={testimonial.id} className="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
+                        <motion.div
+                            key={testimonial.id}
+                            variants={staggerItem}
+                            transition={itemTransition}
+                            className="rounded-xl border border-slate-800 bg-slate-900/40 p-6"
+                        >
                             <p className="text-2xl leading-none text-blue-500">&ldquo;</p>
                             <p className="text-sm text-slate-300">{testimonial.message}</p>
                             <div className="mt-4">
                                 <StarRating rating={testimonial.rating} />
                             </div>
                             <p className="mt-4 font-semibold">{testimonial.clientName}</p>
-                        </div>
+                        </motion.div>
                     ))}
-                </div>
+                </StaggerGroup>
             )}
         </section>
     )

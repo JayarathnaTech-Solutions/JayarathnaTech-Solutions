@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router'
+import { motion } from 'motion/react'
 import {
     collection,
     getDocs,
@@ -15,6 +15,9 @@ import { projectFromDoc } from '../lib/firestore'
 import { Seo } from '../components/Seo'
 import { CtaBanner } from '../components/CtaBanner'
 import { EmptyState } from '../components/EmptyState'
+import { Reveal, StaggerGroup } from '../components/motion'
+import { MotionLink } from '../components/MotionLink'
+import { staggerItem, itemTransition } from '../lib/motion'
 import type { Project } from '../types'
 
 const PAGE_SIZE = 6
@@ -77,16 +80,18 @@ function useProjects() {
 function Hero() {
     return (
         <section className="mx-auto max-w-7xl px-6 py-16 md:py-24">
-            <span className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400">
-                <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
-                Our Work
-            </span>
+            <Reveal>
+                <span className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400">
+                    <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
+                    Our Work
+                </span>
 
-            <h1 className="mt-5 text-4xl font-bold tracking-tight sm:text-6xl">Projects We&rsquo;ve Delivered</h1>
+                <h1 className="mt-5 text-4xl font-bold tracking-tight sm:text-6xl">Projects We&rsquo;ve Delivered</h1>
 
-            <p className="mt-5 max-w-xl text-lg text-slate-300">
-                Explore some of the digital products we&rsquo;ve designed, built, and shipped for our clients.
-            </p>
+                <p className="mt-5 max-w-xl text-lg text-slate-300">
+                    Explore some of the digital products we&rsquo;ve designed, built, and shipped for our clients.
+                </p>
+            </Reveal>
         </section>
     )
 }
@@ -122,8 +127,11 @@ function CategoryTabs({
 
 function ProjectCard({ project }: { project: Project }) {
     return (
-        <Link
+        <MotionLink
             to={`/projects/${project.id}`}
+            variants={staggerItem}
+            transition={itemTransition}
+            whileHover={{ y: -4 }}
             className="group overflow-hidden rounded-xl border border-slate-800 bg-slate-900/40 transition-colors hover:border-slate-700"
         >
             <div className="relative aspect-video overflow-hidden bg-slate-800">
@@ -144,7 +152,7 @@ function ProjectCard({ project }: { project: Project }) {
                 <h3 className="text-lg font-semibold">{project.title}</h3>
                 <p className="mt-2 line-clamp-2 text-sm text-slate-400">{project.description}</p>
             </div>
-        </Link>
+        </MotionLink>
     )
 }
 
@@ -185,21 +193,23 @@ function ProjectsGrid() {
                     message="Try a different category, or check back soon as we publish more work."
                 />
             ) : (
-                <div className="mt-8 grid gap-6 md:grid-cols-3">
+                <StaggerGroup className="mt-8 grid gap-6 md:grid-cols-3">
                     {visibleProjects?.map((project) => <ProjectCard key={project.id} project={project} />)}
-                </div>
+                </StaggerGroup>
             )}
 
             {projects !== null && projects.length > 0 && activeCategory === 'All' && hasMore && (
                 <div className="mt-10 flex justify-center">
-                    <button
+                    <motion.button
                         type="button"
                         onClick={loadMore}
                         disabled={loadingMore}
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
                         className="rounded-lg border border-slate-700 px-6 py-3 text-sm font-medium text-white transition-colors hover:border-slate-500 disabled:opacity-50"
                     >
                         {loadingMore ? 'Loading…' : 'Load More Projects'}
-                    </button>
+                    </motion.button>
                 </div>
             )}
         </section>

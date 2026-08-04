@@ -1,6 +1,9 @@
+import { motion } from 'motion/react'
 import { Seo } from '../components/Seo'
 import { CtaBanner } from '../components/CtaBanner'
 import { HeroBackdrop } from '../components/HeroBackdrop'
+import { Reveal, StaggerGroup } from '../components/motion'
+import { staggerItem, staggerContainer, itemTransition } from '../lib/motion'
 import heroBackground from '../assets/about-background-image.jpg'
 
 const missionItems = [
@@ -140,23 +143,35 @@ function Hero() {
 
             {/* Padding eka py-24 md:py-36 walata wadi kara, image eka loku wenna */}
             <div className="relative mx-auto max-w-7xl px-6 py-24 md:py-36">
-                <div className="max-w-2xl">
-          <span className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400">
+                <motion.div className="max-w-2xl" initial="hidden" animate="visible" variants={staggerContainer}>
+          <motion.span
+              variants={staggerItem}
+              transition={itemTransition}
+              className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400"
+          >
             <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
             Our Story
-          </span>
+          </motion.span>
 
-                    <h1 className="mt-5 text-4xl font-bold tracking-tight sm:text-6xl">
+                    <motion.h1
+                        variants={staggerItem}
+                        transition={itemTransition}
+                        className="mt-5 text-4xl font-bold tracking-tight sm:text-6xl"
+                    >
                         Building the Future,
                         <br />
                         <span className="text-blue-500">Together</span>
-                    </h1>
+                    </motion.h1>
 
-                    <p className="mt-5 max-w-xl text-lg text-slate-300">
+                    <motion.p
+                        variants={staggerItem}
+                        transition={itemTransition}
+                        className="mt-5 max-w-xl text-lg text-slate-300"
+                    >
                         We are a team of passionate developers, designers, and problem solvers helping
                         businesses turn ideas into powerful digital products.
-                    </p>
-                </div>
+                    </motion.p>
+                </motion.div>
             </div>
         </section>
     )
@@ -165,11 +180,16 @@ function Hero() {
 function Mission() {
     return (
         <section className="mx-auto max-w-7xl px-6 py-16">
-            <h2 className="text-2xl font-bold sm:text-3xl">Our Mission</h2>
+            <Reveal><h2 className="text-2xl font-bold sm:text-3xl">Our Mission</h2></Reveal>
 
-            <div className="mt-8 grid gap-6 md:grid-cols-3">
+            <StaggerGroup className="mt-8 grid gap-6 md:grid-cols-3">
                 {missionItems.map((item) => (
-                    <div key={item.title} className="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
+                    <motion.div
+                        key={item.title}
+                        variants={staggerItem}
+                        transition={itemTransition}
+                        className="rounded-xl border border-slate-800 bg-slate-900/40 p-6"
+                    >
                         <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                                 {item.icon}
@@ -177,9 +197,9 @@ function Mission() {
                         </div>
                         <h3 className="mt-4 text-lg font-semibold">{item.title}</h3>
                         <p className="mt-2 text-sm text-slate-400">{item.description}</p>
-                    </div>
+                    </motion.div>
                 ))}
-            </div>
+            </StaggerGroup>
         </section>
     )
 }
@@ -187,17 +207,22 @@ function Mission() {
 function Process() {
     return (
         <section className="mx-auto max-w-7xl px-6 py-16">
-            <h2 className="text-2xl font-bold sm:text-3xl">Our Process</h2>
+            <Reveal><h2 className="text-2xl font-bold sm:text-3xl">Our Process</h2></Reveal>
 
-            <div className="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-4">
+            <StaggerGroup className="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-4">
                 {processSteps.map((item) => (
-                    <div key={item.step} className="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
+                    <motion.div
+                        key={item.step}
+                        variants={staggerItem}
+                        transition={itemTransition}
+                        className="rounded-xl border border-slate-800 bg-slate-900/40 p-6"
+                    >
                         <span className="text-3xl font-bold text-blue-500/30">{item.step}</span>
                         <h3 className="mt-4 text-lg font-semibold">{item.title}</h3>
                         <p className="mt-2 text-sm text-slate-400">{item.description}</p>
-                    </div>
+                    </motion.div>
                 ))}
-            </div>
+            </StaggerGroup>
         </section>
     )
 }
@@ -205,11 +230,16 @@ function Process() {
 function WhyChooseUs() {
     return (
         <section className="mx-auto max-w-7xl px-6 py-16">
-            <h2 className="text-2xl font-bold sm:text-3xl">Why Choose Us</h2>
+            <Reveal><h2 className="text-2xl font-bold sm:text-3xl">Why Choose Us</h2></Reveal>
 
-            <div className="mt-8 grid gap-6 sm:grid-cols-2">
+            <StaggerGroup className="mt-8 grid gap-6 sm:grid-cols-2">
                 {whyChooseUsItems.map((item) => (
-                    <div key={item.title} className="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
+                    <motion.div
+                        key={item.title}
+                        variants={staggerItem}
+                        transition={itemTransition}
+                        className="rounded-xl border border-slate-800 bg-slate-900/40 p-6"
+                    >
                         <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                                 {item.icon}
@@ -217,9 +247,9 @@ function WhyChooseUs() {
                         </div>
                         <h3 className="mt-4 text-lg font-semibold">{item.title}</h3>
                         <p className="mt-2 text-sm text-slate-400">{item.description}</p>
-                    </div>
+                    </motion.div>
                 ))}
-            </div>
+            </StaggerGroup>
         </section>
     )
 }
@@ -227,11 +257,11 @@ function WhyChooseUs() {
 function TechStack() {
     return (
         <section className="mx-auto max-w-7xl px-6 py-16">
-            <h2 className="text-2xl font-bold sm:text-3xl">Technologies We Use</h2>
+            <Reveal><h2 className="text-2xl font-bold sm:text-3xl">Technologies We Use</h2></Reveal>
 
-            <div className="mt-8 grid gap-8 md:grid-cols-3">
+            <StaggerGroup className="mt-8 grid gap-8 md:grid-cols-3">
                 {technologyGroups.map((group) => (
-                    <div key={group.category}>
+                    <motion.div key={group.category} variants={staggerItem} transition={itemTransition}>
                         <h3 className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
                             {group.category}
                         </h3>
@@ -250,9 +280,9 @@ function TechStack() {
                                 </div>
                             ))}
                         </div>
-                    </div>
+                    </motion.div>
                 ))}
-            </div>
+            </StaggerGroup>
         </section>
     )
 }
@@ -260,12 +290,14 @@ function TechStack() {
 function Team() {
     return (
         <section className="mx-auto max-w-7xl px-6 py-16">
-            <h2 className="text-2xl font-bold sm:text-3xl">Meet the Team</h2>
+            <Reveal><h2 className="text-2xl font-bold sm:text-3xl">Meet the Team</h2></Reveal>
 
-            <div className="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-4">
+            <StaggerGroup className="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-4">
                 {team.map((member) => (
-                    <div
+                    <motion.div
                         key={member.name}
+                        variants={staggerItem}
+                        transition={itemTransition}
                         className="group rounded-xl border border-slate-800 bg-slate-900/40 p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/30 hover:bg-slate-900/60 hover:shadow-lg hover:shadow-black/20"
                     >
                         <div className="mx-auto flex h-36 w-36 items-center justify-center overflow-hidden rounded-full bg-slate-800 text-xl font-semibold text-slate-300 ring-4 ring-slate-800/80 transition-all duration-300 group-hover:ring-blue-500/30">
@@ -282,9 +314,9 @@ function Team() {
                         <span className="mt-2 inline-block rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400">
                             {member.role}
                         </span>
-                    </div>
+                    </motion.div>
                 ))}
-            </div>
+            </StaggerGroup>
         </section>
     )
 }
