@@ -1,6 +1,9 @@
 import { Link } from 'react-router'
+import { motion } from 'motion/react'
 import { Seo } from '../components/Seo'
 import { CtaBanner } from '../components/CtaBanner'
+import { Reveal, StaggerGroup } from '../components/motion'
+import { staggerItem, staggerContainer, itemTransition } from '../lib/motion'
 import heroBackground from '../assets/about-background-image.jpg'
 import {HeroBackdrop} from "../components/HeroBackdrop.tsx";
 
@@ -119,17 +122,31 @@ function Hero() {
         <section className="relative overflow-hidden">
           <HeroBackdrop image={heroBackground} />
           <div className="relative mx-auto max-w-7xl px-6 py-24 md:py-36">
-            <div className="max-w-2xl">
-              <span className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400">
+            <motion.div className="max-w-2xl" initial="hidden" animate="visible" variants={staggerContainer}>
+              <motion.span
+                  variants={staggerItem}
+                  transition={itemTransition}
+                  className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400"
+              >
                 <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
                 What We Do
-              </span>
-              <h1 className="mt-5 text-4xl font-bold tracking-tight sm:text-6xl">Digital Solutions<br /><span className="text-blue-500">Built for Growth</span></h1>
-              <p className="mt-5 max-w-xl text-lg text-slate-300">
+              </motion.span>
+              <motion.h1
+                  variants={staggerItem}
+                  transition={itemTransition}
+                  className="mt-5 text-4xl font-bold tracking-tight sm:text-6xl"
+              >
+                Digital Solutions<br /><span className="text-blue-500">Built for Growth</span>
+              </motion.h1>
+              <motion.p
+                  variants={staggerItem}
+                  transition={itemTransition}
+                  className="mt-5 max-w-xl text-lg text-slate-300"
+              >
                 We provide end-to-end software development solutions that help businesses
                 launch, scale, and succeed.
-              </p>
-            </div>
+              </motion.p>
+            </motion.div>
           </div>
         </section>
     )
@@ -138,9 +155,14 @@ function Hero() {
 function ServicesGrid() {
     return (
         <section className="mx-auto max-w-7xl px-6 py-16">
-            <div className="grid gap-6 md:grid-cols-3">
+            <StaggerGroup className="grid gap-6 md:grid-cols-3">
                 {services.map((service) => (
-                    <div key={service.title} className="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
+                    <motion.div
+                        key={service.title}
+                        variants={staggerItem}
+                        transition={itemTransition}
+                        className="rounded-xl border border-slate-800 bg-slate-900/40 p-6"
+                    >
                         <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                                 {service.icon}
@@ -155,9 +177,9 @@ function ServicesGrid() {
                             Learn more
                             <span aria-hidden="true">&rarr;</span>
                         </Link>
-                    </div>
+                    </motion.div>
                 ))}
-            </div>
+            </StaggerGroup>
         </section>
     )
 }
@@ -165,15 +187,22 @@ function ServicesGrid() {
 function EngagementModels() {
     return (
         <section className="mx-auto max-w-7xl px-6 py-16">
+            <Reveal>
       <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-400">
         <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
         How We Work With You
       </span>
-            <h2 className="mt-2 text-2xl font-bold sm:text-3xl">Engagement Models</h2>
+                <h2 className="mt-2 text-2xl font-bold sm:text-3xl">Engagement Models</h2>
+            </Reveal>
 
-            <div className="mt-8 grid gap-6 md:grid-cols-3">
+            <StaggerGroup className="mt-8 grid gap-6 md:grid-cols-3">
                 {engagementModels.map((model) => (
-                    <div key={model.title} className="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
+                    <motion.div
+                        key={model.title}
+                        variants={staggerItem}
+                        transition={itemTransition}
+                        className="rounded-xl border border-slate-800 bg-slate-900/40 p-6"
+                    >
                         <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                                 {model.icon}
@@ -181,9 +210,9 @@ function EngagementModels() {
                         </div>
                         <h3 className="mt-4 text-lg font-semibold">{model.title}</h3>
                         <p className="mt-2 text-sm text-slate-400">{model.description}</p>
-                    </div>
+                    </motion.div>
                 ))}
-            </div>
+            </StaggerGroup>
         </section>
     )
 }
@@ -191,12 +220,14 @@ function EngagementModels() {
 function Faq() {
     return (
         <section className="mx-auto max-w-7xl px-6 py-16">
-            <h2 className="text-2xl font-bold sm:text-3xl">Frequently Asked Questions</h2>
+            <Reveal><h2 className="text-2xl font-bold sm:text-3xl">Frequently Asked Questions</h2></Reveal>
 
-            <div className="mt-8 space-y-4">
+            <StaggerGroup className="mt-8 space-y-4">
                 {faqs.map((faq) => (
-                    <details
+                    <motion.details
                         key={faq.question}
+                        variants={staggerItem}
+                        transition={itemTransition}
                         className="group rounded-xl border border-slate-800 bg-slate-900/40 p-6 open:bg-slate-900/60"
                     >
                         <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold [&::-webkit-details-marker]:hidden">
@@ -214,9 +245,9 @@ function Faq() {
                             </svg>
                         </summary>
                         <p className="mt-3 text-sm text-slate-400">{faq.answer}</p>
-                    </details>
+                    </motion.details>
                 ))}
-            </div>
+            </StaggerGroup>
         </section>
     )
 }

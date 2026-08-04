@@ -57,9 +57,9 @@ function GitHubIcon() {
 export function Footer() {
     return (
         <footer className="border-t border-slate-800/60 bg-slate-950">
-            <div className="mx-auto max-w-7xl px-6 py-16">
-                <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-12">
-                    <div className="lg:col-span-4">
+            <div className="mx-auto max-w-7xl px-6 py-12 sm:py-16">
+                <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-10">
+                    <div className="col-span-2 flex flex-col items-center border-b border-slate-800/60 pb-10 text-center sm:items-start sm:border-b-0 sm:pb-0 sm:text-left lg:col-span-4">
                         <Logo />
                         <p className="mt-4 max-w-xs text-sm text-slate-400">
                             We build digital solutions that drive real business growth — web
@@ -78,7 +78,7 @@ export function Footer() {
                         </div>
                     </div>
 
-                    <div className="lg:col-span-2">
+                    <div className="col-span-1 lg:col-span-2">
                         <h3 className="text-sm font-semibold text-white">Quick Links</h3>
                         <ul className="mt-4 space-y-3 text-sm">
                             {navLinks.map((link) => (
@@ -91,7 +91,7 @@ export function Footer() {
                         </ul>
                     </div>
 
-                    <div className="lg:col-span-3">
+                    <div className="col-span-1 lg:col-span-3">
                         <h3 className="text-sm font-semibold text-white">Services</h3>
                         <ul className="mt-4 space-y-3 text-sm">
                             {serviceLinks.map((service) => (
@@ -104,7 +104,7 @@ export function Footer() {
                         </ul>
                     </div>
 
-                    <div className="lg:col-span-3">
+                    <div className="col-span-2 border-t border-slate-800/60 pt-10 sm:col-span-2 sm:border-t-0 sm:pt-0 lg:col-span-3">
                         <h3 className="text-sm font-semibold text-white">Contact</h3>
                         <ul className="mt-4 space-y-3 text-sm text-slate-400">
                             {contactRows.map((row) => (
@@ -135,7 +135,7 @@ export function Footer() {
             </div>
 
             <div className="border-t border-slate-800/60">
-                <div className="mx-auto max-w-7xl px-6 py-6 text-sm text-slate-500">
+                <div className="mx-auto max-w-7xl px-6 py-6 text-center text-sm text-slate-500 sm:text-left">
                     <p>&copy; {new Date().getFullYear()} JayarathnaTech Solutions. All rights reserved.</p>
                 </div>
             </div>

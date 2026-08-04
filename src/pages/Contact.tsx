@@ -1,8 +1,10 @@
 import { useState, type FormEvent } from 'react'
+import { motion } from 'motion/react'
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import { db } from '../firebase/config'
 import { Seo } from '../components/Seo'
 import { siteContact } from '../lib/siteInfo'
+import { staggerItem, staggerContainer, itemTransition } from '../lib/motion'
 
 const WEB3FORMS_ACCESS_KEY = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY as string
 
@@ -43,24 +45,32 @@ const contactDetails = [
 
 function Info() {
     return (
-        <div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400">
+        <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
+            <motion.span
+                variants={staggerItem}
+                transition={itemTransition}
+                className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400"
+            >
                 <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
                 Get in Touch
-            </span>
+            </motion.span>
 
-            <h1 className="mt-5 text-4xl font-bold tracking-tight sm:text-6xl">
+            <motion.h1
+                variants={staggerItem}
+                transition={itemTransition}
+                className="mt-5 text-4xl font-bold tracking-tight sm:text-6xl"
+            >
                 Let&rsquo;s Build Something
                 <br/>
                 <span className="text-blue-500">Amazing Together</span>
-            </h1>
+            </motion.h1>
 
-            <p className="mt-5 max-w-md text-lg text-slate-300">
+            <motion.p variants={staggerItem} transition={itemTransition} className="mt-5 max-w-md text-lg text-slate-300">
                 Have a project in mind or want to learn more about our services? We&rsquo;d love to
                 hear from you.
-            </p>
+            </motion.p>
 
-            <div className="mt-8 space-y-5">
+            <motion.div variants={staggerItem} transition={itemTransition} className="mt-8 space-y-5">
                 {contactDetails.map((detail) => (
                     <div key={detail.label} className="flex items-center gap-4">
                         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
@@ -74,8 +84,8 @@ function Info() {
                         </div>
                     </div>
                 ))}
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     )
 }
 
@@ -181,7 +191,12 @@ function ContactForm() {
     }
 
     return (
-        <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-8">
+        <motion.div
+            className="rounded-xl border border-slate-800 bg-slate-900/40 p-8"
+            initial={{ opacity: 0, x: 24 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        >
             {status === 'success' ? (
                 <SuccessState onReset={() => setStatus('idle')} />
             ) : (
@@ -210,17 +225,19 @@ function ContactForm() {
                         <p className="text-sm text-red-400">Something went wrong — please try again.</p>
                     )}
 
-                    <button
+                    <motion.button
                         type="submit"
                         disabled={status === 'submitting'}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                         className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-500 disabled:opacity-60"
                     >
                         {status === 'submitting' ? 'Sending…' : 'Send Message'}
                         {status !== 'submitting' && <span aria-hidden="true">&rarr;</span>}
-                    </button>
+                    </motion.button>
                 </form>
             )}
-        </div>
+        </motion.div>
     )
 }
 

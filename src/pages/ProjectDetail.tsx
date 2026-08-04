@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
+import { motion } from 'motion/react'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../firebase/config'
 import { projectFromDoc } from '../lib/firestore'
 import { Seo } from '../components/Seo'
+import { Reveal } from '../components/motion'
+import { MotionLink } from '../components/MotionLink'
 import type { Project } from '../types'
 
 function useProject(projectId: string | undefined) {
@@ -85,13 +88,15 @@ function QuoteCta() {
         <div className="rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 p-6">
             <h3 className="text-lg font-semibold text-white">Have a similar project?</h3>
             <p className="mt-1 text-sm text-blue-100">Let&rsquo;s talk about what you&rsquo;re building.</p>
-            <Link
+            <MotionLink
                 to="/contact"
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
                 className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-white px-4 py-2.5 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-50"
             >
                 Get a Quote
                 <span aria-hidden="true">&rarr;</span>
-            </Link>
+            </MotionLink>
         </div>
     )
 }
@@ -147,10 +152,20 @@ function ProjectBody({ project }: { project: Project }) {
 
 function ProjectView({ project }: { project: Project }) {
     return (
-        <section className="mx-auto max-w-7xl px-6 py-12">
+        <motion.section
+            className="mx-auto max-w-7xl px-6 py-12"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+        >
             <BackLink />
 
-            <div className="relative mt-6 aspect-video overflow-hidden rounded-xl bg-slate-800">
+            <motion.div
+                className="relative mt-6 aspect-video overflow-hidden rounded-xl bg-slate-800"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+            >
                 {project.coverImageUrl && (
                     <img src={project.coverImageUrl} alt="" className="h-full w-full object-cover" />
                 )}
@@ -159,21 +174,28 @@ function ProjectView({ project }: { project: Project }) {
                         {project.category}
                     </span>
                 )}
-            </div>
+            </motion.div>
 
-            <h1 className="mt-8 text-4xl font-bold tracking-tight sm:text-6xl">{project.title}</h1>
+            <motion.h1
+                className="mt-8 text-4xl font-bold tracking-tight sm:text-6xl"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+            >
+                {project.title}
+            </motion.h1>
 
             <div className="mt-10 grid gap-8 lg:grid-cols-3">
-                <div className="lg:col-span-2">
+                <Reveal className="lg:col-span-2">
                     <ProjectBody project={project} />
-                </div>
+                </Reveal>
 
-                <div className="space-y-6">
+                <Reveal delay={0.1} className="space-y-6">
                     <ProjectInfo project={project} />
                     <QuoteCta />
-                </div>
+                </Reveal>
             </div>
-        </section>
+        </motion.section>
     )
 }
 
