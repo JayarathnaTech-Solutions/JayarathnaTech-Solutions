@@ -5,7 +5,7 @@ import { cleanup } from '@testing-library/react'
 afterEach(cleanup)
 
 // jsdom doesn't implement IntersectionObserver, which motion's `whileInView` relies on.
-class MockIntersectionObserver implements IntersectionObserver {
+class MockIntersectionObserver {
     readonly root = null
     readonly rootMargin = ''
     readonly thresholds: ReadonlyArray<number> = []
@@ -17,4 +17,4 @@ class MockIntersectionObserver implements IntersectionObserver {
     }
 }
 
-vi.stubGlobal('IntersectionObserver', MockIntersectionObserver)
+vi.stubGlobal('IntersectionObserver', MockIntersectionObserver as unknown as typeof IntersectionObserver)
