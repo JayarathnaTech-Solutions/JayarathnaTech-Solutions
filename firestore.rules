@@ -12,6 +12,24 @@ service cloud.firestore {
 
     match /testimonials/{testimonialId} {
       allow read: if resource.data.status == 'approved';
+      allow create: if request.resource.data.status == 'pending'
+        && request.resource.data.clientName is string
+        && request.resource.data.clientName.size() > 0
+        && request.resource.data.message is string
+        && request.resource.data.message.size() > 0
+        && (!('rating' in request.resource.data)
+          || (request.resource.data.rating is number
+            && request.resource.data.rating >= 1
+            && request.resource.data.rating <= 5));
+    }
+
+    // Doc id doubles as the invite token — public `get`-by-exact-id only, no
+    // `list`, so a token can't be discovered by enumeration.
+    match /testimonialInvites/{inviteId} {
+      allow get: if true;
+      allow update: if resource.data.used == false
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['used'])
+        && request.resource.data.used == true;
     }
 
     match /{document=**} {
