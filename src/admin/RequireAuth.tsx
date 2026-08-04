@@ -1,21 +1,39 @@
-import { type ReactNode, useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
 import { Navigate } from 'react-router'
-import { onAuthStateChanged, type User } from 'firebase/auth'
+import { signOut } from 'firebase/auth'
 import { auth } from '../firebase/config'
+import { useAuthStatus } from './useAuthStatus'
+import { AuthContext } from './AuthContext'
+
+function NotStaff() {
+    return (
+        <div className="flex min-h-screen flex-col items-center justify-center gap-2 bg-slate-950 px-6 text-center text-white">
+            <h1 className="text-2xl font-bold">Access restricted</h1>
+            <p className="max-w-sm text-sm text-slate-400">
+                Your Google account isn&rsquo;t on the staff list. Admin access is invite-only — contact an
+                administrator if you believe this is a mistake.
+            </p>
+            <button
+                type="button"
+                onClick={() => signOut(auth)}
+                className="mt-4 text-sm font-medium text-blue-400 hover:text-blue-300"
+            >
+                Sign in with a different account
+            </button>
+        </div>
+    )
+}
 
 export function RequireAuth({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [checked, setChecked] = useState(false)
+    const authStatus = useAuthStatus()
 
-  useEffect(() => {
-    return onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser)
-      setChecked(true)
-    })
-  }, [])
+    if (authStatus.status === 'checking') return null
+    if (authStatus.status === 'signed-out') return <Navigate to="/admin/login" replace />
+    if (authStatus.status === 'not-staff') return <NotStaff />
 
-  if (!checked) return null
-  if (!user) return <Navigate to="/admin/login" replace />
-
-  return children
+    return (
+        <AuthContext.Provider value={{ user: authStatus.user, staff: authStatus.staff }}>
+            {children}
+        </AuthContext.Provider>
+    )
 }

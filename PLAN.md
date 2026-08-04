@@ -42,6 +42,12 @@ this file only tracks scope and progress.
 
 - First-ever Admin account is bootstrapped manually (seeded directly in the Firebase
   console or via a one-off script) — there's no in-app way to create the first admin.
+  Concretely: the `staff` collection's doc id is the person's Firebase Auth **uid**
+  (not email — simpler security rules, `request.auth.uid == staffId`), so bootstrap is:
+  1) have the person sign in once at `/admin/login` with Google (they'll land on the
+  "Access restricted" screen since no `staff` doc exists yet), 2) find their uid in
+  Firebase Console → Authentication → Users, 3) manually create a doc at
+  `staff/{uid}` with fields `email`, `name`, `role: "admin"`, `invitedBy`, `createdAt`.
 - PDF export uses a client-side library (e.g. `@react-pdf/renderer`), not server-rendered.
 - Single Firebase project for v1 (no separate staging project). Day-to-day local dev
   connects directly to the live project (`VITE_USE_FIREBASE_EMULATORS=false`) — the
@@ -117,18 +123,18 @@ this file only tracks scope and progress.
 - [x] SEO meta tags
 
 ## 6. Public — Testimonial Submission Flow
-- [ ] `/testimonial/:token` route, public, no login
-- [ ] Validate token against `testimonialInvites` collection
-- [ ] Submission form (client name, message, rating optional)
-- [ ] Write to `testimonials` with status "pending", mark invite as used
-- [ ] Invalid/expired/used token handling (error state)
+- [x] `/testimonial/:token` route, public, no login
+- [x] Validate token against `testimonialInvites` collection
+- [x] Submission form (client name, message, rating optional)
+- [x] Write to `testimonials` with status "pending", mark invite as used
+- [x] Invalid/expired/used token handling (error state)
 
 ## 7. Auth & Access Control
-- [ ] Firebase Auth Google sign-in for `/admin/login`
-- [ ] `staff` Firestore collection (doc id = uid or email; fields: email, name, role, invitedBy, createdAt)
-- [ ] Auth guard: require signed-in + present in `staff` before allowing `/admin/*`
-- [ ] Role-based UI gating: Admin vs Editor (hide staff-management from Editors)
-- [ ] Document the manual bootstrap step for the first Admin (Firebase console seed)
+- [x] Firebase Auth Google sign-in for `/admin/login`
+- [x] `staff` Firestore collection (doc id = **uid**; fields: email, name, role, invitedBy, createdAt)
+- [x] Auth guard: require signed-in + present in `staff` before allowing `/admin/*`
+- [x] Role-based UI gating: Admin vs Editor (hide staff-management from Editors)
+- [x] Document the manual bootstrap step for the first Admin (Firebase console seed)
 
 ## 8. Firestore Security Rules
 - [ ] `staff` — Admins write; staff can read their own doc
@@ -140,8 +146,8 @@ this file only tracks scope and progress.
 - [ ] Write rules tests using `@firebase/rules-unit-testing` against the emulator
 
 ## 9. Admin — Dashboard
-- [ ] Admin layout/shell (nav, protected route wrapper)
-- [ ] Dashboard landing page (pending testimonials, open quotes, unread messages counts)
+- [x] Admin layout/shell (nav, protected route wrapper)
+- [x] Dashboard landing page (pending testimonials, open quotes, unread messages counts)
 
 ## 10. Admin — Project Management
 - [ ] Project list view with edit/delete

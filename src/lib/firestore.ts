@@ -1,5 +1,5 @@
 import { Timestamp, type DocumentData, type QueryDocumentSnapshot, type DocumentSnapshot } from 'firebase/firestore'
-import type { Project, TestimonialInvite } from '../types'
+import type { Project, StaffMember, TestimonialInvite } from '../types'
 
 export function toIsoString(value: unknown): string {
     if (value instanceof Timestamp) return value.toDate().toISOString()
@@ -36,6 +36,21 @@ export function testimonialInviteFromDoc(
         id: doc.id,
         token: data.token ?? doc.id,
         used: data.used ?? false,
+        createdAt: toIsoString(data.createdAt),
+    }
+}
+
+export function staffMemberFromDoc(
+    doc: QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData>,
+): StaffMember {
+    const data = doc.data()
+    if (!data) throw new Error(`Staff member ${doc.id} does not exist`)
+    return {
+        id: doc.id,
+        email: data.email,
+        name: data.name,
+        role: data.role,
+        invitedBy: data.invitedBy,
         createdAt: toIsoString(data.createdAt),
     }
 }
