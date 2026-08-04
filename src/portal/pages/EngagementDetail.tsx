@@ -99,7 +99,7 @@ export function PortalEngagementDetail() {
     return (
         <div>
             <Link to="/portal" className="text-sm text-slate-400 hover:text-white">
-                ← Your Projects
+                Your Projects
             </Link>
             <div className="mt-3 flex items-center justify-between">
                 <h1 className="text-2xl font-bold">{engagement.title}</h1>

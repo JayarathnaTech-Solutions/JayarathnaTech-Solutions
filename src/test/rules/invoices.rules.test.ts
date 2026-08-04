@@ -111,6 +111,19 @@ describe('invoices — the core anti-self-verification guarantee', () => {
         )
     })
 
+    it('rejects a non-https proofUrl (e.g. javascript: or data:)', async () => {
+        await assertFails(
+            updateDoc(doc(customerDb(), 'invoices', 'inv-pending'), {
+                proofUrl: 'javascript:alert(1)', status: 'proof_submitted', proofSubmittedAt: new Date().toISOString(),
+            }),
+        )
+        await assertFails(
+            updateDoc(doc(customerDb(), 'invoices', 'inv-pending'), {
+                proofUrl: 'data:text/html,evil', status: 'proof_submitted', proofSubmittedAt: new Date().toISOString(),
+            }),
+        )
+    })
+
     it('blocks a customer from sneaking other fields into the proof-submission write', async () => {
         await assertFails(
             updateDoc(doc(customerDb(), 'invoices', 'inv-pending'), {

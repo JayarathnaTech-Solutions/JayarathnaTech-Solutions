@@ -212,7 +212,6 @@ function SubmissionForm({ invite }: { invite: TestimonialInvite }) {
                         className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-500 disabled:opacity-60"
                     >
                         {status === 'submitting' ? 'Submitting…' : 'Submit Testimonial'}
-                        {status !== 'submitting' && <span aria-hidden="true">&rarr;</span>}
                     </button>
                 </form>
             )}

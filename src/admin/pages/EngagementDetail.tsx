@@ -501,7 +501,7 @@ function InvoiceCard({
                     rel="noreferrer"
                     className="mt-3 inline-block text-sm font-medium text-blue-400 hover:text-blue-300"
                 >
-                    View payment proof →
+                    View payment proof
                 </a>
             )}
 
@@ -572,7 +572,7 @@ export function AdminEngagementDetail() {
     return (
         <div>
             <Link to="/admin/engagements" className="text-sm text-slate-400 hover:text-white">
-                ← Engagements
+                Engagements
             </Link>
             <div className="mt-3 flex items-center justify-between">
                 <div>

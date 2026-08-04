@@ -58,12 +58,30 @@ service cloud.firestore {
           && request.resource.data.finalInvoiceId == resource.data.finalInvoiceId);
     }
 
-    // Admin, an assigned developer, or the owning (verified) customer.
-    function engagementParticipant(engagementId) {
+    // Split into one function per role (rather than a single function
+    // returning the resolved role as a string) — an earlier version using a
+    // nested ternary returning 'admin'/'developer'/'customer'/null tripped a
+    // "Null value error" in the rules evaluator; this boolean-per-branch
+    // form is the same shape as the rest of this file and is proven to work.
+    function isEngagementDeveloper(engagementId) {
       let eng = get(/databases/$(database)/documents/engagements/$(engagementId)).data;
-      return isAdmin()
-        || (isDeveloper() && request.auth.token.email in eng.assignedDeveloperEmails)
-        || (isVerifiedCustomer() && request.auth.uid == eng.customerId);
+      return isDeveloper() && request.auth.token.email in eng.assignedDeveloperEmails;
+    }
+    function isEngagementCustomer(engagementId) {
+      let eng = get(/databases/$(database)/documents/engagements/$(engagementId)).data;
+      return isVerifiedCustomer() && request.auth.uid == eng.customerId;
+    }
+    function engagementParticipant(engagementId) {
+      return isAdmin() || isEngagementDeveloper(engagementId) || isEngagementCustomer(engagementId);
+    }
+
+    // Blocks `javascript:`/`data:`/etc. URIs from being stored in fields the
+    // UI renders as an `href`/`src` (invoice payment proof, chat
+    // attachments) — the app only ever writes Cloudinary HTTPS URLs here,
+    // but that's a client-side convention, not something rules can trust;
+    // this is the actual enforcement.
+    function isHttpsUrl(url) {
+      return url is string && url.matches('^https://.*');
     }
 
     match /staff/{staffId} {
@@ -148,8 +166,7 @@ service cloud.firestore {
           && resource.data.paymentMethod == 'bank_transfer'
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['proofUrl', 'status', 'proofSubmittedAt'])
           && request.resource.data.status == 'proof_submitted'
-          && request.resource.data.proofUrl is string
-          && request.resource.data.proofUrl.size() > 0
+          && isHttpsUrl(request.resource.data.proofUrl)
         );
 
       allow delete: if false;
@@ -159,10 +176,17 @@ service cloud.firestore {
     match /engagements/{engagementId}/messages/{messageId} {
       allow get, list: if engagementParticipant(engagementId);
 
-      allow create: if engagementParticipant(engagementId)
+      // senderRole is pinned to whichever branch actually authorized the
+      // caller — a participant can't claim a higher-trust role than they
+      // actually have (e.g. a customer posting as senderRole: 'admin').
+      allow create: if (
+          (isAdmin() && request.resource.data.senderRole == 'admin')
+          || (isEngagementDeveloper(engagementId) && request.resource.data.senderRole == 'developer')
+          || (isEngagementCustomer(engagementId) && request.resource.data.senderRole == 'customer')
+        )
         && request.resource.data.senderId == request.auth.uid
         && request.resource.data.senderEmail == request.auth.token.email
-        && (request.resource.data.text is string || request.resource.data.attachmentUrl is string)
+        && (request.resource.data.text is string || isHttpsUrl(request.resource.data.attachmentUrl))
         && (!('text' in request.resource.data) || request.resource.data.text.size() <= 4000);
 
       allow update, delete: if false;

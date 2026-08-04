@@ -32,12 +32,17 @@ export function Navbar() {
           ))}
         </nav>
 
-        <Link
-          to="/contact"
-          className="hidden items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-500 md:inline-flex"
-        >
-          Get a Quote
-        </Link>
+        <div className="hidden items-center gap-5 md:flex">
+          <Link
+            to="/portal/login"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-500"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" />
+            </svg>
+            Login
+          </Link>
+        </div>
 
         <button
           type="button"
@@ -81,14 +86,22 @@ export function Navbar() {
                 {link.label}
               </NavLink>
             ))}
-            <Link
-              to="/contact"
-              onClick={() => setOpen(false)}
-              className="mt-2 inline-flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500"
-            >
-              Get a Quote
-              <span aria-hidden="true">&rarr;</span>
-            </Link>
+            <div className="mt-2 flex flex-col gap-2">
+              <Link
+                to="/portal/login"
+                onClick={() => setOpen(false)}
+                className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-700 px-4 py-2 text-sm font-medium text-slate-300 transition-colors hover:border-slate-600 hover:text-white"
+              >
+                Login
+              </Link>
+              <Link
+                to="/contact"
+                onClick={() => setOpen(false)}
+                className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500"
+              >
+                Get a Quote
+              </Link>
+            </div>
           </motion.nav>
         )}
       </AnimatePresence>
