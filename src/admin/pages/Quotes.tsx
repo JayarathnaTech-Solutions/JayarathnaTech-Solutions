@@ -12,10 +12,10 @@ import {
     formatCurrency,
     lineItemTotal,
 } from '../../lib/quote'
-import { SlidePanel } from '../components/SlidePanel'
-import { StatusBadge } from '../components/StatusBadge'
+import { SlidePanel } from '../../components/SlidePanel'
+import { StatusBadge } from '../../components/StatusBadge'
 import { inputClass } from '../../lib/ui'
-import { Skeleton } from '../components/Skeleton'
+import { Skeleton } from '../../components/Skeleton'
 import type { Quote, QuoteCurrency, QuoteLineItem, QuoteStatus } from '../../types'
 
 const filterTabs: { value: QuoteStatus | 'all'; label: string }[] = [

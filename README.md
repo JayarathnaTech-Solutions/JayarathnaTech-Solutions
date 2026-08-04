@@ -19,7 +19,24 @@ development agency. One React app, route-segmented into a public site and a guar
 - **Testimonials** — approve, reject, or re-approve submissions, and generate invite links
 - **Quotes** — build client quotes with line items, margin/profit buffers, and PDF export
 - **Inbox** — contact form submissions from the public site
-- **Staff** — invite and manage teammates by role (admin-only)
+- **Customers** — create customer portal accounts (admin-only)
+- **Engagements** — manage a customer's paid project: contract value & invoices,
+  sprint planning/progress, developer assignment, delivery gate, and team chat
+- **Staff** — invite and manage teammates by role, including the Developer role
+  used for engagement-scoped access (admin-only)
+
+## Customer portal (`/portal`, email/password, invite-only)
+
+Customers created from the admin Customers page sign in with email + password
+(not Google) to track a project they're paying for:
+
+- Dashboard listing their engagement(s)
+- Current sprint / delivery progress
+- Advance/final payment status, with bank-transfer receipt upload
+- Team chat with the admin and assigned developers
+
+Payment is bank-transfer only for now — see `PLAN.md` Section 18 for the
+payment-gating design and PayPal's deferred status.
 
 ## Tech stack
 
@@ -63,8 +80,9 @@ npm run dev
 src/
   pages/        Public routes
   admin/        Admin routes, layout, RequireAuth guard, admin-only components
-  components/   Shared UI (Navbar, Footer, motion primitives, ...)
-  lib/          Cross-cutting helpers shared by both public and admin code
+  portal/       Customer portal routes, layout, RequireCustomerAuth guard
+  components/   Shared UI (Navbar, Footer, ChatThread, motion primitives, ...)
+  lib/          Cross-cutting helpers shared by public, admin, and portal code
   firebase/     Firebase SDK init/config
   types/        Shared TypeScript types
   test/         Vitest setup and test suites

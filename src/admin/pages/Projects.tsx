@@ -3,10 +3,10 @@ import { addDoc, collection, deleteDoc, doc, getDocs, orderBy, query, serverTime
 import { db } from '../../firebase/config'
 import { projectFromDoc } from '../../lib/firestore'
 import { uploadImage } from '../../lib/cloudinary'
-import { SlidePanel } from '../components/SlidePanel'
-import { ConfirmDialog } from '../components/ConfirmDialog'
-import { Field, TextAreaField } from '../components/FormField'
-import { Skeleton } from '../components/Skeleton'
+import { SlidePanel } from '../../components/SlidePanel'
+import { ConfirmDialog } from '../../components/ConfirmDialog'
+import { Field, TextAreaField } from '../../components/FormField'
+import { Skeleton } from '../../components/Skeleton'
 import type { Project } from '../../types'
 
 function useProjects() {

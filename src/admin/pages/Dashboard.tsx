@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { collection, getCountFromServer, getDocs, limit, orderBy, query, where } from 'firebase/firestore'
 import { db } from '../../firebase/config'
 import { toIsoString } from '../../lib/firestore'
+import { useAuth } from '../AuthContext'
 import type { ContactMessage, Testimonial } from '../../types'
 
 interface DashboardData {
@@ -10,6 +11,8 @@ interface DashboardData {
     openQuotesCount: number
     unreadMessagesCount: number
     totalProjectsCount: number
+    pendingAdvanceCount: number | null
+    paymentsNeedingReviewCount: number | null
     recentMessages: ContactMessage[]
     pendingTestimonials: Testimonial[]
 }
@@ -19,11 +22,19 @@ const emptyData: DashboardData = {
     openQuotesCount: 0,
     unreadMessagesCount: 0,
     totalProjectsCount: 0,
+    pendingAdvanceCount: null,
+    paymentsNeedingReviewCount: null,
     recentMessages: [],
     pendingTestimonials: [],
 }
 
-function useDashboardData() {
+// Engagements-awaiting-advance and payments-needing-review are admin-only
+// under the Firestore rules (developers can't list engagements by status,
+// and have no invoice access at all — payment info stays admin-only by
+// design). Every staff role sees this Dashboard, so these two queries only
+// run for admins; other roles would just get a permission error that failed
+// the whole Promise.all and blanked the entire dashboard.
+function useDashboardData(isAdmin: boolean) {
     const [data, setData] = useState<DashboardData | null>(null)
     const [error, setError] = useState(false)
 
@@ -36,6 +47,8 @@ function useDashboardData() {
                 openQuotesCount,
                 unreadMessagesCount,
                 totalProjectsCount,
+                pendingAdvanceCount,
+                paymentsNeedingReviewCount,
                 recentMessagesSnapshot,
                 pendingTestimonialsSnapshot,
             ] = await Promise.all([
@@ -43,6 +56,8 @@ function useDashboardData() {
                 getCountFromServer(query(collection(db, 'quotes'), where('status', 'in', ['draft', 'sent']))),
                 getCountFromServer(query(collection(db, 'contactMessages'), where('read', '==', false))),
                 getCountFromServer(collection(db, 'projects')),
+                isAdmin ? getCountFromServer(query(collection(db, 'engagements'), where('status', '==', 'pending_advance'))) : null,
+                isAdmin ? getCountFromServer(query(collection(db, 'invoices'), where('status', '==', 'proof_submitted'))) : null,
                 getDocs(query(collection(db, 'contactMessages'), orderBy('createdAt', 'desc'), limit(5))),
                 getDocs(query(collection(db, 'testimonials'), where('status', '==', 'pending'), limit(5))),
             ])
@@ -54,6 +69,8 @@ function useDashboardData() {
                 openQuotesCount: openQuotesCount.data().count,
                 unreadMessagesCount: unreadMessagesCount.data().count,
                 totalProjectsCount: totalProjectsCount.data().count,
+                pendingAdvanceCount: pendingAdvanceCount?.data().count ?? null,
+                paymentsNeedingReviewCount: paymentsNeedingReviewCount?.data().count ?? null,
                 recentMessages: recentMessagesSnapshot.docs.map((doc) => {
                     const d = doc.data()
                     return {
@@ -90,7 +107,7 @@ function useDashboardData() {
         return () => {
             cancelled = true
         }
-    }, [])
+    }, [isAdmin])
 
     return { data, error }
 }
@@ -122,7 +139,7 @@ function StatCard({ label, value, icon }: { label: string; value: number; icon: 
 
 function StatCards({ data }: { data: DashboardData }) {
     return (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <StatCard
                 label="Pending Testimonials"
                 value={data.pendingTestimonialsCount}
@@ -167,6 +184,32 @@ function StatCards({ data }: { data: DashboardData }) {
                     />
                 }
             />
+            {data.pendingAdvanceCount !== null && (
+                <StatCard
+                    label="Engagements Awaiting Advance"
+                    value={data.pendingAdvanceCount}
+                    icon={
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                        />
+                    }
+                />
+            )}
+            {data.paymentsNeedingReviewCount !== null && (
+                <StatCard
+                    label="Payments Needing Review"
+                    value={data.paymentsNeedingReviewCount}
+                    icon={
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M9 12h6m-6 4h6M9 8h1m4-5H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9l-6-6Z"
+                        />
+                    }
+                />
+            )}
         </div>
     )
 }
@@ -275,8 +318,8 @@ function ErrorBanner({ onDismiss }: { onDismiss: () => void }) {
 function Loading() {
     return (
         <div className="space-y-6">
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {[0, 1, 2, 3].map((i) => (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {[0, 1, 2, 3, 4, 5].map((i) => (
                     <div key={i} className="h-24 animate-pulse rounded-xl border border-slate-800 bg-slate-900/50" />
                 ))}
             </div>
@@ -289,7 +332,8 @@ function Loading() {
 }
 
 export function Dashboard() {
-    const { data, error } = useDashboardData()
+    const { staff } = useAuth()
+    const { data, error } = useDashboardData(staff.role === 'admin')
     const [dismissed, setDismissed] = useState(false)
 
     return (

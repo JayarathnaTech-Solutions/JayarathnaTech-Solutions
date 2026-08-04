@@ -10,7 +10,15 @@ this file only tracks scope and progress.
 - **Database**: Firestore only (no Realtime Database).
 - **Auth**: Google sign-in only, admin-invited only (no self-signup). Roles: **Admin**
   (full access, incl. staff management) and **Editor** (projects/testimonials/quotes,
-  no staff management).
+  no staff management). A third staff role, **Developer** (Section 18), was added
+  later for engagement-scoped access to Engagements and chat — same Google-sign-in
+  `staff` mechanism, no new auth provider.
+- **Customer Portal auth**: customers are a *separate* account type from staff —
+  Firebase Auth **email/password**, not Google, and a `customers` collection keyed
+  by **uid** (not email, unlike `staff` — see Assumptions). Admin creates the
+  account and a temp password from the admin panel; the customer verifies their
+  email (Firebase's built-in flow) and is forced to set their own password on
+  first login. See Section 18.
 - **Firebase plan**: Spark (free tier) — **no Cloud Functions**. All logic lives in the
   client + Firestore security rules.
 - **Styling**: Tailwind CSS, mobile-first.
@@ -37,6 +45,25 @@ this file only tracks scope and progress.
   best-effort; a Firestore write failure doesn't affect the user-facing success state)
   so it shows up in the admin inbox (Section 13).
 - **Testing**: automated tests are required for v1 (not just manual click-through).
+- **Customer engagements**: a customer's paid project ("engagement") is a *separate*
+  Firestore collection (`engagements`) from the public-portfolio `projects`
+  collection — they serve different purposes (private billing/progress vs. public
+  showcase) and shouldn't share a schema or security rules. See Section 18.
+- **Payments (v1)**: bank transfer only, fully manual — customer uploads a receipt
+  (Cloudinary), admin reviews and marks it verified. No payment gateway in v1.
+  **PayPal is explicitly deferred** until a PayPal account exists; the `Invoice`
+  schema has an optional fee-line-item field reserved for PayPal's processing fee
+  so adding it later isn't a breaking schema change, but no PayPal SDK/checkout
+  code exists yet. Building it will very likely require revisiting the
+  no-Cloud-Functions decision above, since verifying a PayPal payment securely
+  wants a server-side capture/webhook step that client + Firestore rules can't do
+  safely alone.
+- **Payment gating is enforced in Firestore rules, not just the UI**: a 50%
+  advance invoice must be admin-verified before an engagement can move to
+  `in_progress`, and the 50% final invoice must be admin-verified before it can
+  be marked `delivered`. Customers can submit payment proof but can never write
+  `status: 'verified'` themselves — see `firestore.rules` and Section 18's rules
+  tests. This is the most security-sensitive rule set in the app.
 
 ## Assumptions
 
@@ -66,6 +93,50 @@ this file only tracks scope and progress.
 - Quotes are per-quote USD or LKR (selectable in the quote form, defaults to USD)
   rather than one fixed site-wide currency.
 - Testimonial invite links don't expire by default; admin manages validity manually.
+- `customers` collection doc id is the Auth **uid**, the opposite of `staff` (keyed
+  by email). This is intentional, not an inconsistency: `staff` invites are
+  created by email before the invitee has ever signed in, so the uid isn't known
+  yet; a customer account, by contrast, is created and signed-up for in the same
+  admin action (Section 18's secondary-Firebase-app flow), so the real uid is
+  already in hand when the Firestore doc is written.
+  - Admin can't use the normal client Auth SDK to create a customer account
+    without it signing the admin out of their own session mid-click
+    (`createUserWithEmailAndPassword` signs in as the newly created user). The
+    workaround: a second, isolated Firebase App instance
+    (`src/firebase/secondaryApp.ts`) used only for that one call, immediately
+    signed out afterward — the admin's primary session never sees it. This is a
+    client-side trick made necessary by staying on Spark tier; a real backend
+    (Firebase Admin SDK) would do this more cleanly.
+  - Accepted risk: if account creation fails partway (e.g. the Firestore
+    `customers` doc write fails right after the Auth user was created), you get
+    an orphaned Auth user with no matching Firestore doc. There's no Cloud
+    Function to reconcile this — it needs manual cleanup via the Firebase
+    console if it ever happens. Not worth engineering around for v1 traffic.
+- Customer temp passwords are generated client-side and shown to the admin
+  exactly once (a "copy now" panel) — never persisted to Firestore. The admin
+  relays it to the customer out-of-band (email/chat), matching how the original
+  staff-invite flow also doesn't email invitees automatically.
+- An engagement's `sprints` is a nested, admin-defined structure: each sprint
+  (e.g. "Sprint 1", "Sprint 2") has its own phase checklist (default template:
+  Analysis → Design → Development → Testing → Deploy, editable), and each
+  phase's status (not_started / in_progress / completed) is tracked
+  independently — more than one phase can be in progress at once, admin has
+  full manual control (no auto-advance). No fixed global stage list, no
+  integration with an external PM tool (Jira/Linear/etc). The last phase of
+  the last sprint is treated as the delivery phase by convention, not a
+  separate flag — see `hasReachedDelivery()` in `src/lib/engagement.ts`.
+  This shape went through two earlier iterations during development (a plain
+  `string[]` + single `currentSprintIndex` pointer, then briefly a flat
+  `{name,status}[]`); `engagementFromDoc` in `src/lib/firestore.ts` migrates
+  any of the older shapes on read, so no manual data fix-up was needed for
+  engagements created before the final shape landed.
+- The engagement chat (`engagements/{id}/messages`) is one shared thread per
+  engagement (customer + admin + assigned developers), not per-person DMs, and
+  messages are immutable once posted (no edit/delete, by anyone, including
+  admin) — same append-only philosophy as an audit log.
+- No email notifications for new chat messages, stage changes, or payment
+  verification in v1 — the only outbound email is Firebase Auth's built-in
+  verification email. A customer has to check the portal to see updates.
 
 ## Open risks
 
@@ -82,6 +153,23 @@ this file only tracks scope and progress.
   Blaze later would reopen the Cloud Functions option (email notifications, server PDF
   generation, etc.).
 - Domain not yet chosen — custom domain/DNS setup deferred.
+- **Payment gating has no server double-check**: since there's no backend, whether
+  an invoice is "verified" or an engagement is "delivered" is decided entirely by
+  Firestore security rules evaluated against client writes. A bug in
+  `firestore.rules` here is a direct money-related privilege-escalation risk
+  (e.g. a customer marking their own payment verified), not just a data leak —
+  see Section 18's rules test suite, which specifically targets this.
+- **PayPal will likely force revisiting Spark tier**: securely verifying a PayPal
+  payment (webhook signature verification, server-side order capture) really
+  wants a backend. When PayPal is eventually wired up, expect that decision to
+  come back into question — flagged now so it isn't a surprise mid-implementation.
+- **Cloudinary receipt/attachment uploads are unsigned and client-trusted**, same
+  as the existing public project-image uploads — there's no way to verify
+  server-side that an uploaded "payment receipt" is what it claims to be before
+  a human (the admin) looks at it. Acceptable for a manual-review flow, would not
+  be acceptable if verification were ever automated.
+- **Orphaned Auth users on partial customer-creation failure** (see Assumptions)
+  — no automated cleanup path on Spark tier.
 
 ---
 
@@ -220,3 +308,53 @@ this file only tracks scope and progress.
       account owner (Vercel dashboard access not available to the assistant); Vite
       framework preset auto-detects `npm run build` / `dist` output
 - [ ] Post-deploy smoke test of all public pages + admin login
+
+## 18. Customer Portal
+- [x] Extend `StaffRole` with a **Developer** role (engagement-scoped access,
+      reuses the existing Google-sign-in `staff` mechanism — no new auth provider)
+- [x] `customers` collection (doc id = uid) + `src/firebase/secondaryApp.ts` +
+      `src/lib/customerProvisioning.ts` — admin creates a customer's Auth user
+      and Firestore doc without disturbing their own session (see Assumptions)
+- [x] `engagements` collection — a customer's paid project, separate from the
+      public `projects` portfolio: title/description, total value + currency,
+      status (`pending_advance` → `in_progress` → `delivered`), assigned
+      developer emails, admin-defined sprint list + current-sprint pointer
+- [x] `invoices` collection — advance (50%) + final (50%), auto-generated
+      together via `writeBatch` when admin sets the contract value (reuses
+      `calcDeposit`/`calcBalance` from `src/lib/quote.ts`), bank-transfer proof
+      upload + admin verification, optional fee-line-item field reserved for a
+      future PayPal fee
+- [x] Firestore rules: `customers`, `engagements`, `invoices`,
+      `engagements/{id}/messages` — payment-gated status transitions, customers
+      structurally unable to self-verify a payment, admin-only writes on
+      engagements, immutable chat log. Extensive rules tests in
+      `src/test/rules/{customers,engagements,invoices,chat}.rules.test.ts`
+      (71 total rules tests across all five files as of this feature)
+- [x] Admin UI — Customers (create/list), Engagements (list + detail: contract
+      value, sprint planning/progression, developer assignment, delivery gate),
+      Invoices (verify, export PDF)
+- [x] Customer portal (`/portal/*`, separate `src/portal/` route tree,
+      email/password login, email-verification + forced-first-login-password
+      gates, dashboard listing the customer's engagements, read-only engagement
+      detail with bank-transfer receipt upload)
+- [x] Engagement group chat — one thread per engagement (customer + admin +
+      assigned developers), real-time via Firestore listeners, text +
+      Cloudinary attachments, shared `ChatThread` component used by both the
+      admin and portal engagement-detail pages
+- [x] Invoice PDF export (`src/lib/invoicePdf.tsx`, cloned from the existing
+      quote-PDF pattern) and admin dashboard widgets (engagements awaiting
+      advance, payments needing review)
+- [x] Admin-editable bank transfer details (`settings/bankDetails`, a single
+      global doc — any signed-in staff or customer can read it, only admin can
+      write it — see `src/admin/pages/Settings.tsx`), replacing what was
+      initially hardcoded placeholder text in the customer-facing bank details
+      panel
+- [x] The final (50%) invoice stays hidden from the customer until the
+      engagement reaches its last sprint (or is delivered) — showing both
+      invoices immediately was confusing since the final payment isn't due yet
+- [ ] PayPal checkout/gateway integration — deferred, see Locked-in decisions;
+      requires a PayPal business account (not yet created) and will likely
+      require revisiting the Spark-tier/no-Cloud-Functions decision
+- [ ] Email notifications (new chat message, stage change, payment verified) —
+      deferred; no outbound email service beyond Firebase Auth's built-in
+      verification email exists yet

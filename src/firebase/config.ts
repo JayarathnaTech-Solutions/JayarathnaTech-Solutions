@@ -6,7 +6,7 @@ import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore'
 // billing to enable Cloud Storage on any project created after Oct 2024).
 // File uploads (e.g. project cover images) go through Cloudinary instead —
 // see PLAN.md.
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,

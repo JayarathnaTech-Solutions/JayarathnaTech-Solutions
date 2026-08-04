@@ -7,6 +7,14 @@ const statusStyles: Record<string, string> = {
     approved: 'bg-emerald-500/10 text-emerald-400',
     admin: 'bg-blue-500/10 text-blue-400',
     editor: 'bg-slate-700/50 text-slate-300',
+    developer: 'bg-violet-500/10 text-violet-400',
+    'pending advance': 'bg-amber-500/10 text-amber-400',
+    'in progress': 'bg-blue-500/10 text-blue-400',
+    delivered: 'bg-emerald-500/10 text-emerald-400',
+    proof_submitted: 'bg-amber-500/10 text-amber-400',
+    verified: 'bg-emerald-500/10 text-emerald-400',
+    'not started': 'bg-slate-700/50 text-slate-300',
+    completed: 'bg-emerald-500/10 text-emerald-400',
 }
 
 export function StatusBadge({ status }: { status: string }) {

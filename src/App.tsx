@@ -17,6 +17,15 @@ import { AdminTestimonials } from './admin/pages/Testimonials'
 import { AdminQuotes } from './admin/pages/Quotes'
 import { AdminInbox } from './admin/pages/Inbox'
 import { AdminStaff } from './admin/pages/Staff'
+import { AdminCustomers } from './admin/pages/Customers'
+import { AdminEngagements } from './admin/pages/Engagements'
+import { AdminEngagementDetail } from './admin/pages/EngagementDetail'
+import { AdminSettings } from './admin/pages/Settings'
+import { PortalLayout } from './portal/PortalLayout'
+import { RequireCustomerAuth } from './portal/RequireCustomerAuth'
+import { PortalLogin } from './portal/pages/Login'
+import { PortalDashboard } from './portal/pages/Dashboard'
+import { PortalEngagementDetail } from './portal/pages/EngagementDetail'
 
 function App() {
   return (
@@ -47,6 +56,23 @@ function App() {
         <Route path="quotes" element={<AdminQuotes />} />
         <Route path="inbox" element={<AdminInbox />} />
         <Route path="staff" element={<AdminStaff />} />
+        <Route path="customers" element={<AdminCustomers />} />
+        <Route path="engagements" element={<AdminEngagements />} />
+        <Route path="engagements/:engagementId" element={<AdminEngagementDetail />} />
+        <Route path="settings" element={<AdminSettings />} />
+      </Route>
+
+      <Route path="portal/login" element={<PortalLogin />} />
+      <Route
+        path="portal"
+        element={
+          <RequireCustomerAuth>
+            <PortalLayout />
+          </RequireCustomerAuth>
+        }
+      >
+        <Route index element={<PortalDashboard />} />
+        <Route path="engagements/:engagementId" element={<PortalEngagementDetail />} />
       </Route>
     </Routes>
   )

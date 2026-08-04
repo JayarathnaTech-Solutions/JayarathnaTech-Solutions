@@ -1,4 +1,4 @@
-import { inputClass } from '../../lib/ui'
+import { inputClass } from '../lib/ui'
 
 export function Field({
     label,

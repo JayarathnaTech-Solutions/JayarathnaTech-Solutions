@@ -1,6 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { useEscapeKey } from '../../lib/useEscapeKey'
+import { useEscapeKey } from '../lib/useEscapeKey'
 
 export function SlidePanel({
     open,

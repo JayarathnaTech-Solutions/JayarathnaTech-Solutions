@@ -1,23 +1,35 @@
 import { useState, type ReactNode } from 'react'
-import { NavLink, Outlet, useLocation } from 'react-router'
+import { NavLink, Navigate, Outlet, useLocation } from 'react-router'
 import { AnimatePresence, motion } from 'motion/react'
 import { signOut } from 'firebase/auth'
 import { auth } from '../firebase/config'
 import { useAuth } from './AuthContext'
 import { useEscapeKey } from '../lib/useEscapeKey'
 import { Logo } from '../components/Logo'
-import { ConfirmDialog } from './components/ConfirmDialog'
+import { ConfirmDialog } from '../components/ConfirmDialog'
+import type { StaffRole } from '../types'
 
-const navItems = [
+interface NavItemConfig {
+    to: string
+    label: string
+    end?: boolean
+    /** Restricts visibility to these roles; omit to show to every staff role. */
+    visibleTo?: StaffRole[]
+    icon: ReactNode
+}
+
+const navItems: NavItemConfig[] = [
     {
         to: '/admin',
         label: 'Dashboard',
         end: true,
+        visibleTo: ['admin', 'editor'],
         icon: <path strokeLinecap="round" strokeLinejoin="round" d="M4 4h7v7H4V4Zm9 0h7v7h-7V4ZM4 13h7v7H4v-7Zm9 0h7v7h-7v-7Z" />,
     },
     {
         to: '/admin/projects',
         label: 'Projects',
+        visibleTo: ['admin', 'editor'],
         icon: (
             <path
                 strokeLinecap="round"
@@ -29,6 +41,7 @@ const navItems = [
     {
         to: '/admin/testimonials',
         label: 'Testimonials',
+        visibleTo: ['admin', 'editor'],
         icon: (
             <path
                 strokeLinecap="round"
@@ -40,6 +53,7 @@ const navItems = [
     {
         to: '/admin/quotes',
         label: 'Quotes',
+        visibleTo: ['admin', 'editor'],
         icon: (
             <path
                 strokeLinecap="round"
@@ -51,6 +65,7 @@ const navItems = [
     {
         to: '/admin/inbox',
         label: 'Messages',
+        visibleTo: ['admin', 'editor'],
         icon: (
             <path
                 strokeLinecap="round"
@@ -60,14 +75,50 @@ const navItems = [
         ),
     },
     {
+        to: '/admin/customers',
+        label: 'Customers',
+        visibleTo: ['admin'],
+        icon: (
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm12 10v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"
+            />
+        ),
+    },
+    {
+        to: '/admin/engagements',
+        label: 'Engagements',
+        visibleTo: ['admin', 'developer'],
+        icon: (
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 12h6M9 16h6"
+            />
+        ),
+    },
+    {
         to: '/admin/staff',
         label: 'Staff',
-        adminOnly: true,
+        visibleTo: ['admin'],
         icon: (
             <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M9.5 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm10.5 10v-2a4 4 0 0 0-3-3.87M15.5 3.13A4 4 0 0 1 15.5 11"
+            />
+        ),
+    },
+    {
+        to: '/admin/settings',
+        label: 'Settings',
+        visibleTo: ['admin'],
+        icon: (
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M10.3 3.4a1.9 1.9 0 0 1 3.4 0l.3.7a1.9 1.9 0 0 0 2.3 1l.8-.3a1.9 1.9 0 0 1 2.4 2.4l-.3.8a1.9 1.9 0 0 0 1 2.3l.7.3a1.9 1.9 0 0 1 0 3.4l-.7.3a1.9 1.9 0 0 0-1 2.3l.3.8a1.9 1.9 0 0 1-2.4 2.4l-.8-.3a1.9 1.9 0 0 0-2.3 1l-.3.7a1.9 1.9 0 0 1-3.4 0l-.3-.7a1.9 1.9 0 0 0-2.3-1l-.8.3a1.9 1.9 0 0 1-2.4-2.4l.3-.8a1.9 1.9 0 0 0-1-2.3l-.7-.3a1.9 1.9 0 0 1 0-3.4l.7-.3a1.9 1.9 0 0 0 1-2.3l-.3-.8a1.9 1.9 0 0 1 2.4-2.4l.8.3a1.9 1.9 0 0 0 2.3-1l.3-.7ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
             />
         ),
     },
@@ -113,11 +164,11 @@ function NavItem({
     )
 }
 
-function NavList({ isAdmin, onNavigate }: { isAdmin: boolean; onNavigate?: () => void }) {
+function NavList({ role, onNavigate }: { role: StaffRole; onNavigate?: () => void }) {
     return (
         <nav className="mt-8 flex flex-col gap-1">
             {navItems
-                .filter((item) => !item.adminOnly || isAdmin)
+                .filter((item) => !item.visibleTo || item.visibleTo.includes(role))
                 .map((item) => (
                     <NavItem key={item.to} to={item.to} end={item.end} label={item.label} icon={item.icon} onClick={onNavigate} />
                 ))}
@@ -125,18 +176,18 @@ function NavList({ isAdmin, onNavigate }: { isAdmin: boolean; onNavigate?: () =>
     )
 }
 
-function Sidebar({ isAdmin }: { isAdmin: boolean }) {
+function Sidebar({ role }: { role: StaffRole }) {
     return (
         <aside className="hidden w-64 shrink-0 border-r border-slate-800 bg-slate-900/40 px-4 py-6 md:flex md:flex-col">
             <div className="px-2">
                 <Logo />
             </div>
-            <NavList isAdmin={isAdmin} />
+            <NavList role={role} />
         </aside>
     )
 }
 
-function MobileNavDrawer({ isAdmin, open, onClose }: { isAdmin: boolean; open: boolean; onClose: () => void }) {
+function MobileNavDrawer({ role, open, onClose }: { role: StaffRole; open: boolean; onClose: () => void }) {
     useEscapeKey(open, onClose)
 
     return (
@@ -164,7 +215,7 @@ function MobileNavDrawer({ isAdmin, open, onClose }: { isAdmin: boolean; open: b
                         <div className="px-2">
                             <Logo />
                         </div>
-                        <NavList isAdmin={isAdmin} onNavigate={onClose} />
+                        <NavList role={role} onNavigate={onClose} />
                     </motion.aside>
                 </>
             )}
@@ -226,13 +277,20 @@ function Topbar({ name, onMenuClick, mobileNavOpen }: { name: string; onMenuClic
 
 export function AdminLayout() {
     const { staff } = useAuth()
-    const isAdmin = staff.role === 'admin'
+    const { pathname } = useLocation()
     const [mobileNavOpen, setMobileNavOpen] = useState(false)
+
+    // Developers only have Engagements in the nav — bounce them out of any
+    // other admin route (e.g. the `/admin` dashboard index) instead of
+    // rendering a page they otherwise can't get to via the sidebar.
+    if (staff.role === 'developer' && !pathname.startsWith('/admin/engagements')) {
+        return <Navigate to="/admin/engagements" replace />
+    }
 
     return (
         <div className="flex min-h-screen bg-slate-950 text-white">
-            <Sidebar isAdmin={isAdmin} />
-            <MobileNavDrawer isAdmin={isAdmin} open={mobileNavOpen} onClose={() => setMobileNavOpen(false)} />
+            <Sidebar role={staff.role} />
+            <MobileNavDrawer role={staff.role} open={mobileNavOpen} onClose={() => setMobileNavOpen(false)} />
             <div className="flex min-w-0 flex-1 flex-col">
                 <Topbar name={staff.name} onMenuClick={() => setMobileNavOpen((value) => !value)} mobileNavOpen={mobileNavOpen} />
                 <main className="flex-1 px-6 py-8">

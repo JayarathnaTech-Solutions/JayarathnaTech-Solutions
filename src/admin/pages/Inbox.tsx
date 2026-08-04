@@ -3,7 +3,7 @@ import { collection, doc, getDocs, orderBy, query, updateDoc } from 'firebase/fi
 import { db } from '../../firebase/config'
 import { toIsoString } from '../../lib/firestore'
 import { inputClass } from '../../lib/ui'
-import { Skeleton } from '../components/Skeleton'
+import { Skeleton } from '../../components/Skeleton'
 import type { ContactMessage } from '../../types'
 
 function useMessages() {
