@@ -3,7 +3,7 @@ import heroBackground from '../assets/background-image1.jpg'
 import heroBackground2 from '../assets/background-image2.jpg'
 import heroBackground3 from '../assets/background-image3.jpg'
 import {itemTransition, staggerContainer, staggerItem} from "../lib/motion.ts";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { MotionLink } from "./MotionLink.tsx";
 import {HeroBackdrop} from "./HeroBackdrop.tsx";
 
@@ -14,26 +14,35 @@ export function Hero() {
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length)
-        }, 5000)
+        }, 7000)
 
         return () => clearInterval(timer)
     }, [])
 
     return (
         <section className="relative flex min-h-[70vh] items-center overflow-hidden text-white">
-            {heroImages.map((image, index) => (
-                <div
-                    key={index}
-                    className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                        index === currentImageIndex ? 'opacity-100 z-0' : 'opacity-0 -z-10'
-                    }`}
-                >
-                    <HeroBackdrop image={image} fadeClassName="h-56" />
-                </div>
-            ))}
+            <div className="absolute inset-0 z-0 overflow-hidden bg-slate-900">
+                <AnimatePresence initial={false}>
+                    <motion.div
+                        key={currentImageIndex}
+                        className="absolute inset-0"
+                        initial={{ opacity: 0, x: 32 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -32 }}
+                        transition={{ duration: 1.9, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                        <HeroBackdrop image={heroImages[currentImageIndex]} fadeClassName="h-56" />
+                    </motion.div>
+                </AnimatePresence>
+            </div>
 
             <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-12 px-6 py-24 md:grid-cols-[3fr_2fr] md:items-center">
-                <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
+                <motion.div
+                    initial="hidden"
+                    animate="visible"
+                    variants={staggerContainer}
+                    className="[text-shadow:0_2px_16px_rgba(0,0,0,0.55)]"
+                >
                     <motion.span
                         variants={staggerItem}
                         transition={itemTransition}

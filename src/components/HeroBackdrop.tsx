@@ -10,11 +10,11 @@ export function HeroBackdrop({ image, fadeClassName = 'h-32' }: { image: string;
               style={{ backgroundImage: `url(${image})` }}
           />
 
-          {/* Flat tint: balanced darkness */}
-          <div className="absolute inset-0 bg-slate-900/50" />
+          {/* Flat tint: light darkness */}
+          <div className="absolute inset-0 bg-slate-900/25" />
 
-          {/* Left-weighted gradient: gives just the right amount of shadow for text readability */}
-          <div className="absolute inset-0 bg-linear-to-r from-slate-900/90 via-slate-900/25 to-transparent w-3/5" />
+          {/* Left-weighted gradient: just enough shadow for text readability */}
+          <div className="absolute inset-0 bg-linear-to-r from-slate-900/75 via-slate-900/20 to-transparent w-3/5" />
 
           {/* Bottom fade so the hero blends into the page background. */}
           <div className={`absolute inset-x-0 bottom-0 bg-linear-to-t from-slate-900 to-transparent ${fadeClassName}`} />

@@ -26,7 +26,7 @@ export function AboutHero() {
                     >
                         Building the Future,
                         <br />
-                        <span className="bg-linear-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Together</span>
+                        <span className="bg-linear-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent [text-shadow:0_2px_16px_rgba(0,0,0,0.55)]">Together</span>
                     </motion.h1>
 
                     <motion.p
