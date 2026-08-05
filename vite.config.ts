@@ -2,7 +2,7 @@ import { defineConfig, type Plugin } from 'vite'
 import { configDefaults } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import tailwindcss from "@tailwindcss/vite";
-import { handleChatRequest } from './api/chatHandler.ts'
+import { handleChatRequest } from './api/chatHandler'
 
 // Vite only loads VITE_-prefixed vars into import.meta.env for client code —
 // it does not populate process.env from .env for us, so pull GEMINI_API_KEY
