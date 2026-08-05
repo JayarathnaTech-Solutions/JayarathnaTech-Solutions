@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router'
+import { Analytics } from './components/Analytics'
 import { PublicLayout } from './components/PublicLayout'
 import { Home } from './pages/Home'
 import { About } from './pages/About'
@@ -29,52 +30,55 @@ import { PortalEngagementDetail } from './portal/pages/EngagementDetail'
 
 function App() {
   return (
-    <Routes>
-      <Route element={<PublicLayout />}>
-        <Route index element={<Home />} />
-        <Route path="about" element={<About />} />
-        <Route path="services" element={<Services />} />
-        <Route path="projects" element={<Projects />} />
-        <Route path="projects/:projectId" element={<ProjectDetail />} />
-        <Route path="contact" element={<Contact />} />
-        <Route path="testimonial/:token" element={<TestimonialSubmission />} />
-        <Route path="*" element={<NotFound />} />
-      </Route>
+    <>
+      <Routes>
+        <Route element={<PublicLayout />}>
+          <Route index element={<Home />} />
+          <Route path="about" element={<About />} />
+          <Route path="services" element={<Services />} />
+          <Route path="projects" element={<Projects />} />
+          <Route path="projects/:projectId" element={<ProjectDetail />} />
+          <Route path="contact" element={<Contact />} />
+          <Route path="testimonial/:token" element={<TestimonialSubmission />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
 
-      <Route path="admin/login" element={<Login />} />
-      <Route
-        path="admin"
-        element={
-          <RequireAuth>
-            <AdminLayout />
-          </RequireAuth>
-        }
-      >
-        <Route index element={<Dashboard />} />
-        <Route path="projects" element={<AdminProjects />} />
-        <Route path="testimonials" element={<AdminTestimonials />} />
-        <Route path="quotes" element={<AdminQuotes />} />
-        <Route path="inbox" element={<AdminInbox />} />
-        <Route path="staff" element={<AdminStaff />} />
-        <Route path="customers" element={<AdminCustomers />} />
-        <Route path="engagements" element={<AdminEngagements />} />
-        <Route path="engagements/:engagementId" element={<AdminEngagementDetail />} />
-        <Route path="settings" element={<AdminSettings />} />
-      </Route>
+        <Route path="admin/login" element={<Login />} />
+        <Route
+          path="admin"
+          element={
+            <RequireAuth>
+              <AdminLayout />
+            </RequireAuth>
+          }
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="projects" element={<AdminProjects />} />
+          <Route path="testimonials" element={<AdminTestimonials />} />
+          <Route path="quotes" element={<AdminQuotes />} />
+          <Route path="inbox" element={<AdminInbox />} />
+          <Route path="staff" element={<AdminStaff />} />
+          <Route path="customers" element={<AdminCustomers />} />
+          <Route path="engagements" element={<AdminEngagements />} />
+          <Route path="engagements/:engagementId" element={<AdminEngagementDetail />} />
+          <Route path="settings" element={<AdminSettings />} />
+        </Route>
 
-      <Route path="portal/login" element={<PortalLogin />} />
-      <Route
-        path="portal"
-        element={
-          <RequireCustomerAuth>
-            <PortalLayout />
-          </RequireCustomerAuth>
-        }
-      >
-        <Route index element={<PortalDashboard />} />
-        <Route path="engagements/:engagementId" element={<PortalEngagementDetail />} />
-      </Route>
-    </Routes>
+        <Route path="portal/login" element={<PortalLogin />} />
+        <Route
+          path="portal"
+          element={
+            <RequireCustomerAuth>
+              <PortalLayout />
+            </RequireCustomerAuth>
+          }
+        >
+          <Route index element={<PortalDashboard />} />
+          <Route path="engagements/:engagementId" element={<PortalEngagementDetail />} />
+        </Route>
+      </Routes>
+      <Analytics />
+    </>
   )
 }
 
