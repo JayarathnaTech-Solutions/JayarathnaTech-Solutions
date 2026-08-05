@@ -1,4 +1,4 @@
-import { SITE_NAME, SITE_URL, siteContact } from '../src/lib/siteInfo.ts'
+import { SITE_NAME, SITE_URL, siteContact } from '../src/lib/siteInfo'
 
 const GEMINI_MODEL = 'gemini-2.5-flash'
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`
