@@ -20,7 +20,7 @@ export function Hero() {
     }, [])
 
     return (
-        <section className="relative flex min-h-[92vh] items-center overflow-hidden">
+        <section className="relative flex min-h-[70vh] items-center overflow-hidden text-white">
             {heroImages.map((image, index) => (
                 <div
                     key={index}
@@ -49,7 +49,9 @@ export function Hero() {
                         className="mt-5 text-4xl font-bold tracking-tight sm:text-6xl"
                     >
                         We Build Digital Solutions That Drive{' '}
-                        <span className="text-blue-500">Real Business Growth</span>
+                        <span className="bg-linear-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                            Real Business Growth
+                        </span>
                     </motion.h1>
 
                     <motion.p
@@ -74,28 +76,10 @@ export function Hero() {
                             to="/contact"
                             whileHover={{ scale: 1.04 }}
                             whileTap={{ scale: 0.97 }}
-                            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 px-5 py-3 text-sm font-medium text-white transition-colors hover:border-slate-500"
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 px-5 py-3 text-sm font-medium text-white transition-colors hover:border-slate-400"
                         >
                             Get a Quote
                         </MotionLink>
-                    </motion.div>
-
-                    <motion.div variants={staggerItem} transition={itemTransition} className="mt-10 flex items-center gap-3">
-                        <div className="flex -space-x-3">
-                            {['N', 'T', 'K'].map((initial) => (
-                                <div
-                                    key={initial}
-                                    className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-slate-950 bg-slate-800 text-xs font-semibold text-slate-300"
-                                >
-                                    {initial}
-                                </div>
-                            ))}
-                        </div>
-                        <p className="text-sm text-slate-400">
-                            Trusted by 50+ businesses
-                            <br />
-                            to deliver digital excellence
-                        </p>
                     </motion.div>
                 </motion.div>
             </div>

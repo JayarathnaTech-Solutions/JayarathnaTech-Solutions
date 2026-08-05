@@ -14,11 +14,11 @@ export function Process() {
                         key={item.step}
                         variants={staggerItem}
                         transition={itemTransition}
-                        className="rounded-xl border border-slate-800 bg-slate-900/40 p-6"
+                        className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-800/40"
                     >
-                        <span className="text-3xl font-bold text-blue-500/30">{item.step}</span>
+                        <span className="text-3xl font-bold text-blue-600/30 dark:text-blue-400/30">{item.step}</span>
                         <h3 className="mt-4 text-lg font-semibold">{item.title}</h3>
-                        <p className="mt-2 text-sm text-slate-400">{item.description}</p>
+                        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{item.description}</p>
                     </motion.div>
                 ))}
             </StaggerGroup>

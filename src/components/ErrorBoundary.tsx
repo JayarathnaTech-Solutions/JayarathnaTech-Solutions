@@ -25,7 +25,7 @@ export class ErrorBoundary extends Component<Props, State> {
     render() {
         if (this.state.error) {
             return (
-                <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-950 px-6 text-center text-white">
+                <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-900 px-6 text-center text-white">
                     <h1 className="text-2xl font-bold">Something went wrong</h1>
                     {import.meta.env.DEV && (
                         <pre className="max-w-xl overflow-auto whitespace-pre-wrap rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-left text-xs text-red-300">

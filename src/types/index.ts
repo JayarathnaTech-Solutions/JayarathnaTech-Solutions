@@ -23,6 +23,15 @@ export interface Project {
   keyFeatures?: string[]
 }
 
+// Client/partner logo shown in the "Trusted by" strip on the homepage.
+export interface Company {
+  id: string
+  name: string
+  logoUrl: string
+  websiteUrl?: string
+  createdAt: string
+}
+
 export type TestimonialStatus = 'pending' | 'approved' | 'rejected'
 
 export interface Testimonial {

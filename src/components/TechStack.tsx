@@ -18,14 +18,14 @@ export function TechStack() {
                             {group.items.map((tech) => (
                                 <div
                                     key={tech.name}
-                                    className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/40 p-4 transition-colors hover:border-slate-700"
+                                    className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 transition-colors hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800/40 dark:hover:border-slate-600"
                                 >
                                     <div
                                         className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${tech.color}`}
                                     >
                                         {tech.mono}
                                     </div>
-                                    <span className="font-medium text-slate-200">{tech.name}</span>
+                                    <span className="font-medium text-slate-700 dark:text-slate-200">{tech.name}</span>
                                 </div>
                             ))}
                         </div>

@@ -39,6 +39,18 @@ const navItems: NavItemConfig[] = [
         ),
     },
     {
+        to: '/admin/companies',
+        label: 'Companies',
+        visibleTo: ['admin', 'editor'],
+        icon: (
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3 21h18M6 21V7l6-4 6 4v14M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01"
+            />
+        ),
+    },
+    {
         to: '/admin/testimonials',
         label: 'Testimonials',
         visibleTo: ['admin', 'editor'],

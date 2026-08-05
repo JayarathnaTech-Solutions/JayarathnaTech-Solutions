@@ -10,13 +10,16 @@ export function FeaturedProjects({ projects }: { projects: Project[] | null }) {
         <section className="mx-auto max-w-7xl px-6 py-16">
             <Reveal className="flex flex-wrap items-end justify-between gap-4">
                 <div>
-          <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-400">
+          <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-600 dark:text-blue-400">
             <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
             Our Work
           </span>
                     <h2 className="mt-2 text-2xl font-bold sm:text-3xl">Featured Projects</h2>
                 </div>
-                <Link to="/projects" className="text-sm font-medium text-blue-400 hover:text-blue-300">
+                <Link
+                    to="/projects"
+                    className="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+                >
                     View all projects
                 </Link>
             </Reveal>
@@ -24,7 +27,7 @@ export function FeaturedProjects({ projects }: { projects: Project[] | null }) {
             {projects === null ? (
                 <div className="mt-8 grid gap-6 md:grid-cols-3">
                     {[0, 1, 2].map((i) => (
-                        <div key={i} className="h-72 animate-pulse rounded-xl border border-slate-800 bg-slate-900/50" />
+                        <div key={i} className="h-72 animate-pulse rounded-xl border border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-800/50" />
                     ))}
                 </div>
             ) : projects.length === 0 ? (
@@ -48,9 +51,9 @@ export function FeaturedProjects({ projects }: { projects: Project[] | null }) {
                             variants={staggerItem}
                             transition={itemTransition}
                             whileHover={{ y: -4 }}
-                            className="group overflow-hidden rounded-xl border border-slate-800 bg-slate-900/40 transition-colors hover:border-slate-700"
+                            className="group overflow-hidden rounded-xl border border-slate-200 bg-white transition-colors hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800/40 dark:hover:border-slate-600"
                         >
-                            <div className="aspect-video overflow-hidden bg-slate-800">
+                            <div className="aspect-video overflow-hidden bg-slate-200 dark:bg-slate-800">
                                 {project.coverImageUrl && (
                                     <img
                                         src={project.coverImageUrl}
@@ -61,7 +64,7 @@ export function FeaturedProjects({ projects }: { projects: Project[] | null }) {
                             </div>
                             <div className="p-5">
                                 <h3 className="text-lg font-semibold">{project.title}</h3>
-                                <p className="mt-2 line-clamp-2 text-sm text-slate-400">{project.description}</p>
+                                <p className="mt-2 line-clamp-2 text-sm text-slate-600 dark:text-slate-400">{project.description}</p>
                             </div>
                         </MotionLink>
                     ))}

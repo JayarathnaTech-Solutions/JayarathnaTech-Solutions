@@ -11,13 +11,13 @@ export function NotFound() {
                 description="The page you're looking for doesn't exist or has been moved."
             />
 
-            <section className="relative overflow-hidden">
+            <section className="relative overflow-hidden text-white">
                 <div
                     className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-70"
                     aria-hidden="true"
                 />
                 <div
-                    className="pointer-events-none absolute inset-0 bg-linear-to-b from-slate-950/40 via-slate-950/70 to-slate-950"
+                    className="pointer-events-none absolute inset-0 bg-linear-to-b from-slate-900/30 via-slate-900/60 to-slate-900"
                     aria-hidden="true"
                 />
 

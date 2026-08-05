@@ -71,13 +71,16 @@ export function Services() {
         <section className="mx-auto max-w-7xl px-6 py-16">
             <Reveal className="flex flex-wrap items-end justify-between gap-4">
                 <div>
-          <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-400">
+          <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-600 dark:text-blue-400">
             <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
             What We Do
           </span>
                     <h2 className="mt-2 text-2xl font-bold sm:text-3xl">Our Services</h2>
                 </div>
-                <Link to="/services" className="text-sm font-medium text-blue-400 hover:text-blue-300">
+                <Link
+                    to="/services"
+                    className="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+                >
                     View all services
                 </Link>
             </Reveal>
@@ -90,16 +93,16 @@ export function Services() {
                         variants={staggerItem}
                         transition={itemTransition}
                         whileHover={{ y: -4 }}
-                        className="group rounded-xl border border-slate-800 bg-slate-900/40 p-6 transition-colors hover:border-slate-700"
+                        className="group rounded-xl border border-slate-200 bg-white p-6 transition-colors hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800/40 dark:hover:border-slate-600"
                     >
-                        <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                                 {service.icon}
                             </svg>
                         </div>
                         <h3 className="mt-4 text-lg font-semibold">{service.title}</h3>
-                        <p className="mt-2 text-sm text-slate-400">{service.description}</p>
-                        <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-blue-400 group-hover:text-blue-300">
+                        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{service.description}</p>
+                        <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 group-hover:text-blue-500 dark:text-blue-400 dark:group-hover:text-blue-300">
                             Learn more
                         </span>
                     </MotionLink>

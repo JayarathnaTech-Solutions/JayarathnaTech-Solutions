@@ -197,6 +197,12 @@ service cloud.firestore {
       allow create, update, delete: if isStaff();
     }
 
+    // Client/partner logos shown in the "Trusted by" strip on the homepage.
+    match /companies/{companyId} {
+      allow read: if true;
+      allow create, update, delete: if isStaff();
+    }
+
     match /quotes/{quoteId} {
       allow read, create, update, delete: if isStaff();
     }

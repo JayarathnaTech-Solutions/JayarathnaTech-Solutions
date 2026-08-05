@@ -14,15 +14,15 @@ export function Mission() {
                         key={item.title}
                         variants={staggerItem}
                         transition={itemTransition}
-                        className="rounded-xl border border-slate-800 bg-slate-900/40 p-6"
+                        className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-800/40"
                     >
-                        <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                                 {item.icon}
                             </svg>
                         </div>
                         <h3 className="mt-4 text-lg font-semibold">{item.title}</h3>
-                        <p className="mt-2 text-sm text-slate-400">{item.description}</p>
+                        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{item.description}</p>
                     </motion.div>
                 ))}
             </StaggerGroup>

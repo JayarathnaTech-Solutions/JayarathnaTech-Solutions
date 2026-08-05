@@ -2,6 +2,7 @@ import { Timestamp, type DocumentData, type QueryDocumentSnapshot, type Document
 import type {
     BankDetails,
     ChatMessage,
+    Company,
     ContactMessage,
     Customer,
     Engagement,
@@ -42,6 +43,20 @@ export function projectFromDoc(
         challenge: data.challenge,
         solution: data.solution,
         keyFeatures: data.keyFeatures,
+    }
+}
+
+export function companyFromDoc(
+    doc: QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData>,
+): Company {
+    const data = doc.data()
+    if (!data) throw new Error(`Company ${doc.id} does not exist`)
+    return {
+        id: doc.id,
+        name: data.name,
+        logoUrl: data.logoUrl,
+        websiteUrl: data.websiteUrl,
+        createdAt: toIsoString(data.createdAt),
     }
 }
 

@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import App from '../../App.tsx'
+import { ThemeProvider } from '../../lib/theme.tsx'
 
 vi.mock('firebase/firestore', async (importOriginal) => {
   const actual = await importOriginal<typeof import('firebase/firestore')>()
@@ -11,9 +12,11 @@ vi.mock('firebase/firestore', async (importOriginal) => {
 describe('App', () => {
   it('renders the home page at /', () => {
     render(
-      <MemoryRouter initialEntries={['/']}>
-        <App />
-      </MemoryRouter>,
+      <ThemeProvider>
+        <MemoryRouter initialEntries={['/']}>
+          <App />
+        </MemoryRouter>
+      </ThemeProvider>,
     )
 
     expect(
@@ -23,9 +26,11 @@ describe('App', () => {
 
   it('renders the 404 page for unknown routes', () => {
     render(
-      <MemoryRouter initialEntries={['/nope']}>
-        <App />
-      </MemoryRouter>,
+      <ThemeProvider>
+        <MemoryRouter initialEntries={['/nope']}>
+          <App />
+        </MemoryRouter>
+      </ThemeProvider>,
     )
 
     expect(screen.getByText(/404/)).toBeInTheDocument()

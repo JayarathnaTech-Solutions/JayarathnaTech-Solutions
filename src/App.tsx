@@ -14,6 +14,7 @@ import { RequireAuth } from './admin/RequireAuth'
 import { Login } from './admin/pages/Login'
 import { Dashboard } from './admin/pages/Dashboard'
 import { AdminProjects } from './admin/pages/Projects'
+import { AdminCompanies } from './admin/pages/Companies'
 import { AdminTestimonials } from './admin/pages/Testimonials'
 import { AdminQuotes } from './admin/pages/Quotes'
 import { AdminInbox } from './admin/pages/Inbox'
@@ -54,6 +55,7 @@ function App() {
         >
           <Route index element={<Dashboard />} />
           <Route path="projects" element={<AdminProjects />} />
+          <Route path="companies" element={<AdminCompanies />} />
           <Route path="testimonials" element={<AdminTestimonials />} />
           <Route path="quotes" element={<AdminQuotes />} />
           <Route path="inbox" element={<AdminInbox />} />

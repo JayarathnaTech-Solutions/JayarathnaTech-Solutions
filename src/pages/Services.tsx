@@ -119,7 +119,7 @@ const faqs = [
 
 function Hero() {
     return (
-        <section className="relative overflow-hidden">
+        <section className="relative overflow-hidden text-white">
           <HeroBackdrop image={heroBackground} />
           <div className="relative mx-auto max-w-7xl px-6 py-24 md:py-36">
             <motion.div className="max-w-2xl" initial="hidden" animate="visible" variants={staggerContainer}>
@@ -136,7 +136,7 @@ function Hero() {
                   transition={itemTransition}
                   className="mt-5 text-4xl font-bold tracking-tight sm:text-6xl"
               >
-                Digital Solutions<br /><span className="text-blue-500">Built for Growth</span>
+                Digital Solutions<br /><span className="bg-linear-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Built for Growth</span>
               </motion.h1>
               <motion.p
                   variants={staggerItem}
@@ -161,18 +161,18 @@ function ServicesGrid() {
                         key={service.title}
                         variants={staggerItem}
                         transition={itemTransition}
-                        className="rounded-xl border border-slate-800 bg-slate-900/40 p-6"
+                        className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-800/40"
                     >
-                        <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                                 {service.icon}
                             </svg>
                         </div>
                         <h3 className="mt-4 text-lg font-semibold">{service.title}</h3>
-                        <p className="mt-2 text-sm text-slate-400">{service.description}</p>
+                        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{service.description}</p>
                         <Link
                             to="/contact"
-                            className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-blue-400 hover:text-blue-300"
+                            className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
                         >
                             Learn more
                         </Link>
@@ -187,7 +187,7 @@ function EngagementModels() {
     return (
         <section className="mx-auto max-w-7xl px-6 py-16">
             <Reveal>
-      <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-400">
+      <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-600 dark:text-blue-400">
         <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
         How We Work With You
       </span>
@@ -200,15 +200,15 @@ function EngagementModels() {
                         key={model.title}
                         variants={staggerItem}
                         transition={itemTransition}
-                        className="rounded-xl border border-slate-800 bg-slate-900/40 p-6"
+                        className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-800/40"
                     >
-                        <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                                 {model.icon}
                             </svg>
                         </div>
                         <h3 className="mt-4 text-lg font-semibold">{model.title}</h3>
-                        <p className="mt-2 text-sm text-slate-400">{model.description}</p>
+                        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{model.description}</p>
                     </motion.div>
                 ))}
             </StaggerGroup>
@@ -227,7 +227,7 @@ function Faq() {
                         key={faq.question}
                         variants={staggerItem}
                         transition={itemTransition}
-                        className="group rounded-xl border border-slate-800 bg-slate-900/40 p-6 open:bg-slate-900/60"
+                        className="group rounded-xl border border-slate-200 bg-white p-6 open:bg-slate-50 dark:border-slate-700 dark:bg-slate-800/40 dark:open:bg-slate-800/55"
                     >
                         <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold [&::-webkit-details-marker]:hidden">
                             {faq.question}
@@ -238,12 +238,12 @@ function Faq() {
                                 fill="none"
                                 stroke="currentColor"
                                 strokeWidth="1.75"
-                                className="shrink-0 text-blue-400 transition-transform duration-200 group-open:rotate-180"
+                                className="shrink-0 text-blue-600 transition-transform duration-200 group-open:rotate-180 dark:text-blue-400"
                             >
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m6 9 6 6 6-6" />
                             </svg>
                         </summary>
-                        <p className="mt-3 text-sm text-slate-400">{faq.answer}</p>
+                        <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">{faq.answer}</p>
                     </motion.details>
                 ))}
             </StaggerGroup>

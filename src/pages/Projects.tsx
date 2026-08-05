@@ -81,14 +81,14 @@ function Hero() {
     return (
         <section className="mx-auto max-w-7xl px-6 py-16 md:py-24">
             <Reveal>
-                <span className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400">
+                <span className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-600 dark:text-blue-400">
                     <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
                     Our Work
                 </span>
 
                 <h1 className="mt-5 text-4xl font-bold tracking-tight sm:text-6xl">Projects We&rsquo;ve Delivered</h1>
 
-                <p className="mt-5 max-w-xl text-lg text-slate-300">
+                <p className="mt-5 max-w-xl text-lg text-slate-600 dark:text-slate-300">
                     Explore some of the digital products we&rsquo;ve designed, built, and shipped for our clients.
                 </p>
             </Reveal>
@@ -115,7 +115,7 @@ function CategoryTabs({
                     className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                         active === category
                             ? 'bg-blue-600 text-white'
-                            : 'border border-slate-800 text-slate-300 hover:border-slate-700'
+                            : 'border border-slate-300 text-slate-600 hover:border-slate-400 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600'
                     }`}
                 >
                     {category}
@@ -132,9 +132,9 @@ function ProjectCard({ project }: { project: Project }) {
             variants={staggerItem}
             transition={itemTransition}
             whileHover={{ y: -4 }}
-            className="group overflow-hidden rounded-xl border border-slate-800 bg-slate-900/40 transition-colors hover:border-slate-700"
+            className="group overflow-hidden rounded-xl border border-slate-200 bg-white transition-colors hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800/40 dark:hover:border-slate-600"
         >
-            <div className="relative aspect-video overflow-hidden bg-slate-800">
+            <div className="relative aspect-video overflow-hidden bg-slate-200 dark:bg-slate-800">
                 {project.coverImageUrl && (
                     <img
                         src={project.coverImageUrl}
@@ -143,14 +143,14 @@ function ProjectCard({ project }: { project: Project }) {
                     />
                 )}
                 {project.category && (
-                    <span className="absolute left-3 top-3 rounded-full bg-slate-950/80 px-3 py-1 text-xs font-medium text-slate-200 backdrop-blur">
+                    <span className="absolute left-3 top-3 rounded-full bg-slate-900/75 px-3 py-1 text-xs font-medium text-slate-200 backdrop-blur">
                         {project.category}
                     </span>
                 )}
             </div>
             <div className="p-5">
                 <h3 className="text-lg font-semibold">{project.title}</h3>
-                <p className="mt-2 line-clamp-2 text-sm text-slate-400">{project.description}</p>
+                <p className="mt-2 line-clamp-2 text-sm text-slate-600 dark:text-slate-400">{project.description}</p>
             </div>
         </MotionLink>
     )
@@ -176,7 +176,7 @@ function ProjectsGrid() {
             {projects === null ? (
                 <div className="mt-8 grid gap-6 md:grid-cols-3">
                     {[0, 1, 2, 3, 4, 5].map((i) => (
-                        <div key={i} className="h-72 animate-pulse rounded-xl border border-slate-800 bg-slate-900/50" />
+                        <div key={i} className="h-72 animate-pulse rounded-xl border border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-800/50" />
                     ))}
                 </div>
             ) : projects.length === 0 ? (
@@ -206,7 +206,7 @@ function ProjectsGrid() {
                         disabled={loadingMore}
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.97 }}
-                        className="rounded-lg border border-slate-700 px-6 py-3 text-sm font-medium text-white transition-colors hover:border-slate-500 disabled:opacity-50"
+                        className="rounded-lg border border-slate-300 px-6 py-3 text-sm font-medium text-slate-900 transition-colors hover:border-slate-400 disabled:opacity-50 dark:border-slate-700 dark:text-white dark:hover:border-slate-500"
                     >
                         {loadingMore ? 'Loading…' : 'Load More Projects'}
                     </motion.button>

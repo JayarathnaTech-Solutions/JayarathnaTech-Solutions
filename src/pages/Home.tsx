@@ -4,6 +4,7 @@ import { CtaBanner } from '../components/CtaBanner'
 import {FeaturedTestimonials} from "../components/FeaturedTestimonials.tsx";
 import {Services} from "../components/Services.tsx";
 import {Hero} from "../components/Hero.tsx";
+import {CompanyLogos} from "../components/CompanyLogos.tsx";
 import {FeaturedProjects} from "../components/FeaturedProjects.tsx";
 import {WhyChooseUs} from "../components/WhyChooseUs.tsx";
 import {buildTestimonialsSchema} from "../lib/buildTestimonialsSchema.ts";
@@ -24,6 +25,7 @@ export function Home() {
             {testimonialsSchema && <JsonLd id="organization-reviews" data={testimonialsSchema} />}
 
             <Hero />
+            <CompanyLogos />
             <Services />
             <FeaturedProjects projects={projects} />
             <WhyChooseUs />

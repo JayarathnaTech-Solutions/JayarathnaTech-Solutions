@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 
 export function AboutHero() {
     return (
-        <section className="relative overflow-hidden">
+        <section className="relative overflow-hidden text-white">
             <HeroBackdrop image={heroBackground} />
 
             <div className="relative mx-auto max-w-7xl px-6 py-24 md:py-36">
@@ -26,7 +26,7 @@ export function AboutHero() {
                     >
                         Building the Future,
                         <br />
-                        <span className="text-blue-500">Together</span>
+                        <span className="bg-linear-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Together</span>
                     </motion.h1>
 
                     <motion.p

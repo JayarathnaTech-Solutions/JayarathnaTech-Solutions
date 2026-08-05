@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
     --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
@@ -11,19 +13,37 @@
     }
 
     ::-webkit-scrollbar-track {
-        background: #020617 !important;
+        background: #e2e8f0 !important;
     }
 
     ::-webkit-scrollbar-thumb {
-        background-color: #334155 !important;
+        background-color: #94a3b8 !important;
         border-radius: 9999px !important;
     }
 
     ::-webkit-scrollbar-thumb:hover {
         background-color: #3b82f6 !important;
     }
+
+    .dark ::-webkit-scrollbar-track {
+        background: #0f172a !important;
+    }
+
+    .dark ::-webkit-scrollbar-thumb {
+        background-color: #475569 !important;
+    }
 }
 
-html, body {
-    background-color: #0b0f19;
+html {
+    color-scheme: light;
+    background-color: #f8fafc;
+}
+
+html.dark {
+    color-scheme: dark;
+    background-color: #0f172a;
+}
+
+body {
+    background-color: inherit;
 }

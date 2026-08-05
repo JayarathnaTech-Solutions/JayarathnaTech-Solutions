@@ -6,10 +6,10 @@ export function Logo() {
       </div>
       <div className="leading-tight">
         <div className="text-base font-semibold whitespace-nowrap">
-          <span className="text-white">Jayarathna</span>
-          <span className="text-blue-500">Tech</span>
+          <span className="text-slate-900 dark:text-white">Jayarathna</span>
+          <span className="text-blue-600 dark:text-blue-400">Tech</span>
         </div>
-        <div className="text-xs text-slate-400">Solutions</div>
+        <div className="text-xs text-slate-500 dark:text-slate-400">Solutions</div>
       </div>
     </div>
   )
