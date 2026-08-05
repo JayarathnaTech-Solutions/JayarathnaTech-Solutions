@@ -2,7 +2,7 @@ import { Seo } from '../components/Seo'
 import { JsonLd } from '../components/JsonLd'
 import { CtaBanner } from '../components/CtaBanner'
 import {FeaturedTestimonials} from "../components/FeaturedTestimonials.tsx";
-import {Services} from "./Services.tsx";
+import {Services} from "../components/Services.tsx";
 import {Hero} from "../components/Hero.tsx";
 import {FeaturedProjects} from "../components/FeaturedProjects.tsx";
 import {WhyChooseUs} from "../components/WhyChooseUs.tsx";
