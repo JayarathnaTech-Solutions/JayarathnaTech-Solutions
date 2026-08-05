@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
-import heroBackground from '../assets/background-image1.jpg'
-import heroBackground2 from '../assets/background-image2.jpg'
-import heroBackground3 from '../assets/background-image3.jpg'
+import heroBackground from '../assets/background-image1.webp'
+import heroBackground2 from '../assets/background-image2.webp'
+import heroBackground3 from '../assets/background-image3.webp'
 import {itemTransition, staggerContainer, staggerItem} from "../lib/motion.ts";
 import { motion, AnimatePresence } from "motion/react";
 import { MotionLink } from "./MotionLink.tsx";

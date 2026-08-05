@@ -9,6 +9,15 @@ import { Skeleton } from '../../components/Skeleton'
 import { Avatar } from '../../components/Avatar'
 import type { ContactMessage } from '../../types'
 
+function SourceBadge({ source }: { source: ContactMessage['source'] }) {
+    if (source !== 'chat') return null
+    return (
+        <span className="inline-flex shrink-0 items-center rounded-full bg-blue-500/10 px-1.5 py-0.5 text-[10px] font-medium text-blue-400">
+            Chat
+        </span>
+    )
+}
+
 function useMessages() {
     const { data: messages, reload } = useFirestoreCollection(
         () => query(collection(db, 'contactMessages'), orderBy('createdAt', 'desc')),
@@ -38,9 +47,12 @@ function MessageListItem({
             <Avatar label={message.name} />
             <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
-                    <p className={`truncate text-sm ${message.read ? 'font-medium text-slate-300' : 'font-semibold text-white'}`}>
-                        {message.name}
-                    </p>
+                    <div className="flex min-w-0 items-center gap-1.5">
+                        <p className={`truncate text-sm ${message.read ? 'font-medium text-slate-300' : 'font-semibold text-white'}`}>
+                            {message.name}
+                        </p>
+                        <SourceBadge source={message.source} />
+                    </div>
                     <span className="shrink-0 text-xs text-slate-500">{timeAgo(message.createdAt)}</span>
                 </div>
                 <p className="truncate text-sm text-slate-500">{message.message}</p>
@@ -72,7 +84,10 @@ function MessageDetail({
                 Back
             </button>
             <div>
-                <h2 className="text-lg font-semibold">{message.name}</h2>
+                <div className="flex items-center gap-2">
+                    <h2 className="text-lg font-semibold">{message.name}</h2>
+                    <SourceBadge source={message.source} />
+                </div>
                 <p className="mt-1 text-sm text-slate-400">{message.email}</p>
                 {message.phone && <p className="text-sm text-slate-400">{message.phone}</p>}
                 <p className="mt-1 text-xs text-slate-500">{formatDateTime(message.createdAt)}</p>

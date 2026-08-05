@@ -82,6 +82,7 @@ export interface ContactMessage {
   message: string
   read: boolean
   createdAt: string
+  source?: 'contact-form' | 'chat'
 }
 
 // Single global doc at settings/bankDetails — one bank account for the whole

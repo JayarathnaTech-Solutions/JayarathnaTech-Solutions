@@ -64,6 +64,14 @@ this file only tracks scope and progress.
   be marked `delivered`. Customers can submit payment proof but can never write
   `status: 'verified'` themselves — see `firestore.rules` and Section 18's rules
   tests. This is the most security-sensitive rule set in the app.
+- **AI chat assistant uses Gemini, proxied through a Vercel Edge Function**
+  (`api/chat.ts` + shared `api/chatHandler.ts`) so `GEMINI_API_KEY` stays
+  server-side only (no `VITE_` prefix — never bundled to the client). The
+  assistant's knowledge is a hand-written system prompt (services, engagement
+  models, FAQs, contact info), not a live data feed, so it needs manual updates
+  if those facts change. Since `vite dev` doesn't run Vercel's `/api` functions,
+  a matching Vite plugin middleware in `vite.config.ts` re-implements the same
+  route for local development by calling the same shared handler.
 
 ## Assumptions
 
@@ -170,6 +178,11 @@ this file only tracks scope and progress.
   be acceptable if verification were ever automated.
 - **Orphaned Auth users on partial customer-creation failure** (see Assumptions)
   — no automated cleanup path on Spark tier.
+- **No rate-limiting on the `/api/chat` endpoint**: same class of risk as the
+  public contact/testimonial forms — without a backend beyond a single Edge
+  Function, there's nothing stopping repeated automated requests from running
+  up Gemini API usage/cost. Acceptable for current traffic; would need
+  addressing (e.g. IP/session-based throttling) before high-traffic launch.
 
 ---
 
@@ -186,7 +199,11 @@ this file only tracks scope and progress.
 - [x] Set up Cloudinary account (free tier) + unsigned upload preset for project cover images
 
 ## 1. Public — Home Page
-- [x] Hero section (agency intro, mobile-first responsive)
+- [x] Hero section (agency intro, mobile-first responsive) — multi-image
+      crossfade carousel (`Hero.tsx`/`HeroBackdrop.tsx`) with a subtle
+      drift-and-fade transition (not a full-width slide, which read as a
+      jarring wipe) and a dark fallback background so no light-mode flash
+      shows through at the transition edges
 - [x] Featured projects section (pulled from Firestore `projects`)
 - [x] Featured testimonials section (pulled from approved `testimonials`)
 - [x] CTA to Contact/Services
@@ -292,21 +309,30 @@ this file only tracks scope and progress.
 - [x] Unified typography system — Inter font loaded site-wide, consistent H1/H2/H3 and
       body-text scale across every page
 - [x] Custom scrollbar styling matching the dark theme
+- [x] Google Search Console verification (`public/google039ffe3ad4a4c897.html`
+      file-verification method, deployed at the site root)
+- [x] Google Analytics 4 (`src/lib/analytics.ts` + `src/components/Analytics.tsx`)
+      — loads `gtag.js` and reports a `page_view` on every client-side route
+      change (GA's default pageview-on-load doesn't fire for SPA navigation);
+      gated to production builds only via `import.meta.env.PROD` so local dev
+      never pollutes analytics data
 
 ## 17. Deployment
 - [x] Firebase Auth providers enabled (Google sign-in), Firestore rules deployed
       (no Storage — not used, see Locked-in decisions)
 - [x] `vercel.json` SPA rewrite (`/(.*) → /index.html`) so client-side routes
       (e.g. `/admin/login`, `/projects/:id`) don't 404 on direct load/refresh
-- [ ] Environment variables set in Vercel — the 9 `VITE_*` vars from `.env.example`:
+- [x] Environment variables set in Vercel — all vars from `.env.example`:
       `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID`,
       `VITE_FIREBASE_MESSAGING_SENDER_ID`, `VITE_FIREBASE_APP_ID`,
       `VITE_USE_FIREBASE_EMULATORS` (set to `false`), `VITE_CLOUDINARY_CLOUD_NAME`,
-      `VITE_CLOUDINARY_UPLOAD_PRESET`, `VITE_WEB3FORMS_ACCESS_KEY` — same values as
-      the local `.env` (not committed to git)
-- [ ] Vercel deployment connected to repo, production build verified — requires the
-      account owner (Vercel dashboard access not available to the assistant); Vite
-      framework preset auto-detects `npm run build` / `dist` output
+      `VITE_CLOUDINARY_UPLOAD_PRESET`, `VITE_CLOUDINARY_RECEIPTS_UPLOAD_PRESET`,
+      `VITE_WEB3FORMS_ACCESS_KEY`, `VITE_GA_MEASUREMENT_ID`, plus `GEMINI_API_KEY`
+      (no `VITE_` prefix — server-side only, see the AI chat assistant section) —
+      same values as the local `.env` (not committed to git)
+- [x] Vercel deployment connected to repo, production build verified — live at
+      `jayarathnatechsolutions.com`; Vite framework preset auto-detects
+      `npm run build` / `dist` output
 - [ ] Post-deploy smoke test of all public pages + admin login
 
 ## 18. Customer Portal
@@ -358,3 +384,29 @@ this file only tracks scope and progress.
 - [ ] Email notifications (new chat message, stage change, payment verified) —
       deferred; no outbound email service beyond Firebase Auth's built-in
       verification email exists yet
+
+## 19. Public — AI Chat Assistant
+- [x] `api/chat.ts` — Vercel Edge Function proxying Gemini (`gemini-2.5-flash`),
+      keeping `GEMINI_API_KEY` server-side only; validates input and caps
+      message length/history
+- [x] `api/chatHandler.ts` — shared request-handling logic (system prompt +
+      Gemini call), imported by both `api/chat.ts` (production) and the local
+      dev middleware below, so the two never drift apart
+- [x] System prompt grounds every answer in real site content (services,
+      engagement models, FAQs, differentiators, contact info from
+      `src/lib/siteInfo.ts`) and instructs the model to stay on-topic and
+      never invent prices/timelines
+- [x] Local dev parity — a Vite plugin (`vite.config.ts`) serves the same
+      `/api/chat` route under plain `npm run dev`, since Vercel only runs the
+      `api/` folder as serverless functions in production or under
+      `vercel dev`
+- [x] `src/components/ChatWidget.tsx` — floating widget on all public pages
+      (mounted in `PublicLayout`, excluded from `/admin` and `/portal`)
+  - [x] Markdown-link rendering: replies referencing site pages (Contact,
+        Services, About, Projects) render as real clickable links, same-origin
+        ones navigating client-side via `react-router`
+  - [x] Auto-opens with the greeting once per browser session, a few seconds
+        after landing (skipped if the visitor already opened/closed it
+        manually), plus an in-browser-synthesized notification chime — queued
+        and played on the visitor's first page interaction if the browser's
+        autoplay policy blocked it at the moment of auto-open

@@ -1,4 +1,13 @@
-import { Timestamp, type DocumentData, type QueryDocumentSnapshot, type DocumentSnapshot } from 'firebase/firestore'
+import {
+    Timestamp,
+    addDoc,
+    collection,
+    serverTimestamp,
+    type DocumentData,
+    type QueryDocumentSnapshot,
+    type DocumentSnapshot,
+} from 'firebase/firestore'
+import { db } from '../firebase/config'
 import type {
     BankDetails,
     ChatMessage,
@@ -267,5 +276,24 @@ export function contactMessageFromDoc(
         message: data.message,
         read: data.read,
         createdAt: toIsoString(data.createdAt),
+        source: data.source ?? 'contact-form',
     }
+}
+
+export function createContactMessage(input: {
+    name: string
+    email: string
+    message: string
+    phone?: string
+    source?: 'contact-form' | 'chat'
+}) {
+    return addDoc(collection(db, 'contactMessages'), {
+        name: input.name,
+        email: input.email,
+        message: input.message,
+        ...(input.phone ? { phone: input.phone } : {}),
+        ...(input.source ? { source: input.source } : {}),
+        read: false,
+        createdAt: serverTimestamp(),
+    })
 }

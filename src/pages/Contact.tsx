@@ -1,11 +1,10 @@
 import { useState, type FormEvent } from 'react'
 import { motion } from 'motion/react'
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
-import { db } from '../firebase/config'
 import { Seo } from '../components/Seo'
 import { siteContact } from '../lib/siteInfo'
 import { staggerItem, staggerContainer, itemTransition } from '../lib/motion'
 import { publicInputClass } from '../lib/ui'
+import { createContactMessage } from '../lib/firestore'
 
 const WEB3FORMS_ACCESS_KEY = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY as string
 
@@ -172,13 +171,12 @@ function ContactForm() {
             if (result.success) {
                 form.reset()
                 setStatus('success')
-                void addDoc(collection(db, 'contactMessages'), {
+                void createContactMessage({
                     name,
                     email,
                     message,
                     ...(phone ? { phone } : {}),
-                    read: false,
-                    createdAt: serverTimestamp(),
+                    source: 'contact-form',
                 }).catch(() => {})
             } else {
                 setStatus('error')

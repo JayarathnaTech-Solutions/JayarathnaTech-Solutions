@@ -5,6 +5,7 @@ import { Navbar } from './Navbar'
 import { Footer } from './Footer'
 import { JsonLd } from './JsonLd'
 import { ChatWidget } from './ChatWidget'
+import { StickyMobileCta } from './StickyMobileCta'
 import { buildOrganizationSchema } from '../lib/siteInfo'
 
 export function PublicLayout() {
@@ -33,6 +34,7 @@ export function PublicLayout() {
       </motion.main>
       <Footer />
       <ChatWidget />
+      <StickyMobileCta />
     </div>
   )
 }
