@@ -4,6 +4,7 @@ import { motion } from 'motion/react'
 import { Navbar } from './Navbar'
 import { Footer } from './Footer'
 import { JsonLd } from './JsonLd'
+import { ChatWidget } from './ChatWidget'
 import { buildOrganizationSchema } from '../lib/siteInfo'
 
 export function PublicLayout() {
@@ -31,6 +32,7 @@ export function PublicLayout() {
         <Outlet />
       </motion.main>
       <Footer />
+      <ChatWidget />
     </div>
   )
 }
