@@ -1,50 +1,13 @@
-import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { doc, getDoc } from 'firebase/firestore'
-import { db } from '../../firebase/config'
-import { engagementFromDoc, invoiceFromDoc } from '../../lib/firestore'
 import { formatCurrency } from '../../lib/quote'
-import { engagementStatusLabels, hasReachedDelivery } from '../../lib/engagement'
+import { engagementStatusLabels, hasReachedDelivery, phaseDotClass } from '../../lib/engagement'
+import { useEngagement, useInvoices } from '../../lib/useEngagementDetail'
 import { useCustomerAuth } from '../CustomerAuthContext'
 import { StatusBadge } from '../../components/StatusBadge'
 import { Skeleton } from '../../components/Skeleton'
 import { ChatThread } from '../../components/ChatThread'
 import { BankTransferDetails } from '../components/BankTransferDetails'
-import type { Engagement, Invoice } from '../../types'
-
-function useEngagement(id: string) {
-    const [engagement, setEngagement] = useState<Engagement | null | undefined>(undefined)
-
-    const reload = () => {
-        getDoc(doc(db, 'engagements', id))
-            .then((snap) => setEngagement(snap.exists() ? engagementFromDoc(snap) : null))
-            .catch(() => setEngagement(null))
-    }
-
-    useEffect(reload, [id])
-
-    return { engagement, reload }
-}
-
-// Fetched by id (from the engagement's advanceInvoiceId/finalInvoiceId) rather
-// than a `where('engagementId', ...)` query: Firestore can't prove a `list`
-// query is safe under the customer-scoped rule (which checks `customerId`, a
-// different field than the query filter), so a query here would silently
-// return nothing for a signed-in customer even though `get` on a known id works.
-function useInvoices(advanceInvoiceId: string, finalInvoiceId: string) {
-    const [invoices, setInvoices] = useState<Invoice[] | null>(null)
-
-    const reload = () => {
-        const ids = [advanceInvoiceId, finalInvoiceId].filter((id) => id !== '')
-        Promise.all(ids.map((id) => getDoc(doc(db, 'invoices', id))))
-            .then((snapshots) => setInvoices(snapshots.filter((snap) => snap.exists()).map(invoiceFromDoc)))
-            .catch(() => setInvoices([]))
-    }
-
-    useEffect(reload, [advanceInvoiceId, finalInvoiceId])
-
-    return { invoices, reload }
-}
+import type { Invoice } from '../../types'
 
 function InvoiceSection({ invoice, onSubmitted }: { invoice: Invoice; onSubmitted: () => void }) {
     return (
@@ -129,15 +92,7 @@ export function PortalEngagementDetail() {
                                 <ol className="mt-2 space-y-2">
                                     {sprint.phases.map((phase, phaseIndex) => (
                                         <li key={phaseIndex} className="flex items-center gap-3 text-sm">
-                                            <span
-                                                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
-                                                    phase.status === 'completed'
-                                                        ? 'bg-emerald-500/10 text-emerald-400'
-                                                        : phase.status === 'in_progress'
-                                                          ? 'bg-blue-500/10 text-blue-400'
-                                                          : 'bg-slate-800 text-slate-500'
-                                                }`}
-                                            >
+                                            <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${phaseDotClass[phase.status]}`}>
                                                 {phaseIndex + 1}
                                             </span>
                                             <span className={phase.status !== 'not_started' ? 'font-medium text-white' : 'text-slate-400'}>

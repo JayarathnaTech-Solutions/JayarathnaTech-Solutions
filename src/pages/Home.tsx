@@ -3,14 +3,16 @@ import { Link } from 'react-router'
 import { motion } from 'motion/react'
 import { collection, getDocs, limit, orderBy, query, where } from 'firebase/firestore'
 import { db } from '../firebase/config'
-import { toIsoString, projectFromDoc } from '../lib/firestore'
+import { projectFromDoc, testimonialFromDoc } from '../lib/firestore'
 import { Seo } from '../components/Seo'
+import { JsonLd } from '../components/JsonLd'
 import { CtaBanner } from '../components/CtaBanner'
 import { EmptyState } from '../components/EmptyState'
 import { HeroBackdrop } from '../components/HeroBackdrop'
 import { Reveal, StaggerGroup } from '../components/motion'
 import { MotionLink } from '../components/MotionLink'
 import { staggerItem, staggerContainer, itemTransition } from '../lib/motion'
+import { buildOrganizationSchema } from '../lib/siteInfo'
 import heroBackground from '../assets/background-image1.jpg'
 import heroBackground2 from '../assets/background-image2.jpg'
 import heroBackground3 from '../assets/background-image3.jpg'
@@ -39,28 +41,19 @@ function useFeaturedProjects() {
     return projects
 }
 
-function useFeaturedTestimonials() {
+// Fetches every approved testimonial (not just the featured 3 shown on the
+// page) so the review/aggregateRating structured data reflects the true
+// aggregate rather than a cherry-picked subset.
+function useApprovedTestimonials() {
     const [testimonials, setTestimonials] = useState<Testimonial[] | null>(null)
 
     useEffect(() => {
         let cancelled = false
 
-        getDocs(query(collection(db, 'testimonials'), where('status', '==', 'approved'), limit(3)))
+        getDocs(query(collection(db, 'testimonials'), where('status', '==', 'approved')))
             .then((snapshot) => {
                 if (cancelled) return
-                setTestimonials(
-                    snapshot.docs.map((doc) => {
-                        const data = doc.data()
-                        return {
-                            id: doc.id,
-                            clientName: data.clientName,
-                            message: data.message,
-                            rating: data.rating,
-                            status: data.status,
-                            createdAt: toIsoString(data.createdAt),
-                        } satisfies Testimonial
-                    }),
-                )
+                setTestimonials(snapshot.docs.map(testimonialFromDoc))
             })
             .catch(() => {
                 if (!cancelled) setTestimonials([])
@@ -72,6 +65,29 @@ function useFeaturedTestimonials() {
     }, [])
 
     return testimonials
+}
+
+// Schema.org Review objects require a numeric reviewRating — testimonials
+// without a star rating (message-only) are excluded from both the featured
+// rich-snippet reviews and the aggregate.
+function buildTestimonialsSchema(testimonials: Testimonial[]) {
+    const rated = testimonials.filter((t): t is Testimonial & { rating: number } => typeof t.rating === 'number')
+    if (rated.length === 0) return null
+
+    return {
+        ...buildOrganizationSchema(),
+        aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: (rated.reduce((sum, t) => sum + t.rating, 0) / rated.length).toFixed(1),
+            reviewCount: rated.length,
+        },
+        review: rated.map((t) => ({
+            '@type': 'Review',
+            author: { '@type': 'Person', name: t.clientName },
+            reviewRating: { '@type': 'Rating', ratingValue: t.rating, bestRating: 5 },
+            reviewBody: t.message,
+        })),
+    }
 }
 
 const heroImages = [heroBackground, heroBackground2, heroBackground3]
@@ -503,20 +519,22 @@ function FeaturedTestimonials({ testimonials }: { testimonials: Testimonial[] | 
 
 export function Home() {
     const projects = useFeaturedProjects()
-    const testimonials = useFeaturedTestimonials()
+    const testimonials = useApprovedTestimonials()
+    const testimonialsSchema = testimonials ? buildTestimonialsSchema(testimonials) : null
 
     return (
         <>
             <Seo
-                title="JayarathnaTech Solutions — Web & Software Development Agency"
-                description="We build digital solutions that drive real business growth — web applications, e-commerce platforms, and scalable software systems."
+                title="JayarathnaTech Solutions — Software Company in Sri Lanka & Worldwide"
+                description="JayarathnaTech Solutions is a software company based in Sri Lanka building web applications, e-commerce platforms, and custom software for clients in Sri Lanka and internationally."
             />
+            {testimonialsSchema && <JsonLd id="organization-reviews" data={testimonialsSchema} />}
 
             <Hero />
             <Services />
             <FeaturedProjects projects={projects} />
             <WhyChooseUs />
-            <FeaturedTestimonials testimonials={testimonials} />
+            <FeaturedTestimonials testimonials={testimonials?.slice(0, 3) ?? null} />
             <CtaBanner />
         </>
     )

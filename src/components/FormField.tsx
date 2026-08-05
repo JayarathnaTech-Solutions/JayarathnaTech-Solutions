@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { inputClass } from '../lib/ui'
 
 export function Field({
@@ -8,7 +9,7 @@ export function Field({
     required,
     defaultValue,
 }: {
-    label: string
+    label: ReactNode
     name: string
     type?: string
     placeholder?: string

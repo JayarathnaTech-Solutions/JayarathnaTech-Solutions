@@ -1,31 +1,23 @@
-import { useEffect, useState, type FormEvent } from 'react'
-import { collection, getDocs, orderBy, query } from 'firebase/firestore'
+import { useState, type FormEvent } from 'react'
+import { collection, orderBy, query } from 'firebase/firestore'
 import { db } from '../../firebase/config'
 import { customerFromDoc } from '../../lib/firestore'
+import { useFirestoreCollection } from '../../lib/useFirestoreCollection'
+import { formatDate } from '../../lib/format'
 import { CustomerAlreadyExistsError, createCustomerAccount, generateTempPassword } from '../../lib/customerProvisioning'
 import { useAuth } from '../AuthContext'
 import { SlidePanel } from '../../components/SlidePanel'
 import { StatusBadge } from '../../components/StatusBadge'
-import { inputClass } from '../../lib/ui'
+import { Field } from '../../components/FormField'
 import { Skeleton } from '../../components/Skeleton'
-import type { Customer } from '../../types'
 
 function useCustomers() {
-    const [customers, setCustomers] = useState<Customer[] | null>(null)
-
-    const reload = () => {
-        getDocs(query(collection(db, 'customers'), orderBy('createdAt', 'desc')))
-            .then((snapshot) => setCustomers(snapshot.docs.map(customerFromDoc)))
-            .catch(() => setCustomers([]))
-    }
-
-    useEffect(reload, [])
+    const { data: customers, reload } = useFirestoreCollection(
+        () => query(collection(db, 'customers'), orderBy('createdAt', 'desc')),
+        customerFromDoc,
+    )
 
     return { customers, reload }
-}
-
-function formatDate(iso: string) {
-    return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 function CreatedPanel({ email, tempPassword, onDone }: { email: string; tempPassword: string; onDone: () => void }) {
@@ -103,24 +95,17 @@ function CustomerForm({
 
     return (
         <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-                <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-slate-300">
-                    Name
-                </label>
-                <input id="name" name="name" type="text" required placeholder="Jane Perera" className={inputClass} />
-            </div>
-            <div>
-                <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-300">
-                    Email
-                </label>
-                <input id="email" name="email" type="email" required placeholder="jane@client.com" className={inputClass} />
-            </div>
-            <div>
-                <label htmlFor="company" className="mb-1.5 block text-sm font-medium text-slate-300">
-                    Company <span className="font-normal text-slate-500">(optional)</span>
-                </label>
-                <input id="company" name="company" type="text" placeholder="FinCorp (Pvt) Ltd" className={inputClass} />
-            </div>
+            <Field label="Name" name="name" placeholder="Jane Perera" required />
+            <Field label="Email" name="email" type="email" placeholder="jane@client.com" required />
+            <Field
+                label={
+                    <>
+                        Company <span className="font-normal text-slate-500">(optional)</span>
+                    </>
+                }
+                name="company"
+                placeholder="FinCorp (Pvt) Ltd"
+            />
 
             {error && <p className="text-sm text-red-400">{error}</p>}
 

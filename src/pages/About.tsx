@@ -325,8 +325,8 @@ export function About() {
     return (
         <>
             <Seo
-                title="About — JayarathnaTech Solutions"
-                description="Meet the team behind JayarathnaTech Solutions and learn about our mission to build digital products that drive real business growth."
+                title="About Us — Software Company in Sri Lanka | JayarathnaTech Solutions"
+                description="Meet the team behind JayarathnaTech Solutions, a software company based in Sri Lanka building digital products for clients locally and around the world."
             />
 
             <Hero />

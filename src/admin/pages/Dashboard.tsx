@@ -2,8 +2,10 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import { collection, getCountFromServer, getDocs, limit, orderBy, query, where } from 'firebase/firestore'
 import { db } from '../../firebase/config'
-import { toIsoString } from '../../lib/firestore'
+import { contactMessageFromDoc, testimonialFromDoc } from '../../lib/firestore'
+import { timeAgo } from '../../lib/format'
 import { useAuth } from '../AuthContext'
+import { Avatar } from '../../components/Avatar'
 import type { ContactMessage, Testimonial } from '../../types'
 
 interface DashboardData {
@@ -71,29 +73,8 @@ function useDashboardData(isAdmin: boolean) {
                 totalProjectsCount: totalProjectsCount.data().count,
                 pendingAdvanceCount: pendingAdvanceCount?.data().count ?? null,
                 paymentsNeedingReviewCount: paymentsNeedingReviewCount?.data().count ?? null,
-                recentMessages: recentMessagesSnapshot.docs.map((doc) => {
-                    const d = doc.data()
-                    return {
-                        id: doc.id,
-                        name: d.name,
-                        email: d.email,
-                        phone: d.phone,
-                        message: d.message,
-                        read: d.read,
-                        createdAt: toIsoString(d.createdAt),
-                    } satisfies ContactMessage
-                }),
-                pendingTestimonials: pendingTestimonialsSnapshot.docs.map((doc) => {
-                    const d = doc.data()
-                    return {
-                        id: doc.id,
-                        clientName: d.clientName,
-                        message: d.message,
-                        rating: d.rating,
-                        status: d.status,
-                        createdAt: toIsoString(d.createdAt),
-                    } satisfies Testimonial
-                }),
+                recentMessages: recentMessagesSnapshot.docs.map(contactMessageFromDoc),
+                pendingTestimonials: pendingTestimonialsSnapshot.docs.map(testimonialFromDoc),
             })
         }
 
@@ -110,15 +91,6 @@ function useDashboardData(isAdmin: boolean) {
     }, [isAdmin])
 
     return { data, error }
-}
-
-function timeAgo(iso: string): string {
-    const minutes = Math.floor((Date.now() - new Date(iso).getTime()) / 60000)
-    if (minutes < 1) return 'just now'
-    if (minutes < 60) return `${minutes}m ago`
-    const hours = Math.floor(minutes / 60)
-    if (hours < 24) return `${hours}h ago`
-    return `${Math.floor(hours / 24)}d ago`
 }
 
 function StatCard({ label, value, icon }: { label: string; value: number; icon: ReactNode }) {
@@ -227,14 +199,6 @@ function MiniStars({ rating }: { rating?: number }) {
     )
 }
 
-function Avatar({ name }: { name: string }) {
-    return (
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-800 text-xs font-semibold text-slate-300">
-            {name.charAt(0).toUpperCase() || '?'}
-        </div>
-    )
-}
-
 function RecentMessages({ messages }: { messages: ContactMessage[] }) {
     return (
         <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
@@ -251,7 +215,7 @@ function RecentMessages({ messages }: { messages: ContactMessage[] }) {
                 <ul className="mt-5 space-y-4">
                     {messages.map((message) => (
                         <li key={message.id} className="flex items-start gap-3">
-                            <Avatar name={message.name} />
+                            <Avatar label={message.name} />
                             <div className="min-w-0 flex-1">
                                 <div className="flex items-center justify-between gap-2">
                                     <p className="truncate text-sm font-medium">{message.name}</p>
@@ -283,7 +247,7 @@ function PendingTestimonials({ testimonials }: { testimonials: Testimonial[] }) 
                 <ul className="mt-5 space-y-4">
                     {testimonials.map((testimonial) => (
                         <li key={testimonial.id} className="flex items-start gap-3">
-                            <Avatar name={testimonial.clientName} />
+                            <Avatar label={testimonial.clientName} />
                             <div className="min-w-0 flex-1">
                                 <div className="flex items-center justify-between gap-2">
                                     <p className="truncate text-sm font-medium">{testimonial.clientName}</p>

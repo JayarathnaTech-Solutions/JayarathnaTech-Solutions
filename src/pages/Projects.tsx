@@ -220,8 +220,8 @@ export function Projects() {
     return (
         <>
             <Seo
-                title="Projects — JayarathnaTech Solutions"
-                description="Explore the web applications, e-commerce platforms, and digital products JayarathnaTech Solutions has designed and built for clients."
+                title="Our Projects — Software Company in Sri Lanka | JayarathnaTech Solutions"
+                description="Explore web applications, e-commerce platforms, and digital products delivered by JayarathnaTech Solutions for clients in Sri Lanka and internationally."
             />
 
             <Hero />

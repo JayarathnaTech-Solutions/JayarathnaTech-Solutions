@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react'
-import { addDoc, collection, doc, getDocs, orderBy, query, serverTimestamp, updateDoc, where } from 'firebase/firestore'
+import { useState } from 'react'
+import { addDoc, collection, doc, orderBy, query, serverTimestamp, updateDoc, where } from 'firebase/firestore'
 import { db } from '../../firebase/config'
-import { toIsoString } from '../../lib/firestore'
+import { quoteFromDoc } from '../../lib/firestore'
+import { useFirestoreCollection } from '../../lib/useFirestoreCollection'
+import { formatDate } from '../../lib/format'
 import {
     calcBalance,
     calcBufferAmount,
@@ -26,41 +28,17 @@ const filterTabs: { value: QuoteStatus | 'all'; label: string }[] = [
     { value: 'rejected', label: 'Rejected' },
 ]
 
-function quoteFromDoc(id: string, data: Record<string, unknown>): Quote {
-    return {
-        id,
-        clientName: data.clientName as string,
-        clientEmail: data.clientEmail as string,
-        lineItems: (data.lineItems as QuoteLineItem[] | undefined) ?? [],
-        status: data.status as QuoteStatus,
-        currency: (data.currency as QuoteCurrency | undefined) ?? 'USD',
-        bufferPercent: (data.bufferPercent as number | undefined) ?? 0,
-        profitPercent: (data.profitPercent as number | undefined) ?? 0,
-        createdAt: toIsoString(data.createdAt),
-    }
-}
-
 function useQuotes(filter: QuoteStatus | 'all') {
-    const [quotes, setQuotes] = useState<Quote[] | null>(null)
-
-    const reload = () => {
-        const q =
+    const { data: quotes, reload } = useFirestoreCollection(
+        () =>
             filter === 'all'
                 ? query(collection(db, 'quotes'), orderBy('createdAt', 'desc'))
-                : query(collection(db, 'quotes'), where('status', '==', filter), orderBy('createdAt', 'desc'))
-
-        getDocs(q)
-            .then((snapshot) => setQuotes(snapshot.docs.map((snap) => quoteFromDoc(snap.id, snap.data()))))
-            .catch(() => setQuotes([]))
-    }
-
-    useEffect(reload, [filter])
+                : query(collection(db, 'quotes'), where('status', '==', filter), orderBy('createdAt', 'desc')),
+        quoteFromDoc,
+        [filter],
+    )
 
     return { quotes, reload }
-}
-
-function formatDate(iso: string) {
-    return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 function LineItemsEditor({

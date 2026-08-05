@@ -1,8 +1,9 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router'
-import { addDoc, collection, getDocs, orderBy, query, serverTimestamp, where } from 'firebase/firestore'
+import { addDoc, collection, orderBy, query, serverTimestamp, where } from 'firebase/firestore'
 import { db } from '../../firebase/config'
 import { customerFromDoc, engagementFromDoc } from '../../lib/firestore'
+import { useFirestoreCollection } from '../../lib/useFirestoreCollection'
 import { formatCurrency } from '../../lib/quote'
 import { engagementStatusLabels } from '../../lib/engagement'
 import { useAuth } from '../AuthContext'
@@ -11,38 +12,29 @@ import { SlidePanel } from '../../components/SlidePanel'
 import { StatusBadge } from '../../components/StatusBadge'
 import { inputClass } from '../../lib/ui'
 import { Skeleton } from '../../components/Skeleton'
-import type { Customer, Engagement, StaffMember } from '../../types'
+import type { Customer, StaffMember } from '../../types'
 
 function useEngagements() {
     const { staff } = useAuth()
-    const [engagements, setEngagements] = useState<Engagement[] | null>(null)
-
-    const reload = () => {
-        const q =
+    const { data: engagements, reload } = useFirestoreCollection(
+        () =>
             staff.role === 'admin'
                 ? query(collection(db, 'engagements'), orderBy('createdAt', 'desc'))
-                : query(collection(db, 'engagements'), where('assignedDeveloperEmails', 'array-contains', staff.email), orderBy('createdAt', 'desc'))
-
-        getDocs(q)
-            .then((snapshot) => setEngagements(snapshot.docs.map(engagementFromDoc)))
-            .catch(() => setEngagements([]))
-    }
-
-    useEffect(reload, [staff.role, staff.email])
+                : query(collection(db, 'engagements'), where('assignedDeveloperEmails', 'array-contains', staff.email), orderBy('createdAt', 'desc')),
+        engagementFromDoc,
+        [staff.role, staff.email],
+    )
 
     return { engagements, reload }
 }
 
 function useCustomers() {
-    const [customers, setCustomers] = useState<Customer[] | null>(null)
+    const { data } = useFirestoreCollection(
+        () => query(collection(db, 'customers'), orderBy('createdAt', 'desc')),
+        customerFromDoc,
+    )
 
-    useEffect(() => {
-        getDocs(query(collection(db, 'customers'), orderBy('createdAt', 'desc')))
-            .then((snapshot) => setCustomers(snapshot.docs.map(customerFromDoc)))
-            .catch(() => setCustomers([]))
-    }, [])
-
-    return customers
+    return data
 }
 
 function NewEngagementForm({

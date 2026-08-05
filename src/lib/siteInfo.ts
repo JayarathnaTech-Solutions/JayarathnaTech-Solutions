@@ -1,3 +1,6 @@
+export const SITE_NAME = 'JayarathnaTech Solutions'
+export const SITE_URL = 'https://jayarathnatechsolutions.com'
+
 export const siteContact = {
     email: 'hello@jayarathnatechsolutions.com',
     phone: '+94 78 628 7211',
@@ -15,3 +18,27 @@ export const navLinks = [
     { to: '/projects', label: 'Projects' },
     { to: '/contact', label: 'Contact' },
 ]
+
+// Base Organization structured data (schema.org), shared by the sitewide
+// JSON-LD in PublicLayout and extended with aggregateRating/review on Home.
+export function buildOrganizationSchema() {
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        '@id': `${SITE_URL}/#organization`,
+        name: SITE_NAME,
+        url: SITE_URL,
+        logo: `${SITE_URL}/favicon.svg`,
+        email: siteContact.email,
+        telephone: siteContact.phone,
+        address: {
+            '@type': 'PostalAddress',
+            addressLocality: 'Negombo',
+            addressCountry: 'LK',
+        },
+        areaServed: ['Sri Lanka', 'Worldwide'],
+        sameAs: [siteSocial.github],
+        description:
+            'JayarathnaTech Solutions is a software company based in Negombo, Sri Lanka, building web applications, e-commerce platforms, and custom software for clients in Sri Lanka and internationally.',
+    }
+}

@@ -1,24 +1,21 @@
-import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { collection, getDocs, orderBy, query, where } from 'firebase/firestore'
+import { collection, orderBy, query, where } from 'firebase/firestore'
 import { db } from '../../firebase/config'
 import { engagementFromDoc } from '../../lib/firestore'
+import { useFirestoreCollection } from '../../lib/useFirestoreCollection'
 import { currentPhase, currentSprint, engagementStatusLabels } from '../../lib/engagement'
 import { useCustomerAuth } from '../CustomerAuthContext'
 import { StatusBadge } from '../../components/StatusBadge'
 import { Skeleton } from '../../components/Skeleton'
-import type { Engagement } from '../../types'
 
 function useMyEngagements(customerId: string) {
-    const [engagements, setEngagements] = useState<Engagement[] | null>(null)
+    const { data } = useFirestoreCollection(
+        () => query(collection(db, 'engagements'), where('customerId', '==', customerId), orderBy('createdAt', 'desc')),
+        engagementFromDoc,
+        [customerId],
+    )
 
-    useEffect(() => {
-        getDocs(query(collection(db, 'engagements'), where('customerId', '==', customerId), orderBy('createdAt', 'desc')))
-            .then((snapshot) => setEngagements(snapshot.docs.map(engagementFromDoc)))
-            .catch(() => setEngagements([]))
-    }, [customerId])
-
-    return engagements
+    return data
 }
 
 export function PortalDashboard() {

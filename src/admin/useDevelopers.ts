@@ -1,17 +1,13 @@
-import { useEffect, useState } from 'react'
-import { collection, getDocs, query, where } from 'firebase/firestore'
+import { collection, query, where } from 'firebase/firestore'
 import { db } from '../firebase/config'
 import { staffMemberFromDoc } from '../lib/firestore'
-import type { StaffMember } from '../types'
+import { useFirestoreCollection } from '../lib/useFirestoreCollection'
 
 export function useDevelopers() {
-    const [developers, setDevelopers] = useState<StaffMember[] | null>(null)
+    const { data } = useFirestoreCollection(
+        () => query(collection(db, 'staff'), where('role', '==', 'developer')),
+        staffMemberFromDoc,
+    )
 
-    useEffect(() => {
-        getDocs(query(collection(db, 'staff'), where('role', '==', 'developer')))
-            .then((snapshot) => setDevelopers(snapshot.docs.map(staffMemberFromDoc)))
-            .catch(() => setDevelopers([]))
-    }, [])
-
-    return developers
+    return data
 }

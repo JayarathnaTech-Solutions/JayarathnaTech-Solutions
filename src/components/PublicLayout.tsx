@@ -3,6 +3,8 @@ import { Outlet, useLocation } from 'react-router'
 import { motion } from 'motion/react'
 import { Navbar } from './Navbar'
 import { Footer } from './Footer'
+import { JsonLd } from './JsonLd'
+import { buildOrganizationSchema } from '../lib/siteInfo'
 
 export function PublicLayout() {
   const location = useLocation()
@@ -13,6 +15,7 @@ export function PublicLayout() {
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-950 text-white">
+      <JsonLd id="organization" data={buildOrganizationSchema()} />
       <Navbar />
       <motion.main
         key={location.pathname}

@@ -255,8 +255,8 @@ export function Services() {
     return (
         <>
             <Seo
-                title="Services — JayarathnaTech Solutions"
-                description="End-to-end software development services — web, e-commerce, mobile, UI/UX, SaaS, and ongoing support — built to help your business launch, scale, and succeed."
+                title="Software Development Services in Sri Lanka | JayarathnaTech Solutions"
+                description="End-to-end software development services from a Sri Lanka-based company — web, e-commerce, mobile, UI/UX, SaaS, and ongoing support for clients in Sri Lanka and internationally."
             />
 
             <Hero />

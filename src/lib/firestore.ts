@@ -1,5 +1,23 @@
 import { Timestamp, type DocumentData, type QueryDocumentSnapshot, type DocumentSnapshot } from 'firebase/firestore'
-import type { BankDetails, ChatMessage, Customer, Engagement, Invoice, Phase, PhaseStatus, Project, Sprint, StaffMember, TestimonialInvite } from '../types'
+import type {
+    BankDetails,
+    ChatMessage,
+    ContactMessage,
+    Customer,
+    Engagement,
+    Invoice,
+    Phase,
+    PhaseStatus,
+    Project,
+    Quote,
+    QuoteCurrency,
+    QuoteLineItem,
+    QuoteStatus,
+    Sprint,
+    StaffMember,
+    Testimonial,
+    TestimonialInvite,
+} from '../types'
 
 export function toIsoString(value: unknown): string {
     if (value instanceof Timestamp) return value.toDate().toISOString()
@@ -184,6 +202,55 @@ export function invoiceFromDoc(
         proofSubmittedAt: data.proofSubmittedAt ? toIsoString(data.proofSubmittedAt) : undefined,
         verifiedBy: data.verifiedBy,
         verifiedAt: data.verifiedAt ? toIsoString(data.verifiedAt) : undefined,
+        createdAt: toIsoString(data.createdAt),
+    }
+}
+
+export function quoteFromDoc(
+    doc: QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData>,
+): Quote {
+    const data = doc.data()
+    if (!data) throw new Error(`Quote ${doc.id} does not exist`)
+    return {
+        id: doc.id,
+        clientName: data.clientName,
+        clientEmail: data.clientEmail,
+        lineItems: (data.lineItems as QuoteLineItem[] | undefined) ?? [],
+        status: data.status as QuoteStatus,
+        currency: (data.currency as QuoteCurrency | undefined) ?? 'USD',
+        bufferPercent: data.bufferPercent ?? 0,
+        profitPercent: data.profitPercent ?? 0,
+        createdAt: toIsoString(data.createdAt),
+    }
+}
+
+export function testimonialFromDoc(
+    doc: QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData>,
+): Testimonial {
+    const data = doc.data()
+    if (!data) throw new Error(`Testimonial ${doc.id} does not exist`)
+    return {
+        id: doc.id,
+        clientName: data.clientName,
+        message: data.message,
+        rating: data.rating,
+        status: data.status,
+        createdAt: toIsoString(data.createdAt),
+    }
+}
+
+export function contactMessageFromDoc(
+    doc: QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData>,
+): ContactMessage {
+    const data = doc.data()
+    if (!data) throw new Error(`Contact message ${doc.id} does not exist`)
+    return {
+        id: doc.id,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        message: data.message,
+        read: data.read,
         createdAt: toIsoString(data.createdAt),
     }
 }

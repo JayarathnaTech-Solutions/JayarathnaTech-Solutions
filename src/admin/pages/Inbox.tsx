@@ -1,59 +1,21 @@
-import { useEffect, useMemo, useState } from 'react'
-import { collection, doc, getDocs, orderBy, query, updateDoc } from 'firebase/firestore'
+import { useMemo, useState } from 'react'
+import { collection, doc, orderBy, query, updateDoc } from 'firebase/firestore'
 import { db } from '../../firebase/config'
-import { toIsoString } from '../../lib/firestore'
+import { contactMessageFromDoc } from '../../lib/firestore'
+import { useFirestoreCollection } from '../../lib/useFirestoreCollection'
+import { formatDateTime, timeAgo } from '../../lib/format'
 import { inputClass } from '../../lib/ui'
 import { Skeleton } from '../../components/Skeleton'
+import { Avatar } from '../../components/Avatar'
 import type { ContactMessage } from '../../types'
 
 function useMessages() {
-    const [messages, setMessages] = useState<ContactMessage[] | null>(null)
-
-    const reload = () => {
-        getDocs(query(collection(db, 'contactMessages'), orderBy('createdAt', 'desc')))
-            .then((snapshot) => {
-                setMessages(
-                    snapshot.docs.map((snap) => {
-                        const data = snap.data()
-                        return {
-                            id: snap.id,
-                            name: data.name,
-                            email: data.email,
-                            phone: data.phone,
-                            message: data.message,
-                            read: data.read,
-                            createdAt: toIsoString(data.createdAt),
-                        } satisfies ContactMessage
-                    }),
-                )
-            })
-            .catch(() => setMessages([]))
-    }
-
-    useEffect(reload, [])
+    const { data: messages, reload } = useFirestoreCollection(
+        () => query(collection(db, 'contactMessages'), orderBy('createdAt', 'desc')),
+        contactMessageFromDoc,
+    )
 
     return { messages, reload }
-}
-
-function timeAgo(iso: string): string {
-    const minutes = Math.floor((Date.now() - new Date(iso).getTime()) / 60000)
-    if (minutes < 1) return 'just now'
-    if (minutes < 60) return `${minutes}m ago`
-    const hours = Math.floor(minutes / 60)
-    if (hours < 24) return `${hours}h ago`
-    return `${Math.floor(hours / 24)}d ago`
-}
-
-function formatDate(iso: string) {
-    return new Date(iso).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })
-}
-
-function Avatar({ name }: { name: string }) {
-    return (
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-800 text-xs font-semibold text-slate-300">
-            {name.charAt(0).toUpperCase() || '?'}
-        </div>
-    )
 }
 
 function MessageListItem({
@@ -73,7 +35,7 @@ function MessageListItem({
                 active ? 'bg-blue-500/10' : 'hover:bg-slate-900/60'
             }`}
         >
-            <Avatar name={message.name} />
+            <Avatar label={message.name} />
             <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
                     <p className={`truncate text-sm ${message.read ? 'font-medium text-slate-300' : 'font-semibold text-white'}`}>
@@ -113,7 +75,7 @@ function MessageDetail({
                 <h2 className="text-lg font-semibold">{message.name}</h2>
                 <p className="mt-1 text-sm text-slate-400">{message.email}</p>
                 {message.phone && <p className="text-sm text-slate-400">{message.phone}</p>}
-                <p className="mt-1 text-xs text-slate-500">{formatDate(message.createdAt)}</p>
+                <p className="mt-1 text-xs text-slate-500">{formatDateTime(message.createdAt)}</p>
             </div>
 
             <p className="mt-6 flex-1 whitespace-pre-wrap text-sm text-slate-300">{message.message}</p>

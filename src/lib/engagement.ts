@@ -15,6 +15,13 @@ export const phaseStatusLabels: Record<PhaseStatus, string> = {
 /** Default phase checklist for a newly added sprint. */
 export const defaultPhaseTemplate = ['Analysis', 'Design', 'Development', 'Testing', 'Deploy']
 
+/** Color classes for the numbered phase-step dot shown on both admin and portal engagement views. */
+export const phaseDotClass: Record<PhaseStatus, string> = {
+    completed: 'bg-emerald-500/10 text-emerald-400',
+    in_progress: 'bg-blue-500/10 text-blue-400',
+    not_started: 'bg-slate-800 text-slate-500',
+}
+
 // The single phase shown on customer-facing summaries: the first one in
 // progress, else the first not yet started, else the last (all done).
 export function currentPhase(phases: Phase[]): Phase | null {

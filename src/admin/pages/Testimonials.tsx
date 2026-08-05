@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { addDoc, collection, doc, getCountFromServer, getDocs, query, serverTimestamp, updateDoc, where } from 'firebase/firestore'
 import { db } from '../../firebase/config'
-import { toIsoString } from '../../lib/firestore'
+import { testimonialFromDoc } from '../../lib/firestore'
+import { timeAgo } from '../../lib/format'
 import { Skeleton } from '../../components/Skeleton'
+import { Avatar } from '../../components/Avatar'
 import type { Testimonial, TestimonialStatus } from '../../types'
 
 function usePendingCount(version: number) {
@@ -23,21 +25,7 @@ function useTestimonials(status: TestimonialStatus) {
     const reload = () => {
         getDocs(query(collection(db, 'testimonials'), where('status', '==', status)))
             .then((snapshot) => {
-                setTestimonials(
-                    snapshot.docs
-                        .map((snap) => {
-                            const data = snap.data()
-                            return {
-                                id: snap.id,
-                                clientName: data.clientName,
-                                message: data.message,
-                                rating: data.rating,
-                                status: data.status,
-                                createdAt: toIsoString(data.createdAt),
-                            } satisfies Testimonial
-                        })
-                        .sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
-                )
+                setTestimonials(snapshot.docs.map(testimonialFromDoc).sort((a, b) => b.createdAt.localeCompare(a.createdAt)))
             })
             .catch(() => setTestimonials([]))
     }
@@ -45,15 +33,6 @@ function useTestimonials(status: TestimonialStatus) {
     useEffect(reload, [status])
 
     return { testimonials, reload }
-}
-
-function timeAgo(iso: string): string {
-    const minutes = Math.floor((Date.now() - new Date(iso).getTime()) / 60000)
-    if (minutes < 1) return 'just now'
-    if (minutes < 60) return `${minutes}m ago`
-    const hours = Math.floor(minutes / 60)
-    if (hours < 24) return `${hours}h ago`
-    return `${Math.floor(hours / 24)}d ago`
 }
 
 function Stars({ rating }: { rating?: number }) {
@@ -69,14 +48,6 @@ function Stars({ rating }: { rating?: number }) {
     )
 }
 
-function Avatar({ name }: { name: string }) {
-    return (
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-800 text-sm font-semibold text-slate-300">
-            {name.charAt(0).toUpperCase() || '?'}
-        </div>
-    )
-}
-
 function PendingCard({ testimonial, onDecided }: { testimonial: Testimonial; onDecided: () => void }) {
     const [busy, setBusy] = useState(false)
 
@@ -88,7 +59,7 @@ function PendingCard({ testimonial, onDecided }: { testimonial: Testimonial; onD
 
     return (
         <div className="flex items-start gap-3 rounded-xl border border-slate-800 bg-slate-900/40 p-5">
-            <Avatar name={testimonial.clientName} />
+            <Avatar label={testimonial.clientName} size="md" />
             <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
                     <p className="font-medium">{testimonial.clientName}</p>
@@ -145,7 +116,7 @@ function TestimonialActionCard({
 
     return (
         <div className="flex items-start gap-3 rounded-xl border border-slate-800 bg-slate-900/40 p-5">
-            <Avatar name={testimonial.clientName} />
+            <Avatar label={testimonial.clientName} size="md" />
             <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
                     <p className="font-medium">{testimonial.clientName}</p>

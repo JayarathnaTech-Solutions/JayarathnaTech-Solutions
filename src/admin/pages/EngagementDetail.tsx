@@ -2,9 +2,11 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useParams } from 'react-router'
 import { collection, doc, getDoc, updateDoc, writeBatch } from 'firebase/firestore'
 import { db } from '../../firebase/config'
-import { customerFromDoc, engagementFromDoc, invoiceFromDoc } from '../../lib/firestore'
+import { customerFromDoc } from '../../lib/firestore'
+import { useEngagement, useInvoices } from '../../lib/useEngagementDetail'
 import { calcBalance, calcDeposit, formatCurrency } from '../../lib/quote'
-import { defaultPhaseTemplate, engagementStatusLabels, hasReachedDelivery, phaseStatusLabels } from '../../lib/engagement'
+import { defaultPhaseTemplate, engagementStatusLabels, hasReachedDelivery, phaseDotClass, phaseStatusLabels } from '../../lib/engagement'
+import { formatDateTime } from '../../lib/format'
 import { useAuth } from '../AuthContext'
 import { useDevelopers } from '../useDevelopers'
 import { StatusBadge } from '../../components/StatusBadge'
@@ -12,20 +14,6 @@ import { ChatThread } from '../../components/ChatThread'
 import { inputClass } from '../../lib/ui'
 import { Skeleton } from '../../components/Skeleton'
 import type { Currency, Engagement, Invoice, Phase, PhaseStatus, Sprint } from '../../types'
-
-function useEngagement(id: string) {
-    const [engagement, setEngagement] = useState<Engagement | null | undefined>(undefined)
-
-    const reload = () => {
-        getDoc(doc(db, 'engagements', id))
-            .then((snap) => setEngagement(snap.exists() ? engagementFromDoc(snap) : null))
-            .catch(() => setEngagement(null))
-    }
-
-    useEffect(reload, [id])
-
-    return { engagement, reload }
-}
 
 function useCustomerName(customerId: string) {
     const [name, setName] = useState<string | null>(null)
@@ -41,30 +29,6 @@ function useCustomerName(customerId: string) {
     }, [customerId])
 
     return name
-}
-
-// Fetched by id (from the engagement's advanceInvoiceId/finalInvoiceId) rather
-// than a `where('engagementId', ...)` query — see the same note in
-// src/portal/pages/EngagementDetail.tsx. Works unconditionally for admin here
-// since the admin rule branch is unconstrained, but fetching by id avoids
-// relying on that and needs no composite index.
-function useInvoices(advanceInvoiceId: string, finalInvoiceId: string) {
-    const [invoices, setInvoices] = useState<Invoice[] | null>(null)
-
-    const reload = () => {
-        const ids = [advanceInvoiceId, finalInvoiceId].filter((id) => id !== '')
-        Promise.all(ids.map((id) => getDoc(doc(db, 'invoices', id))))
-            .then((snapshots) => setInvoices(snapshots.filter((snap) => snap.exists()).map(invoiceFromDoc)))
-            .catch(() => setInvoices([]))
-    }
-
-    useEffect(reload, [advanceInvoiceId, finalInvoiceId])
-
-    return { invoices, reload }
-}
-
-function formatDateTime(iso: string) {
-    return new Date(iso).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })
 }
 
 function SetContractValueForm({ engagement, onSaved }: { engagement: Engagement; onSaved: () => void }) {
@@ -210,12 +174,6 @@ function SprintsForm({ engagement, onSaved }: { engagement: Engagement; onSaved:
             </div>
         </div>
     )
-}
-
-const phaseDotClass: Record<PhaseStatus, string> = {
-    completed: 'bg-emerald-500/10 text-emerald-400',
-    in_progress: 'bg-blue-500/10 text-blue-400',
-    not_started: 'bg-slate-800 text-slate-500',
 }
 
 // Each sprint has its own phase checklist, tracked independently — admin can

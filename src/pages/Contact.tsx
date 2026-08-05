@@ -242,8 +242,8 @@ export function Contact() {
     return (
         <>
             <Seo
-                title="Contact — JayarathnaTech Solutions"
-                description="Have a project in mind? Get in touch with JayarathnaTech Solutions — we'd love to hear from you."
+                title="Contact Us — Software Company in Sri Lanka | JayarathnaTech Solutions"
+                description="Get in touch with JayarathnaTech Solutions, a software company in Negombo, Sri Lanka, working with clients across Sri Lanka and around the world."
             />
 
             <section className="mx-auto max-w-7xl px-6 py-16 md:py-24">

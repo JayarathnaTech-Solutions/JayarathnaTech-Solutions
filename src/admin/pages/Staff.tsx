@@ -1,40 +1,26 @@
-import { useEffect, useState, type FormEvent } from 'react'
-import { collection, deleteDoc, doc, getDocs, orderBy, query, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
+import { useState, type FormEvent } from 'react'
+import { collection, deleteDoc, doc, orderBy, query, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
 import { db } from '../../firebase/config'
 import { staffMemberFromDoc } from '../../lib/firestore'
+import { useFirestoreCollection } from '../../lib/useFirestoreCollection'
+import { formatDate } from '../../lib/format'
 import { useAuth } from '../AuthContext'
 import { SlidePanel } from '../../components/SlidePanel'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { StatusBadge } from '../../components/StatusBadge'
+import { Avatar } from '../../components/Avatar'
+import { EditIcon, DeleteIcon } from '../../components/icons'
 import { inputClass } from '../../lib/ui'
 import { Skeleton } from '../../components/Skeleton'
 import type { StaffMember, StaffRole } from '../../types'
 
 function useStaff() {
-    const [staff, setStaff] = useState<StaffMember[] | null>(null)
-
-    const reload = () => {
-        getDocs(query(collection(db, 'staff'), orderBy('createdAt', 'desc')))
-            .then((snapshot) => setStaff(snapshot.docs.map(staffMemberFromDoc)))
-            .catch(() => setStaff([]))
-    }
-
-    useEffect(reload, [])
+    const { data: staff, reload } = useFirestoreCollection(
+        () => query(collection(db, 'staff'), orderBy('createdAt', 'desc')),
+        staffMemberFromDoc,
+    )
 
     return { staff, reload }
-}
-
-function formatDate(iso: string) {
-    return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-}
-
-function Avatar({ name, email }: { name: string; email: string }) {
-    const initial = (name || email).charAt(0).toUpperCase() || '?'
-    return (
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-800 text-xs font-semibold text-slate-300">
-            {initial}
-        </div>
-    )
 }
 
 function InviteForm({
@@ -139,22 +125,6 @@ function InviteForm({
     )
 }
 
-function EditIcon() {
-    return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M11 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5Z" />
-        </svg>
-    )
-}
-
-function DeleteIcon() {
-    return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16Z" />
-        </svg>
-    )
-}
-
 export function AdminStaff() {
     const { staff: currentStaff } = useAuth()
     const { staff, reload } = useStaff()
@@ -236,7 +206,7 @@ export function AdminStaff() {
                                 <tr key={member.id}>
                                     <td className="px-6 py-3">
                                         <div className="flex items-center gap-3">
-                                            <Avatar name={member.name} email={member.email} />
+                                            <Avatar label={member.name || member.email} />
                                             <span className="font-medium">{member.name || '(pending sign-in)'}</span>
                                         </div>
                                     </td>

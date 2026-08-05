@@ -1,4 +1,4 @@
-// This module builds a PDF document (not a React UI component) and pairs a
+    // This module builds a PDF document (not a React UI component) and pairs a
 // react-pdf template with an export function, so it doesn't fit the
 // component-only-exports shape Fast Refresh expects.
 /* eslint-disable react-refresh/only-export-components */

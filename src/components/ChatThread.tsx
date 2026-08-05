@@ -4,12 +4,9 @@ import { db } from '../firebase/config'
 import { chatMessageFromDoc } from '../lib/firestore'
 import { uploadImage, RECEIPTS_UPLOAD_PRESET } from '../lib/cloudinary'
 import { inputClass } from '../lib/ui'
+import { formatTime } from '../lib/format'
 import { Skeleton } from './Skeleton'
 import type { ChatMessage, ChatSenderRole } from '../types'
-
-function formatTime(iso: string) {
-    return new Date(iso).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
-}
 
 const roleLabels: Record<ChatSenderRole, string> = {
     admin: 'Admin',
