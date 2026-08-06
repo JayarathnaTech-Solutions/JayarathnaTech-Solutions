@@ -7,7 +7,7 @@ import {EmptyState} from "./EmptyState.tsx";
 
 export function FeaturedProjects({ projects }: { projects: Project[] | null }) {
     return (
-        <section className="mx-auto max-w-7xl px-6 py-16">
+        <section className="mx-auto max-w-screen-2xl px-6 py-16">
             <Reveal className="flex flex-wrap items-end justify-between gap-4">
                 <div>
           <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-600 dark:text-blue-400">

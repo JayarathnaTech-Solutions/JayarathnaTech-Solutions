@@ -22,7 +22,7 @@ export function NotFound() {
                 />
 
                 <motion.div
-                    className="relative mx-auto flex max-w-7xl flex-col items-center px-6 py-32 text-center md:py-44"
+                    className="relative mx-auto flex max-w-screen-2xl flex-col items-center px-6 py-32 text-center md:py-44"
                     initial="hidden"
                     animate="visible"
                     variants={staggerContainer}
