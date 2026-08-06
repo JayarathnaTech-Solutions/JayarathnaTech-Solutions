@@ -20,7 +20,7 @@ export function Hero() {
     }, [])
 
     return (
-        <section className="relative flex min-h-[70vh] items-center overflow-hidden text-white">
+        <section className="relative flex min-h-[73vh] items-center overflow-hidden text-white">
             <div className="absolute inset-0 z-0 overflow-hidden bg-slate-900">
                 <AnimatePresence initial={false}>
                     <motion.div
@@ -36,7 +36,7 @@ export function Hero() {
                 </AnimatePresence>
             </div>
 
-            <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-12 px-6 py-24 md:grid-cols-[3fr_2fr] md:items-center">
+            <div className="relative z-10 mx-auto grid w-full max-w-screen-2xl gap-12 px-6 py-24 md:grid-cols-[3fr_2fr] md:items-center">
                 <motion.div
                     initial="hidden"
                     animate="visible"
@@ -57,9 +57,9 @@ export function Hero() {
                         transition={itemTransition}
                         className="mt-5 text-4xl font-bold tracking-tight sm:text-6xl"
                     >
-                        We Build Digital Solutions That Drive{' '}
+                        We Build Digital Solutions <br/> That Drive Real Business{' '}
                         <span className="bg-linear-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
-                            Real Business Growth
+                            Growth
                         </span>
                     </motion.h1>
 

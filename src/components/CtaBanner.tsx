@@ -3,7 +3,7 @@ import { MotionLink } from './MotionLink'
 
 export function CtaBanner() {
   return (
-    <section className="mx-auto max-w-7xl px-6 pb-20">
+    <section className="mx-auto max-w-5xl px-6 pb-20">
       <Reveal className="flex flex-col items-start gap-6 rounded-2xl bg-linear-to-r from-blue-600 to-indigo-600 p-8 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-start gap-4">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-white/15">

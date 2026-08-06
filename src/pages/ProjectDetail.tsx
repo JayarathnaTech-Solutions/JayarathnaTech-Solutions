@@ -151,7 +151,7 @@ function ProjectBody({ project }: { project: Project }) {
 function ProjectView({ project }: { project: Project }) {
     return (
         <motion.section
-            className="mx-auto max-w-7xl px-6 py-12"
+            className="mx-auto max-w-screen-2xl px-6 py-12"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4 }}
@@ -199,7 +199,7 @@ function ProjectView({ project }: { project: Project }) {
 
 function NotFound() {
     return (
-        <section className="mx-auto max-w-7xl px-6 py-24 text-center">
+        <section className="mx-auto max-w-screen-2xl px-6 py-24 text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">Project not found</h1>
             <p className="mt-3 text-slate-500 dark:text-slate-400">This project may have been removed or the link is incorrect.</p>
             <Link
@@ -214,7 +214,7 @@ function NotFound() {
 
 function Loading() {
     return (
-        <section className="mx-auto max-w-7xl px-6 py-12">
+        <section className="mx-auto max-w-screen-2xl px-6 py-12">
             <div className="h-5 w-32 animate-pulse rounded bg-slate-200 dark:bg-slate-800/50" />
             <div className="mt-6 aspect-video animate-pulse rounded-xl bg-slate-200 dark:bg-slate-800/50" />
             <div className="mt-8 h-9 w-72 animate-pulse rounded bg-slate-200 dark:bg-slate-800/50" />

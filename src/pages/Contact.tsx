@@ -244,7 +244,7 @@ export function Contact() {
                 description="Get in touch with JayarathnaTech Solutions, a software company in Negombo, Sri Lanka, working with clients across Sri Lanka and around the world."
             />
 
-            <section className="mx-auto max-w-7xl px-6 py-16 md:py-24">
+            <section className="mx-auto max-w-screen-2xl px-6 py-16 md:py-24">
                 <div className="grid gap-12 lg:grid-cols-2">
                     <Info />
                     <ContactForm />

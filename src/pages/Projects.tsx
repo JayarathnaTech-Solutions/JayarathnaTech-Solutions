@@ -79,7 +79,7 @@ function useProjects() {
 
 function Hero() {
     return (
-        <section className="mx-auto max-w-7xl px-6 py-16 md:py-24">
+        <section className="mx-auto max-w-screen-2xl px-6 py-16 md:py-24">
             <Reveal>
                 <span className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-600 dark:text-blue-400">
                     <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
@@ -168,7 +168,7 @@ function ProjectsGrid() {
         activeCategory === 'All' ? projects : (projects ?? []).filter((project) => project.category === activeCategory)
 
     return (
-        <section className="mx-auto max-w-7xl px-6 pb-16">
+        <section className="mx-auto max-w-screen-2xl px-6 pb-16">
             {projects !== null && projects.length > 0 && (
                 <CategoryTabs categories={categories} active={activeCategory} onSelect={setActiveCategory} />
             )}

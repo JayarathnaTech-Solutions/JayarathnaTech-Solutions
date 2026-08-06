@@ -5,7 +5,7 @@ import {itemTransition, staggerItem} from "../lib/motion.ts";
 
 export function Team() {
     return (
-        <section className="mx-auto max-w-7xl px-6 py-16">
+        <section className="mx-auto max-w-screen-2xl px-6 py-16">
             <Reveal><h2 className="text-2xl font-bold sm:text-3xl">Meet the Team</h2></Reveal>
 
             <StaggerGroup className="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-4">
