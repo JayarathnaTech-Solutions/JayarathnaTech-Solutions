@@ -136,7 +136,7 @@ function Hero() {
                   transition={itemTransition}
                   className="mt-5 text-4xl font-bold tracking-tight sm:text-6xl"
               >
-                Digital Solutions<br /><span className="bg-linear-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent [text-shadow:0_2px_16px_rgba(0,0,0,0.55)]">Built for Growth</span>
+                Digital Solutions <br /> Built for<span className="bg-linear-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent [text-shadow:0_2px_16px_rgba(0,0,0,0.55)]"> Growth</span>
               </motion.h1>
               <motion.p
                   variants={staggerItem}
