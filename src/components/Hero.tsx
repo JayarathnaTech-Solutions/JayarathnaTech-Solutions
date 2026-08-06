@@ -74,20 +74,20 @@ export function Hero() {
 
                     <motion.div variants={staggerItem} transition={itemTransition} className="mt-8 flex flex-wrap gap-4">
                         <MotionLink
-                            to="/projects"
+                            to="/contact"
                             whileHover={{ scale: 1.04 }}
                             whileTap={{ scale: 0.97 }}
                             className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-500"
                         >
-                            View Projects
+                            Get a Quote
                         </MotionLink>
                         <MotionLink
-                            to="/contact"
+                            to="/projects"
                             whileHover={{ scale: 1.04 }}
                             whileTap={{ scale: 0.97 }}
                             className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 px-5 py-3 text-sm font-medium text-white transition-colors hover:border-slate-400"
                         >
-                            Get a Quote
+                            View Projects
                         </MotionLink>
                     </motion.div>
                 </motion.div>
