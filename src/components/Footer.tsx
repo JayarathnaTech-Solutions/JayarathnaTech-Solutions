@@ -54,6 +54,14 @@ function GitHubIcon() {
     )
 }
 
+function FacebookIcon() {
+    return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M13.5 21v-7.5h2.5l.5-3h-3V8.5c0-.87.24-1.46 1.5-1.46H16.6V4.35C16.32 4.31 15.36 4.23 14.25 4.23c-2.32 0-3.9 1.42-3.9 4.02V10.5H7.85v3h2.5V21h3.15Z" />
+        </svg>
+    )
+}
+
 export function Footer() {
     return (
         <footer className="border-t border-slate-200 bg-slate-50 dark:border-slate-700/50 dark:bg-slate-900">
@@ -66,6 +74,15 @@ export function Footer() {
                             applications, e-commerce platforms, and scalable software systems.
                         </p>
                         <div className="mt-6 flex items-center gap-3">
+                            <a
+                                href={siteSocial.facebook}
+                                target="_blank"
+                                rel="noreferrer"
+                                aria-label="Facebook"
+                                className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 text-slate-500 transition-colors hover:border-slate-400 hover:text-slate-900 dark:border-slate-700 dark:text-slate-400 dark:hover:border-slate-600 dark:hover:text-white"
+                            >
+                                <FacebookIcon />
+                            </a>
                             <a
                                 href={siteSocial.github}
                                 target="_blank"
