@@ -174,8 +174,8 @@ function ContactForm() {
                 void createContactMessage({
                     name,
                     email,
+                    phone,
                     message,
-                    ...(phone ? { phone } : {}),
                     source: 'contact-form',
                 }).catch(() => {})
             } else {
@@ -201,7 +201,7 @@ function ContactForm() {
 
                     <Field label="Name" name="name" type="text" placeholder="Your full name" required />
                     <Field label="Email" name="email" type="email" placeholder="your.email@example.com" required />
-                    <Field label="Phone (optional)" name="phone" type="tel" placeholder="Your phone number" />
+                    <Field label="Phone" name="phone" type="tel" placeholder="Your phone number" required />
 
                     <div>
                         <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
