@@ -36,7 +36,7 @@ export function Hero() {
                 </AnimatePresence>
             </div>
 
-            <div className="relative z-10 mx-auto grid w-full max-w-screen-2xl gap-12 px-6 py-24 md:grid-cols-[3fr_2fr] md:items-center">
+            <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-12 px-6 py-24 md:grid-cols-[3fr_2fr] md:items-center">
                 <motion.div
                     initial="hidden"
                     animate="visible"

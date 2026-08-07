@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 
 export function TechStack() {
     return (
-        <section className="mx-auto max-w-screen-2xl px-6 py-16">
+        <section className="mx-auto max-w-7xl px-6 py-16">
             <Reveal><h2 className="text-2xl font-bold sm:text-3xl">Technologies We Use</h2></Reveal>
 
             <StaggerGroup className="mt-8 grid gap-8 md:grid-cols-3">

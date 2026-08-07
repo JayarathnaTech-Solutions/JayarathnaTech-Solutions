@@ -45,7 +45,7 @@ export function WhyChooseUs() {
     ]
 
     return (
-        <section className="mx-auto max-w-screen-2xl px-6 py-16">
+        <section className="mx-auto max-w-7xl px-6 py-16">
             <Reveal>
       <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-600 dark:text-blue-400">
         <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />

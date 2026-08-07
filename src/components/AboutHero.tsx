@@ -8,7 +8,7 @@ export function AboutHero() {
         <section className="relative overflow-hidden text-white">
             <HeroBackdrop image={heroBackground} />
 
-            <div className="relative mx-auto max-w-screen-2xl px-6 py-24 md:py-36">
+            <div className="relative mx-auto max-w-7xl px-6 py-24 md:py-36">
                 <motion.div className="max-w-2xl" initial="hidden" animate="visible" variants={staggerContainer}>
                     <motion.span
                         variants={staggerItem}

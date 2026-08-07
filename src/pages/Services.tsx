@@ -121,7 +121,7 @@ function Hero() {
     return (
         <section className="relative overflow-hidden text-white">
           <HeroBackdrop image={heroBackground} />
-          <div className="relative mx-auto max-w-screen-2xl px-6 py-24 md:py-36">
+          <div className="relative mx-auto max-w-7xl px-6 py-24 md:py-36">
             <motion.div className="max-w-2xl" initial="hidden" animate="visible" variants={staggerContainer}>
               <motion.span
                   variants={staggerItem}
@@ -154,7 +154,7 @@ function Hero() {
 
 function ServicesGrid() {
     return (
-        <section className="mx-auto max-w-screen-2xl px-6 py-16">
+        <section className="mx-auto max-w-7xl px-6 py-16">
             <StaggerGroup className="grid gap-6 md:grid-cols-3">
                 {services.map((service) => (
                     <motion.div
@@ -185,7 +185,7 @@ function ServicesGrid() {
 
 function EngagementModels() {
     return (
-        <section className="mx-auto max-w-screen-2xl px-6 py-16">
+        <section className="mx-auto max-w-7xl px-6 py-16">
             <Reveal>
       <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-600 dark:text-blue-400">
         <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
@@ -218,7 +218,7 @@ function EngagementModels() {
 
 function Faq() {
     return (
-        <section className="mx-auto max-w-screen-2xl px-6 py-16">
+        <section className="mx-auto max-w-7xl px-6 py-16">
             <Reveal><h2 className="text-2xl font-bold sm:text-3xl">Frequently Asked Questions</h2></Reveal>
 
             <StaggerGroup className="mt-8 space-y-4">
