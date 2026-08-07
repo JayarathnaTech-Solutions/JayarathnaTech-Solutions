@@ -6,7 +6,7 @@ const sizeClasses = {
 export function Avatar({ label, size = 'sm' }: { label: string; size?: keyof typeof sizeClasses }) {
     return (
         <div
-            className={`flex shrink-0 items-center justify-center rounded-full bg-slate-800 font-semibold text-slate-300 ${sizeClasses[size]}`}
+            className={`flex shrink-0 items-center justify-center rounded-full bg-slate-200 font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-300 ${sizeClasses[size]}`}
         >
             {label.charAt(0).toUpperCase() || '?'}
         </div>

@@ -35,32 +35,32 @@ export function PortalLogin() {
         <>
             <Seo title="Customer Portal Login — JayarathnaTech Solutions" description="Sign in to track your project." />
 
-            <div className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-white">
+            <div className="flex min-h-screen items-center justify-center bg-slate-50 px-6 text-slate-900 dark:bg-slate-950 dark:text-white">
                 <div className="w-full max-w-sm">
                     <div className="flex justify-center">
-                        <Logo variant="dark" />
+                        <Logo />
                     </div>
 
-                    <div className="mt-8 rounded-xl border border-slate-800 bg-slate-900/40 p-8">
+                    <div className="mt-8 rounded-xl border border-slate-200 bg-white p-8 dark:border-slate-800 dark:bg-slate-900/40">
                         <h1 className="text-center text-xl font-semibold">Customer Portal</h1>
-                        <p className="mt-1.5 text-center text-sm text-slate-400">Sign in to track your project</p>
+                        <p className="mt-1.5 text-center text-sm text-slate-500 dark:text-slate-400">Sign in to track your project</p>
 
                         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                             <div>
-                                <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-300">
+                                <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">
                                     Email
                                 </label>
                                 <input id="email" name="email" type="email" required className={inputClass} />
                             </div>
                             <div>
-                                <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-slate-300">
+                                <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">
                                     Password
                                 </label>
                                 <input id="password" name="password" type="password" required className={inputClass} />
                             </div>
 
                             {signInStatus === 'error' && (
-                                <p className="text-sm text-red-400">Incorrect email or password — please try again.</p>
+                                <p className="text-sm text-red-600 dark:text-red-400">Incorrect email or password — please try again.</p>
                             )}
 
                             <button
@@ -73,7 +73,7 @@ export function PortalLogin() {
                         </form>
                     </div>
 
-                    <p className="mt-6 text-center text-xs text-slate-500">
+                    <p className="mt-6 text-center text-xs text-slate-500 dark:text-slate-400">
                         Accounts are set up by JayarathnaTech Solutions — contact us if you need access.
                     </p>
                 </div>

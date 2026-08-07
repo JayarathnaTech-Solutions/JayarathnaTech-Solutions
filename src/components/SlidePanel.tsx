@@ -26,7 +26,7 @@ export function SlidePanel({
             {open && (
                 <div className="fixed inset-0 z-50 flex justify-end">
                     <motion.div
-                        className="absolute inset-0 bg-slate-950/70"
+                        className="absolute inset-0 bg-slate-950/50 dark:bg-slate-950/70"
                         onClick={onClose}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -37,20 +37,20 @@ export function SlidePanel({
                         role="dialog"
                         aria-modal="true"
                         aria-label={title}
-                        className="relative flex h-full w-full max-w-md flex-col border-l border-slate-800 bg-slate-900 shadow-xl"
+                        className="relative flex h-full w-full max-w-md flex-col border-l border-slate-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-900"
                         initial={{ x: '100%' }}
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                     >
-                        <div className="flex items-center justify-between border-b border-slate-800 px-6 py-4">
+                        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 dark:border-slate-800">
                             <h2 className="text-lg font-semibold">{title}</h2>
                             <button
                                 ref={closeButtonRef}
                                 type="button"
                                 onClick={onClose}
                                 aria-label="Close"
-                                className="text-slate-400 hover:text-white"
+                                className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                             >
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6 6 18" />

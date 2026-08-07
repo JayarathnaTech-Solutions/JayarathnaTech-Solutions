@@ -30,21 +30,21 @@ function CreatedPanel({ email, tempPassword, onDone }: { email: string; tempPass
 
     return (
         <div className="space-y-5">
-            <p className="text-sm text-slate-400">
-                Account created for <span className="font-medium text-white">{email}</span>. Share this temporary password
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+                Account created for <span className="font-medium text-slate-900 dark:text-white">{email}</span>. Share this temporary password
                 with them yourself — it won't be shown again.
             </p>
-            <div className="flex items-center justify-between gap-3 rounded-lg border border-slate-800 bg-slate-950/60 px-4 py-3">
-                <code className="text-sm font-medium text-white">{tempPassword}</code>
+            <div className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950/60 px-4 py-3">
+                <code className="text-sm font-medium text-slate-900 dark:text-white">{tempPassword}</code>
                 <button
                     type="button"
                     onClick={handleCopy}
-                    className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-slate-600"
+                    className="rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600"
                 >
                     {copied ? 'Copied' : 'Copy'}
                 </button>
             </div>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
                 A verification email has also been sent to {email}. They must verify it and change this password on first
                 login.
             </p>
@@ -100,20 +100,20 @@ function CustomerForm({
             <Field
                 label={
                     <>
-                        Company <span className="font-normal text-slate-500">(optional)</span>
+                        Company <span className="font-normal text-slate-500 dark:text-slate-400">(optional)</span>
                     </>
                 }
                 name="company"
                 placeholder="FinCorp (Pvt) Ltd"
             />
 
-            {error && <p className="text-sm text-red-400">{error}</p>}
+            {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
             <div className="flex justify-end gap-3 pt-2">
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-medium text-slate-300 hover:border-slate-600"
+                    className="rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600"
                 >
                     Cancel
                 </button>
@@ -163,9 +163,9 @@ export function AdminCustomers() {
                 </button>
             </div>
 
-            <div className="mt-6 overflow-hidden rounded-xl border border-slate-800 bg-slate-900/40">
+            <div className="mt-6 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40">
                 {customers === null ? (
-                    <div className="divide-y divide-slate-800">
+                    <div className="divide-y divide-slate-200 dark:divide-slate-800">
                         {[0, 1, 2, 3].map((i) => (
                             <div key={i} className="flex items-center gap-4 px-6 py-4">
                                 <Skeleton className="h-3.5 w-32" />
@@ -175,10 +175,10 @@ export function AdminCustomers() {
                         ))}
                     </div>
                 ) : customers.length === 0 ? (
-                    <div className="p-10 text-center text-sm text-slate-500">No customers yet — create your first one.</div>
+                    <div className="p-10 text-center text-sm text-slate-500 dark:text-slate-400">No customers yet — create your first one.</div>
                 ) : (
                     <table className="w-full text-left text-sm">
-                        <thead className="border-b border-slate-800 text-xs text-slate-500">
+                        <thead className="border-b border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
                             <tr>
                                 <th className="px-6 py-3 font-medium">Customer</th>
                                 <th className="px-6 py-3 font-medium">Email</th>
@@ -187,13 +187,13 @@ export function AdminCustomers() {
                                 <th className="px-6 py-3 font-medium text-right">Status</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-800">
+                        <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                             {customers.map((customer) => (
                                 <tr key={customer.id}>
                                     <td className="px-6 py-3 font-medium">{customer.name}</td>
-                                    <td className="px-6 py-3 text-slate-400">{customer.email}</td>
-                                    <td className="px-6 py-3 text-slate-400">{customer.company || '—'}</td>
-                                    <td className="px-6 py-3 text-slate-400">{formatDate(customer.createdAt)}</td>
+                                    <td className="px-6 py-3 text-slate-500 dark:text-slate-400">{customer.email}</td>
+                                    <td className="px-6 py-3 text-slate-500 dark:text-slate-400">{customer.company || '—'}</td>
+                                    <td className="px-6 py-3 text-slate-500 dark:text-slate-400">{formatDate(customer.createdAt)}</td>
                                     <td className="px-6 py-3 text-right">
                                         <StatusBadge status={customer.mustChangePassword ? 'pending' : 'approved'} />
                                     </td>

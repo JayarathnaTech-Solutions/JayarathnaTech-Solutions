@@ -38,7 +38,7 @@ function useTestimonials(status: TestimonialStatus) {
 function Stars({ rating }: { rating?: number }) {
     if (!rating) return null
     return (
-        <div className="flex gap-0.5 text-amber-400">
+        <div className="flex gap-0.5 text-amber-600 dark:text-amber-400">
             {Array.from({ length: 5 }, (_, i) => (
                 <svg key={i} width="13" height="13" viewBox="0 0 20 20" fill={i < rating ? 'currentColor' : 'none'} stroke="currentColor">
                     <path d="M10 1.5l2.6 5.27 5.82.85-4.21 4.1.99 5.8L10 14.9l-5.2 2.72.99-5.8-4.21-4.1 5.82-.85z" />
@@ -58,14 +58,14 @@ function PendingCard({ testimonial, onDecided }: { testimonial: Testimonial; onD
     }
 
     return (
-        <div className="flex items-start gap-3 rounded-xl border border-slate-800 bg-slate-900/40 p-5">
+        <div className="flex items-start gap-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-5">
             <Avatar label={testimonial.clientName} size="md" />
             <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
                     <p className="font-medium">{testimonial.clientName}</p>
-                    <span className="shrink-0 text-xs text-slate-500">{timeAgo(testimonial.createdAt)}</span>
+                    <span className="shrink-0 text-xs text-slate-500 dark:text-slate-400">{timeAgo(testimonial.createdAt)}</span>
                 </div>
-                <p className="mt-1 text-sm text-slate-400">{testimonial.message}</p>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{testimonial.message}</p>
                 <div className="mt-2">
                     <Stars rating={testimonial.rating} />
                 </div>
@@ -76,7 +76,7 @@ function PendingCard({ testimonial, onDecided }: { testimonial: Testimonial; onD
                     disabled={busy}
                     onClick={() => decide('approved')}
                     aria-label="Approve"
-                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 disabled:opacity-50"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 disabled:opacity-50"
                 >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path strokeLinecap="round" strokeLinejoin="round" d="m5 13 4 4L19 7" />
@@ -87,7 +87,7 @@ function PendingCard({ testimonial, onDecided }: { testimonial: Testimonial; onD
                     disabled={busy}
                     onClick={() => decide('rejected')}
                     aria-label="Reject"
-                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 disabled:opacity-50"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-500/20 disabled:opacity-50"
                 >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path strokeLinecap="round" strokeLinejoin="round" d="m6 6 12 12M18 6 6 18" />
@@ -115,14 +115,14 @@ function TestimonialActionCard({
     }
 
     return (
-        <div className="flex items-start gap-3 rounded-xl border border-slate-800 bg-slate-900/40 p-5">
+        <div className="flex items-start gap-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-5">
             <Avatar label={testimonial.clientName} size="md" />
             <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
                     <p className="font-medium">{testimonial.clientName}</p>
-                    <span className="shrink-0 text-xs text-slate-500">{timeAgo(testimonial.createdAt)}</span>
+                    <span className="shrink-0 text-xs text-slate-500 dark:text-slate-400">{timeAgo(testimonial.createdAt)}</span>
                 </div>
-                <p className="mt-1 text-sm text-slate-400">{testimonial.message}</p>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{testimonial.message}</p>
                 <div className="mt-2">
                     <Stars rating={testimonial.rating} />
                 </div>
@@ -131,7 +131,7 @@ function TestimonialActionCard({
                 type="button"
                 disabled={busy}
                 onClick={handleAction}
-                className="shrink-0 rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-slate-600 disabled:opacity-50"
+                className="shrink-0 rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600 disabled:opacity-50"
             >
                 {actionLabel}
             </button>
@@ -170,15 +170,15 @@ function GenerateInviteButton() {
             </button>
 
             {link && (
-                <div className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2 text-xs">
-                    <span className="max-w-xs truncate text-slate-300">{link}</span>
+                <div className="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900/60 px-3 py-2 text-xs">
+                    <span className="max-w-xs truncate text-slate-600 dark:text-slate-300">{link}</span>
                     <button
                         type="button"
                         onClick={() => {
                             void navigator.clipboard.writeText(link)
                             setCopied(true)
                         }}
-                        className="font-medium text-blue-400 hover:text-blue-300"
+                        className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300"
                     >
                         {copied ? 'Copied!' : 'Copy'}
                     </button>
@@ -203,7 +203,7 @@ function Tabs({
                 type="button"
                 onClick={() => onChange('pending')}
                 className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                    active === 'pending' ? 'bg-blue-600 text-white' : 'border border-slate-800 text-slate-300 hover:border-slate-700'
+                    active === 'pending' ? 'bg-blue-600 text-white' : 'border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-700'
                 }`}
             >
                 Pending {pendingCount > 0 && `(${pendingCount})`}
@@ -212,7 +212,7 @@ function Tabs({
                 type="button"
                 onClick={() => onChange('approved')}
                 className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                    active === 'approved' ? 'bg-blue-600 text-white' : 'border border-slate-800 text-slate-300 hover:border-slate-700'
+                    active === 'approved' ? 'bg-blue-600 text-white' : 'border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-700'
                 }`}
             >
                 Approved
@@ -221,7 +221,7 @@ function Tabs({
                 type="button"
                 onClick={() => onChange('rejected')}
                 className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                    active === 'rejected' ? 'bg-blue-600 text-white' : 'border border-slate-800 text-slate-300 hover:border-slate-700'
+                    active === 'rejected' ? 'bg-blue-600 text-white' : 'border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-700'
                 }`}
             >
                 Rejected
@@ -260,7 +260,7 @@ export function AdminTestimonials() {
             <div className="mt-6 space-y-4">
                 {testimonials === null ? (
                     [0, 1, 2].map((i) => (
-                        <div key={i} className="flex items-start gap-3 rounded-xl border border-slate-800 bg-slate-900/40 p-5">
+                        <div key={i} className="flex items-start gap-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-5">
                             <Skeleton className="h-10 w-10 shrink-0 rounded-full" />
                             <div className="min-w-0 flex-1 space-y-2.5">
                                 <Skeleton className="h-3.5 w-1/3" />
@@ -270,7 +270,7 @@ export function AdminTestimonials() {
                         </div>
                     ))
                 ) : testimonials.length === 0 ? (
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
                         {activeTab === 'pending'
                             ? 'No pending testimonials.'
                             : activeTab === 'approved'

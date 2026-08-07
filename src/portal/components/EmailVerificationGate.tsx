@@ -18,10 +18,10 @@ export function EmailVerificationGate({ user }: { user: User }) {
     }
 
     return (
-        <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-slate-950 px-6 text-center text-white">
+        <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-slate-50 dark:bg-slate-950 px-6 text-center text-slate-900 dark:text-white">
             <h1 className="text-2xl font-bold">Verify your email</h1>
-            <p className="max-w-sm text-sm text-slate-400">
-                We sent a verification link to <span className="text-slate-300">{user.email}</span>. Click it, then
+            <p className="max-w-sm text-sm text-slate-500 dark:text-slate-400">
+                We sent a verification link to <span className="text-slate-600 dark:text-slate-300">{user.email}</span>. Click it, then
                 come back here.
             </p>
             <div className="mt-4 flex flex-col items-center gap-3">
@@ -36,11 +36,11 @@ export function EmailVerificationGate({ user }: { user: User }) {
                     type="button"
                     onClick={handleResend}
                     disabled={sending}
-                    className="text-sm font-medium text-blue-400 hover:text-blue-300 disabled:opacity-60"
+                    className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 disabled:opacity-60"
                 >
                     {sent ? 'Verification email sent' : sending ? 'Sending…' : 'Resend verification email'}
                 </button>
-                <button type="button" onClick={() => signOut(auth)} className="text-sm text-slate-500 hover:text-slate-400">
+                <button type="button" onClick={() => signOut(auth)} className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-400">
                     Sign out
                 </button>
             </div>

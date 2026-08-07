@@ -50,9 +50,9 @@ export function AdminSettings() {
         <div>
             <h1 className="text-2xl font-bold">Settings</h1>
 
-            <div className="mt-6 max-w-lg rounded-xl border border-slate-800 bg-slate-900/40 p-6">
-                <h2 className="text-sm font-semibold text-slate-300">Bank Transfer Details</h2>
-                <p className="mt-1 text-sm text-slate-500">
+            <div className="mt-6 max-w-lg rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6">
+                <h2 className="text-sm font-semibold text-slate-600 dark:text-slate-300">Bank Transfer Details</h2>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                     Shown to every customer paying an invoice by bank transfer.
                 </p>
 
@@ -70,8 +70,8 @@ export function AdminSettings() {
                         <Field label="Account Number" name="accountNumber" required defaultValue={bankDetails?.accountNumber} placeholder="0000000000" />
                         <Field label="Branch / SWIFT" name="branchSwift" required defaultValue={bankDetails?.branchSwift} placeholder="Colombo / CCEYLKLX" />
 
-                        {error && <p className="text-sm text-red-400">Something went wrong — please try again.</p>}
-                        {saved && !error && <p className="text-sm text-emerald-400">Saved.</p>}
+                        {error && <p className="text-sm text-red-600 dark:text-red-400">Something went wrong — please try again.</p>}
+                        {saved && !error && <p className="text-sm text-emerald-600 dark:text-emerald-400">Saved.</p>}
 
                         <div className="flex justify-end pt-2">
                             <button
