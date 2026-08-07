@@ -2,16 +2,22 @@
 // react-pdf template with an export function, so it doesn't fit the
 // component-only-exports shape Fast Refresh expects.
 /* eslint-disable react-refresh/only-export-components */
-import { Document, Page, StyleSheet, Text, View, pdf } from '@react-pdf/renderer'
+import { Document, Image, Page, StyleSheet, Text, View, pdf } from '@react-pdf/renderer'
 import { calcBalance, calcDeposit, calcQuoteTotal, formatCurrency, lineItemTotal } from './quote'
-import { siteContact } from './siteInfo'
+import { siteContact, siteLetterhead } from './siteInfo'
+import logo from '../assets/logo.png'
 import type { Quote, QuoteLineItem } from '../types'
 
 const styles = StyleSheet.create({
     page: { padding: 40, fontSize: 11, fontFamily: 'Helvetica', color: '#0f172a' },
-    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 30 },
-    brand: { fontSize: 18, fontFamily: 'Helvetica-Bold' },
-    quoteLabel: { fontSize: 20, fontFamily: 'Helvetica-Bold' },
+    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 30, borderBottom: '1 solid #e2e8f0', paddingBottom: 16 },
+    logo: { width: 130, height: 34 },
+    brand: { fontSize: 15, fontFamily: 'Helvetica-Bold' },
+    brandSub: { fontSize: 8, color: '#64748b', marginTop: 2 },
+    letterhead: { alignItems: 'flex-end' },
+    letterheadBrand: { alignItems: 'flex-end', marginBottom: 10 },
+    letterheadLine: { fontSize: 8, color: '#64748b', textAlign: 'right' },
+    quoteTitle: { fontSize: 24, fontFamily: 'Helvetica-Bold', textAlign: 'center', letterSpacing: 2, marginBottom: 24 },
     section: { marginBottom: 20 },
     label: { fontSize: 9, color: '#64748b', marginBottom: 2 },
     value: { fontSize: 12, marginBottom: 8 },
@@ -50,11 +56,19 @@ function QuoteDocument({ quote }: { quote: Quote }) {
         <Document>
             <Page size="A4" style={styles.page}>
                 <View style={styles.header}>
-                    <View>
-                        <Text style={styles.brand}>JayarathnaTech Solutions</Text>
+                    <Image src={logo} style={styles.logo} />
+                    <View style={styles.letterhead}>
+                        <View style={styles.letterheadBrand}>
+                            <Text style={styles.brand}>JayarathnaTech Solutions</Text>
+                            <Text style={styles.brandSub}>{siteLetterhead.regNo}</Text>
+                        </View>
+                        <Text style={styles.letterheadLine}>{siteLetterhead.address}</Text>
+                        <Text style={styles.letterheadLine}>{siteLetterhead.phone} / {siteLetterhead.phoneAlt}</Text>
+                        <Text style={styles.letterheadLine}>{siteLetterhead.website}  |  {siteLetterhead.email}</Text>
                     </View>
-                    <Text style={styles.quoteLabel}>QUOTE</Text>
                 </View>
+
+                <Text style={styles.quoteTitle}>QUOTE</Text>
 
                 <View style={styles.section}>
                     <Text style={styles.label}>CLIENT</Text>

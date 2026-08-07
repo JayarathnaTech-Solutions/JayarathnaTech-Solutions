@@ -192,7 +192,7 @@ function Sidebar({ role }: { role: StaffRole }) {
     return (
         <aside className="hidden w-64 shrink-0 border-r border-slate-800 bg-slate-900/40 px-4 py-6 md:flex md:flex-col">
             <div className="px-2">
-                <Logo />
+                <Logo variant="dark" />
             </div>
             <NavList role={role} />
         </aside>
@@ -225,7 +225,7 @@ function MobileNavDrawer({ role, open, onClose }: { role: StaffRole; open: boole
                         transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                     >
                         <div className="px-2">
-                            <Logo />
+                            <Logo variant="dark" />
                         </div>
                         <NavList role={role} onNavigate={onClose} />
                     </motion.aside>

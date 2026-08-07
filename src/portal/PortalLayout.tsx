@@ -15,7 +15,7 @@ function Topbar({ name }: { name: string }) {
     return (
         <header className="flex items-center justify-between border-b border-slate-800 bg-slate-900/40 px-6 py-4">
             <NavLink to="/portal" className="px-2">
-                <Logo />
+                <Logo variant="dark" />
             </NavLink>
             <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-500/10 text-sm font-semibold text-blue-400">

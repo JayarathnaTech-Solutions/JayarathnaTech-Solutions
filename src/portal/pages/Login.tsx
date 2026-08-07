@@ -38,7 +38,7 @@ export function PortalLogin() {
             <div className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-white">
                 <div className="w-full max-w-sm">
                     <div className="flex justify-center">
-                        <Logo />
+                        <Logo variant="dark" />
                     </div>
 
                     <div className="mt-8 rounded-xl border border-slate-800 bg-slate-900/40 p-8">
