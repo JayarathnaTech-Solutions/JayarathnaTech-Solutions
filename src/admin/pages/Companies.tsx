@@ -44,7 +44,7 @@ function LogoUpload({ value, onChange }: { value: string; onChange: (url: string
 
     return (
         <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-300">Logo</label>
+            <label className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">Logo</label>
             <input
                 ref={inputRef}
                 type="file"
@@ -73,30 +73,30 @@ function LogoUpload({ value, onChange }: { value: string; onChange: (url: string
                     if (file) void handleFile(file)
                 }}
                 className={`flex w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed px-4 py-6 text-center transition-colors ${
-                    dragActive ? 'border-blue-500 bg-blue-500/5' : 'border-slate-700 bg-slate-950/60 hover:border-slate-600'
+                    dragActive ? 'border-blue-500 bg-blue-500/5' : 'border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-950/60 hover:border-slate-400 dark:hover:border-slate-600'
                 }`}
             >
                 {value && !uploading ? (
                     <img src={value} alt="" className="h-16 w-full rounded object-contain" />
                 ) : (
                     <>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="text-slate-500">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="text-slate-500 dark:text-slate-400">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 16V4m0 0 4 4m-4-4-4 4M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" />
                         </svg>
-                        <span className="text-sm text-slate-400">Drag & drop logo here, or click to browse</span>
+                        <span className="text-sm text-slate-500 dark:text-slate-400">Drag & drop logo here, or click to browse</span>
                     </>
                 )}
             </button>
 
             {uploading && (
                 <div className="mt-2">
-                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-800">
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
                         <div className="h-full bg-blue-500 transition-all" style={{ width: `${progress}%` }} />
                     </div>
-                    <p className="mt-1 text-xs text-slate-500">Uploading… {progress}%</p>
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Uploading… {progress}%</p>
                 </div>
             )}
-            {error && <p className="mt-2 text-sm text-red-400">Upload failed — please try again.</p>}
+            {error && <p className="mt-2 text-sm text-red-600 dark:text-red-400">Upload failed — please try again.</p>}
         </div>
     )
 }
@@ -153,13 +153,13 @@ function CompanyForm({
                 defaultValue={company?.websiteUrl}
             />
 
-            {error && <p className="text-sm text-red-400">Something went wrong — please try again.</p>}
+            {error && <p className="text-sm text-red-600 dark:text-red-400">Something went wrong — please try again.</p>}
 
             <div className="flex justify-end gap-3 pt-2">
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-medium text-slate-300 hover:border-slate-600"
+                    className="rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600"
                 >
                     Cancel
                 </button>
@@ -215,13 +215,13 @@ export function AdminCompanies() {
                     Add Company
                 </button>
             </div>
-            <p className="mt-2 text-sm text-slate-500">
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                 Logos shown in the "Trusted by" strip on the homepage, right after the hero section.
             </p>
 
-            <div className="mt-6 overflow-hidden rounded-xl border border-slate-800 bg-slate-900/40">
+            <div className="mt-6 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40">
                 {companies === null ? (
-                    <div className="divide-y divide-slate-800">
+                    <div className="divide-y divide-slate-200 dark:divide-slate-800">
                         {[0, 1, 2].map((i) => (
                             <div key={i} className="flex items-center gap-4 px-6 py-4">
                                 <Skeleton className="h-10 w-16 shrink-0 rounded" />
@@ -231,22 +231,22 @@ export function AdminCompanies() {
                         ))}
                     </div>
                 ) : companies.length === 0 ? (
-                    <div className="p-10 text-center text-sm text-slate-500">No companies yet — add your first one.</div>
+                    <div className="p-10 text-center text-sm text-slate-500 dark:text-slate-400">No companies yet — add your first one.</div>
                 ) : (
                     <table className="w-full text-left text-sm">
-                        <thead className="border-b border-slate-800 text-xs text-slate-500">
+                        <thead className="border-b border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
                             <tr>
                                 <th className="px-6 py-3 font-medium">Company</th>
                                 <th className="px-6 py-3 font-medium">Date</th>
                                 <th className="px-6 py-3 font-medium text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-800">
+                        <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                             {companies.map((company) => (
                                 <tr key={company.id}>
                                     <td className="px-6 py-3">
                                         <div className="flex items-center gap-3">
-                                            <div className="flex h-10 w-14 shrink-0 items-center justify-center overflow-hidden rounded bg-slate-800">
+                                            <div className="flex h-10 w-14 shrink-0 items-center justify-center overflow-hidden rounded bg-slate-200 dark:bg-slate-800">
                                                 {company.logoUrl && (
                                                     <img src={company.logoUrl} alt="" className="h-full w-full object-contain" />
                                                 )}
@@ -254,14 +254,14 @@ export function AdminCompanies() {
                                             <span className="font-medium">{company.name}</span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-3 text-slate-400">{formatDate(company.createdAt)}</td>
+                                    <td className="px-6 py-3 text-slate-500 dark:text-slate-400">{formatDate(company.createdAt)}</td>
                                     <td className="px-6 py-3">
                                         <div className="flex justify-end gap-2">
                                             <button
                                                 type="button"
                                                 onClick={() => openEdit(company)}
                                                 aria-label={`Edit ${company.name}`}
-                                                className="rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-white"
+                                                className="rounded-lg p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white"
                                             >
                                                 <EditIcon />
                                             </button>
@@ -269,7 +269,7 @@ export function AdminCompanies() {
                                                 type="button"
                                                 onClick={() => setDeleting(company)}
                                                 aria-label={`Delete ${company.name}`}
-                                                className="rounded-lg p-2 text-slate-400 hover:bg-red-500/10 hover:text-red-400"
+                                                className="rounded-lg p-2 text-slate-500 dark:text-slate-400 hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400"
                                             >
                                                 <DeleteIcon />
                                             </button>

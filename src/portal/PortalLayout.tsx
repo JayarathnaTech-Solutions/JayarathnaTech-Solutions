@@ -6,6 +6,7 @@ import { useCustomerAuth } from './CustomerAuthContext'
 import { EmailVerificationGate } from './components/EmailVerificationGate'
 import { ForceChangePasswordForm } from './components/ForceChangePasswordForm'
 import { Logo } from '../components/Logo'
+import { ThemeToggle } from '../components/ThemeToggle'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 
 function Topbar({ name }: { name: string }) {
@@ -13,19 +14,20 @@ function Topbar({ name }: { name: string }) {
     const initial = name.charAt(0).toUpperCase() || '?'
 
     return (
-        <header className="flex items-center justify-between border-b border-slate-800 bg-slate-900/40 px-6 py-4">
+        <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4 dark:border-slate-800 dark:bg-slate-900/40">
             <NavLink to="/portal" className="px-2">
-                <Logo variant="dark" />
+                <Logo />
             </NavLink>
             <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-500/10 text-sm font-semibold text-blue-400">
+                <ThemeToggle />
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-500/10 text-sm font-semibold text-blue-600 dark:text-blue-400">
                     {initial}
                 </div>
                 <span className="hidden text-sm font-medium sm:inline">{name}</span>
                 <button
                     type="button"
                     onClick={() => setSignOutOpen(true)}
-                    className="text-sm font-medium text-slate-400 hover:text-white"
+                    className="text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                 >
                     Sign out
                 </button>
@@ -52,7 +54,7 @@ export function PortalLayout() {
     }
 
     return (
-        <div className="flex min-h-screen flex-col bg-slate-950 text-white">
+        <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-white">
             <Topbar name={customer.name} />
             <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-8">
                 <Outlet />

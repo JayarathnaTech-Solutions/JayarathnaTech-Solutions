@@ -99,7 +99,7 @@ function NewEngagementForm({
     return (
         <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-                <label htmlFor="customerId" className="mb-1.5 block text-sm font-medium text-slate-300">
+                <label htmlFor="customerId" className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">
                     Customer
                 </label>
                 <select id="customerId" name="customerId" required defaultValue="" className={inputClass}>
@@ -114,30 +114,30 @@ function NewEngagementForm({
                 </select>
             </div>
             <div>
-                <label htmlFor="title" className="mb-1.5 block text-sm font-medium text-slate-300">
+                <label htmlFor="title" className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">
                     Title
                 </label>
                 <input id="title" name="title" type="text" required placeholder="Website Rebuild" className={inputClass} />
             </div>
             <div>
-                <label htmlFor="description" className="mb-1.5 block text-sm font-medium text-slate-300">
+                <label htmlFor="description" className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">
                     Description
                 </label>
                 <textarea id="description" name="description" rows={3} className={inputClass} />
             </div>
             <div>
-                <p className="mb-1.5 block text-sm font-medium text-slate-300">Assign Developers</p>
+                <p className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">Assign Developers</p>
                 {developers.length === 0 ? (
-                    <p className="text-sm text-slate-500">No developer accounts yet — add one in Staff first.</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">No developer accounts yet — add one in Staff first.</p>
                 ) : (
                     <div className="space-y-2">
                         {developers.map((dev) => (
-                            <label key={dev.id} className="flex items-center gap-2 text-sm text-slate-300">
+                            <label key={dev.id} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
                                 <input
                                     type="checkbox"
                                     checked={assignedEmails.includes(dev.email)}
                                     onChange={() => toggleDeveloper(dev.email)}
-                                    className="h-4 w-4 rounded border-slate-700 bg-slate-950"
+                                    className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950"
                                 />
                                 {dev.name || dev.email}
                             </label>
@@ -146,13 +146,13 @@ function NewEngagementForm({
                 )}
             </div>
 
-            {error && <p className="text-sm text-red-400">Something went wrong — please try again.</p>}
+            {error && <p className="text-sm text-red-600 dark:text-red-400">Something went wrong — please try again.</p>}
 
             <div className="flex justify-end gap-3 pt-2">
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-medium text-slate-300 hover:border-slate-600"
+                    className="rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600"
                 >
                     Cancel
                 </button>
@@ -196,9 +196,9 @@ export function AdminEngagements() {
                 )}
             </div>
 
-            <div className="mt-6 overflow-hidden rounded-xl border border-slate-800 bg-slate-900/40">
+            <div className="mt-6 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40">
                 {engagements === null ? (
-                    <div className="divide-y divide-slate-800">
+                    <div className="divide-y divide-slate-200 dark:divide-slate-800">
                         {[0, 1, 2].map((i) => (
                             <div key={i} className="flex items-center gap-4 px-6 py-4">
                                 <Skeleton className="h-3.5 w-32" />
@@ -208,10 +208,10 @@ export function AdminEngagements() {
                         ))}
                     </div>
                 ) : engagements.length === 0 ? (
-                    <div className="p-10 text-center text-sm text-slate-500">No engagements yet.</div>
+                    <div className="p-10 text-center text-sm text-slate-500 dark:text-slate-400">No engagements yet.</div>
                 ) : (
                     <table className="w-full text-left text-sm">
-                        <thead className="border-b border-slate-800 text-xs text-slate-500">
+                        <thead className="border-b border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
                             <tr>
                                 <th className="px-6 py-3 font-medium">Title</th>
                                 <th className="px-6 py-3 font-medium">Customer</th>
@@ -219,16 +219,16 @@ export function AdminEngagements() {
                                 <th className="px-6 py-3 font-medium">Status</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-800">
+                        <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                             {engagements.map((engagement) => (
                                 <tr
                                     key={engagement.id}
                                     onClick={() => navigate(`/admin/engagements/${engagement.id}`)}
-                                    className="cursor-pointer hover:bg-slate-900/60"
+                                    className="cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-900/60"
                                 >
                                     <td className="px-6 py-3 font-medium">{engagement.title}</td>
-                                    <td className="px-6 py-3 text-slate-400">{engagement.customerEmail}</td>
-                                    <td className="px-6 py-3 text-slate-400">
+                                    <td className="px-6 py-3 text-slate-500 dark:text-slate-400">{engagement.customerEmail}</td>
+                                    <td className="px-6 py-3 text-slate-500 dark:text-slate-400">
                                         {engagement.totalValue > 0 ? formatCurrency(engagement.totalValue, engagement.currency) : '—'}
                                     </td>
                                     <td className="px-6 py-3">

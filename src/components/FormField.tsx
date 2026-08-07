@@ -18,7 +18,7 @@ export function Field({
 }) {
     return (
         <div>
-            <label htmlFor={name} className="mb-1.5 block text-sm font-medium text-slate-300">
+            <label htmlFor={name} className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">
                 {label}
             </label>
             <input
@@ -51,7 +51,7 @@ export function TextAreaField({
 }) {
     return (
         <div>
-            <label htmlFor={name} className="mb-1.5 block text-sm font-medium text-slate-300">
+            <label htmlFor={name} className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">
                 {label}
             </label>
             <textarea
@@ -82,7 +82,7 @@ export function SelectField({
 }) {
     return (
         <div>
-            <label htmlFor={name} className="mb-1.5 block text-sm font-medium text-slate-300">
+            <label htmlFor={name} className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">
                 {label}
             </label>
             <select id={name} name={name} required={required} defaultValue={defaultValue} className={inputClass}>

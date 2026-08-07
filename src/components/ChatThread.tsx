@@ -89,20 +89,22 @@ export function ChatThread({
     }
 
     return (
-        <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
-            <h2 className="text-sm font-semibold text-slate-300">Team Chat</h2>
+        <div className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900/40">
+            <h2 className="text-sm font-semibold text-slate-600 dark:text-slate-300">Team Chat</h2>
 
             <div className="mt-4 max-h-96 space-y-4 overflow-y-auto">
                 {messages === null ? (
                     <Skeleton className="h-24 w-full" />
                 ) : messages.length === 0 ? (
-                    <p className="text-sm text-slate-500">No messages yet — say hello.</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">No messages yet — say hello.</p>
                 ) : (
                     messages.map((message) => (
                         <div key={message.id} className={message.senderId === senderId ? 'text-right' : 'text-left'}>
                             <div
                                 className={`inline-block max-w-[85%] rounded-lg px-3.5 py-2.5 text-sm ${
-                                    message.senderId === senderId ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-200'
+                                    message.senderId === senderId
+                                        ? 'bg-blue-600 text-white'
+                                        : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200'
                                 }`}
                             >
                                 <p className="text-xs font-medium opacity-70">
@@ -123,17 +125,17 @@ export function ChatThread({
                                     </a>
                                 )}
                             </div>
-                            <p className="mt-1 text-xs text-slate-600">{formatTime(message.createdAt)}</p>
+                            <p className="mt-1 text-xs text-slate-400 dark:text-slate-600">{formatTime(message.createdAt)}</p>
                         </div>
                     ))
                 )}
                 <div ref={bottomRef} />
             </div>
 
-            {error && <p className="mt-2 text-sm text-red-400">Something went wrong — please try again.</p>}
+            {error && <p className="mt-2 text-sm text-red-600 dark:text-red-400">Something went wrong — please try again.</p>}
 
             <form onSubmit={handleSend} className="mt-4 flex items-center gap-2">
-                <label className="shrink-0 cursor-pointer text-slate-400 hover:text-white">
+                <label className="shrink-0 cursor-pointer text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">
                     <input type="file" accept="image/*,application/pdf" onChange={handleAttach} disabled={uploading} className="hidden" />
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M21.44 11.05 12.25 20.24a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
