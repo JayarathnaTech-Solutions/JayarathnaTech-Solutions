@@ -7,6 +7,18 @@ export const siteContact = {
     location: 'Negombo, Sri Lanka',
 }
 
+// Registered business details used on formal documents (quotes, invoices,
+// agreements) — matches the company letterhead.
+export const siteLetterhead = {
+    registeredName: 'JayarathnaTech Solutions (Pvt) Ltd',
+    regNo: 'PV00223764',
+    address: 'No. 90/28/4, Gurugewaththa, Seeduwa Road, Kotugoda, Sri Lanka',
+    phone: '+94 75 282 8091',
+    phoneAlt: siteContact.phone,
+    website: 'www.jayarathnatechsolutions.com',
+    email: 'info@jayarathnatechsolutions.com',
+}
+
 export const siteSocial = {
     github: 'https://github.com/JayarathnaTech-Solutions',
 }
