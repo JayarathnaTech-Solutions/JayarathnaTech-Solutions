@@ -1,4 +1,7 @@
-import { SITE_NAME, SITE_URL, siteContact } from '../src/lib/siteInfo.ts'
+// No file extension here on purpose: Vercel's Edge Function bundler (see
+// api/chat.ts's `runtime: 'edge'`) fails to resolve relative imports that
+// have one, even though Vite's native config loader warns about it.
+import { SITE_NAME, SITE_URL, siteContact } from '../src/lib/siteInfo'
 
 const GEMINI_MODEL = 'gemini-2.5-flash'
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`
