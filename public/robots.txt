@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /portal
 
-Sitemap: https://jayarathnatechsolutions.com/sitemap.xml
+Sitemap: https://www.jayarathnatechsolutions.com/sitemap.xml

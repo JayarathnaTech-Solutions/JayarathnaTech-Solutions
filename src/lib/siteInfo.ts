@@ -1,5 +1,8 @@
 export const SITE_NAME = 'JayarathnaTech Solutions'
-export const SITE_URL = 'https://jayarathnatechsolutions.com'
+// Must match Vercel's primary domain exactly — the apex domain 308-redirects
+// here, so pointing this at the apex instead would make every sitemap/canonical
+// URL a redirect target and Search Console would flag pages as unindexable.
+export const SITE_URL = 'https://www.jayarathnatechsolutions.com'
 
 export const siteContact = {
     email: 'hello@jayarathnatechsolutions.com',

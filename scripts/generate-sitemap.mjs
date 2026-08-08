@@ -8,7 +8,7 @@ try {
     // No .env file locally is fine — Vercel injects env vars directly at build time.
 }
 
-const SITE_URL = 'https://jayarathnatechsolutions.com'
+const SITE_URL = 'https://www.jayarathnatechsolutions.com'
 const STATIC_ROUTES = ['/', '/about', '/services', '/projects', '/contact']
 
 const app = initializeApp({
