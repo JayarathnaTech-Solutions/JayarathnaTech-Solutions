@@ -62,6 +62,14 @@ function FacebookIcon() {
     )
 }
 
+function LinkedInIcon() {
+    return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6.94 8.5H3.56V21h3.38V8.5ZM5.25 3.25a1.96 1.96 0 1 0 0 3.92 1.96 1.96 0 0 0 0-3.92ZM20.44 21h.01v-6.87c0-3.36-.72-5.95-4.65-5.95-1.89 0-3.15 1.03-3.67 2.01h-.05V8.5H8.86V21h3.38v-6.29c0-1.66.31-3.26 2.36-3.26 2.02 0 2.05 1.89 2.05 3.37V21h3.79Z" />
+        </svg>
+    )
+}
+
 export function Footer() {
     return (
         <footer className="border-t border-slate-200 bg-white">
@@ -82,6 +90,15 @@ export function Footer() {
                                 className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 text-slate-500 transition-colors hover:border-slate-400 hover:text-slate-900"
                             >
                                 <FacebookIcon />
+                            </a>
+                            <a
+                                href={siteSocial.linkedin}
+                                target="_blank"
+                                rel="noreferrer"
+                                aria-label="LinkedIn"
+                                className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 text-slate-500 transition-colors hover:border-slate-400 hover:text-slate-900"
+                            >
+                                <LinkedInIcon />
                             </a>
                             <a
                                 href={siteSocial.github}
