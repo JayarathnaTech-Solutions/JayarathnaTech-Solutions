@@ -25,6 +25,7 @@ import type {
     QuoteStatus,
     Sprint,
     StaffMember,
+    StaffPersonalInfo,
     Testimonial,
     TestimonialInvite,
 } from '../types'
@@ -94,6 +95,25 @@ export function staffMemberFromDoc(
         role: data.role,
         invitedBy: data.invitedBy,
         createdAt: toIsoString(data.createdAt),
+    }
+}
+
+export function staffPersonalInfoFromDoc(
+    doc: QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData>,
+): StaffPersonalInfo {
+    const data = doc.data()
+    if (!data) throw new Error(`Staff personal info ${doc.id} does not exist`)
+    return {
+        id: doc.id,
+        nic: data.nic ?? '',
+        birthday: data.birthday ?? '',
+        address: data.address ?? '',
+        phone1: data.phone1 ?? '',
+        phone2: data.phone2 ?? '',
+        nicFrontUrl: data.nicFrontUrl ?? '',
+        nicBackUrl: data.nicBackUrl ?? '',
+        updatedAt: toIsoString(data.updatedAt),
+        updatedBy: data.updatedBy ?? '',
     }
 }
 

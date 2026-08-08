@@ -1,7 +1,7 @@
-import { useState, type FormEvent } from 'react'
-import { collection, deleteDoc, doc, orderBy, query, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
+import { useEffect, useState, type FormEvent } from 'react'
+import { collection, deleteDoc, doc, getDoc, orderBy, query, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
 import { db } from '../../firebase/config'
-import { staffMemberFromDoc } from '../../lib/firestore'
+import { staffMemberFromDoc, staffPersonalInfoFromDoc } from '../../lib/firestore'
 import { useFirestoreCollection } from '../../lib/useFirestoreCollection'
 import { formatDate } from '../../lib/format'
 import { useAuth } from '../AuthContext'
@@ -9,10 +9,12 @@ import { SlidePanel } from '../../components/SlidePanel'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { StatusBadge } from '../../components/StatusBadge'
 import { Avatar } from '../../components/Avatar'
-import { EditIcon, DeleteIcon } from '../../components/icons'
+import { EditIcon, DeleteIcon, IdCardIcon } from '../../components/icons'
+import { Field, TextAreaField } from '../../components/FormField'
+import { NicImageUpload } from '../components/NicImageUpload'
 import { inputClass } from '../../lib/ui'
 import { Skeleton } from '../../components/Skeleton'
-import type { StaffMember, StaffRole } from '../../types'
+import type { StaffMember, StaffPersonalInfo, StaffRole } from '../../types'
 
 function useStaff() {
     const { data: staff, reload } = useFirestoreCollection(
@@ -26,11 +28,13 @@ function useStaff() {
 function InviteForm({
     editing,
     invitedBy,
+    showAdminOption,
     onSaved,
     onCancel,
 }: {
     editing: StaffMember | null
     invitedBy: string
+    showAdminOption: boolean
     onSaved: () => void
     onCancel: () => void
 }) {
@@ -97,9 +101,10 @@ function InviteForm({
                     <option value="" disabled>
                         Select role
                     </option>
-                    <option value="admin">Admin</option>
+                    {showAdminOption && <option value="admin">Admin</option>}
                     <option value="editor">Editor</option>
                     <option value="developer">Developer</option>
+                    <option value="hr">HR Manager</option>
                 </select>
             </div>
 
@@ -125,18 +130,141 @@ function InviteForm({
     )
 }
 
+const emptyPersonalInfo: Omit<StaffPersonalInfo, 'id' | 'updatedAt' | 'updatedBy'> = {
+    nic: '',
+    birthday: '',
+    address: '',
+    phone1: '',
+    phone2: '',
+    nicFrontUrl: '',
+    nicBackUrl: '',
+}
+
+function PersonalInfoForm({ member, updatedBy, onSaved }: { member: StaffMember; updatedBy: string; onSaved: () => void }) {
+    const [loading, setLoading] = useState(true)
+    const [record, setRecord] = useState(emptyPersonalInfo)
+    const [saving, setSaving] = useState(false)
+    const [error, setError] = useState(false)
+
+    useEffect(() => {
+        let cancelled = false
+
+        getDoc(doc(db, 'staffRecords', member.id))
+            .then((snapshot) => {
+                if (cancelled) return
+                if (snapshot.exists()) {
+                    const info = staffPersonalInfoFromDoc(snapshot)
+                    setRecord({
+                        nic: info.nic,
+                        birthday: info.birthday,
+                        address: info.address,
+                        phone1: info.phone1,
+                        phone2: info.phone2,
+                        nicFrontUrl: info.nicFrontUrl,
+                        nicBackUrl: info.nicBackUrl,
+                    })
+                } else {
+                    setRecord(emptyPersonalInfo)
+                }
+            })
+            .finally(() => {
+                if (!cancelled) setLoading(false)
+            })
+
+        return () => {
+            cancelled = true
+        }
+    }, [member.id])
+
+    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault()
+        setSaving(true)
+        setError(false)
+
+        const formData = new FormData(event.currentTarget)
+
+        try {
+            await setDoc(
+                doc(db, 'staffRecords', member.id),
+                {
+                    nic: String(formData.get('nic') ?? '').trim(),
+                    birthday: String(formData.get('birthday') ?? ''),
+                    address: String(formData.get('address') ?? '').trim(),
+                    phone1: String(formData.get('phone1') ?? '').trim(),
+                    phone2: String(formData.get('phone2') ?? '').trim(),
+                    nicFrontUrl: record.nicFrontUrl,
+                    nicBackUrl: record.nicBackUrl,
+                    updatedAt: serverTimestamp(),
+                    updatedBy,
+                },
+                { merge: true },
+            )
+            onSaved()
+        } catch {
+            setError(true)
+        } finally {
+            setSaving(false)
+        }
+    }
+
+    if (loading) {
+        return (
+            <div className="space-y-4">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-24 w-full" />
+                <Skeleton className="h-10 w-full" />
+            </div>
+        )
+    }
+
+    return (
+        <form onSubmit={handleSubmit} className="space-y-5">
+            <Field label="NIC Number" name="nic" placeholder="XXXXXXXXXVX" defaultValue={record.nic} />
+            <Field label="Birthday" name="birthday" type="date" defaultValue={record.birthday} />
+            <TextAreaField label="Address" name="address" placeholder="Full residential address" defaultValue={record.address} />
+            <Field label="Phone Number 1" name="phone1" type="tel" placeholder="+94 7X XXX XXXX" defaultValue={record.phone1} />
+            <Field label="Phone Number 2" name="phone2" type="tel" placeholder="+94 7X XXX XXXX" defaultValue={record.phone2} />
+
+            <NicImageUpload
+                label="NIC Front"
+                value={record.nicFrontUrl}
+                onChange={(url) => setRecord((prev) => ({ ...prev, nicFrontUrl: url }))}
+            />
+            <NicImageUpload
+                label="NIC Back"
+                value={record.nicBackUrl}
+                onChange={(url) => setRecord((prev) => ({ ...prev, nicBackUrl: url }))}
+            />
+
+            {error && <p className="text-sm text-red-600">Something went wrong — please try again.</p>}
+
+            <div className="flex justify-end pt-2">
+                <button
+                    type="submit"
+                    disabled={saving}
+                    className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 disabled:opacity-60"
+                >
+                    {saving ? 'Saving…' : 'Save'}
+                </button>
+            </div>
+        </form>
+    )
+}
+
 export function AdminStaff() {
     const { staff: currentStaff } = useAuth()
     const { staff, reload } = useStaff()
     const [panelOpen, setPanelOpen] = useState(false)
     const [editing, setEditing] = useState<StaffMember | null>(null)
     const [removing, setRemoving] = useState<StaffMember | null>(null)
+    const [personalMember, setPersonalMember] = useState<StaffMember | null>(null)
 
-    if (currentStaff.role !== 'admin') {
+    if (currentStaff.role !== 'admin' && currentStaff.role !== 'hr') {
         return (
             <div className="rounded-xl border border-slate-200 bg-white p-10 text-center">
-                <h1 className="text-lg font-semibold">Admins only</h1>
-                <p className="mt-2 text-sm text-slate-500">Staff management is restricted to Admin accounts.</p>
+                <h1 className="text-lg font-semibold">Restricted</h1>
+                <p className="mt-2 text-sm text-slate-500">Staff management is restricted to Admin and HR accounts.</p>
             </div>
         )
     }
@@ -159,6 +287,7 @@ export function AdminStaff() {
     async function handleRemove() {
         if (!removing) return
         await deleteDoc(doc(db, 'staff', removing.id))
+        await deleteDoc(doc(db, 'staffRecords', removing.id)).catch(() => {})
         setRemoving(null)
         reload()
     }
@@ -202,7 +331,11 @@ export function AdminStaff() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-200">
-                            {staff.map((member) => (
+                            {staff.map((member) => {
+                                // HR has full parity with admin except it can never touch an
+                                // admin account — matches the firestore.rules boundary exactly.
+                                const blockedForHr = currentStaff.role === 'hr' && member.role === 'admin'
+                                return (
                                 <tr key={member.id}>
                                     <td className="px-6 py-3">
                                         <div className="flex items-center gap-3">
@@ -219,16 +352,26 @@ export function AdminStaff() {
                                         <div className="flex justify-end gap-2">
                                             <button
                                                 type="button"
+                                                onClick={() => setPersonalMember(member)}
+                                                disabled={blockedForHr}
+                                                aria-label={`Personal info for ${member.email}`}
+                                                className="rounded-lg p-2 text-slate-500 hover:bg-slate-200 hover:text-slate-900 disabled:opacity-30"
+                                            >
+                                                <IdCardIcon />
+                                            </button>
+                                            <button
+                                                type="button"
                                                 onClick={() => openEdit(member)}
+                                                disabled={blockedForHr}
                                                 aria-label={`Edit ${member.email}`}
-                                                className="rounded-lg p-2 text-slate-500 hover:bg-slate-200 hover:text-slate-900"
+                                                className="rounded-lg p-2 text-slate-500 hover:bg-slate-200 hover:text-slate-900 disabled:opacity-30"
                                             >
                                                 <EditIcon />
                                             </button>
                                             <button
                                                 type="button"
                                                 onClick={() => setRemoving(member)}
-                                                disabled={member.id === currentStaff.id}
+                                                disabled={member.id === currentStaff.id || blockedForHr}
                                                 aria-label={`Remove ${member.email}`}
                                                 className="rounded-lg p-2 text-slate-500 hover:bg-red-500/10 hover:text-red-600 disabled:opacity-30"
                                             >
@@ -237,20 +380,42 @@ export function AdminStaff() {
                                         </div>
                                     </td>
                                 </tr>
-                            ))}
+                                )
+                            })}
                         </tbody>
                     </table>
                 )}
             </div>
 
             <SlidePanel open={panelOpen} title={editing ? 'Edit Staff Member' : 'Invite Staff'} onClose={() => setPanelOpen(false)}>
-                <InviteForm editing={editing} invitedBy={currentStaff.email} onSaved={handleSaved} onCancel={() => setPanelOpen(false)} />
+                <InviteForm
+                    editing={editing}
+                    invitedBy={currentStaff.email}
+                    showAdminOption={currentStaff.role === 'admin'}
+                    onSaved={handleSaved}
+                    onCancel={() => setPanelOpen(false)}
+                />
+            </SlidePanel>
+
+            <SlidePanel
+                open={personalMember !== null}
+                title={`Personal Information — ${personalMember?.name || personalMember?.email || ''}`}
+                onClose={() => setPersonalMember(null)}
+            >
+                {personalMember && (
+                    <PersonalInfoForm
+                        key={personalMember.id}
+                        member={personalMember}
+                        updatedBy={currentStaff.email}
+                        onSaved={() => setPersonalMember(null)}
+                    />
+                )}
             </SlidePanel>
 
             <ConfirmDialog
                 open={removing !== null}
                 title="Remove staff member?"
-                message={`${removing?.email} will lose admin access immediately.`}
+                message={`${removing?.email} will lose staff access immediately.`}
                 confirmLabel="Remove"
                 onConfirm={handleRemove}
                 onCancel={() => setRemoving(null)}

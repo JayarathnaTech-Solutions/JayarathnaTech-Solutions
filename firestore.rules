@@ -20,6 +20,14 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/staff/$(request.auth.token.email)).data.role == 'developer';
     }
 
+    // Same one-function-per-role shape as isAdmin()/isDeveloper() above —
+    // see the comment near isEngagementDeveloper() for why this file avoids
+    // a single generic "resolved role" helper.
+    function isHr() {
+      return request.auth != null
+        && get(/databases/$(database)/documents/staff/$(request.auth.token.email)).data.role == 'hr';
+    }
+
     // A customer can authenticate before verifying their email (Firebase's
     // email/password sign-in doesn't block it), but must not be able to write
     // anything customer-scoped until they do — there's no server here to
@@ -84,14 +92,53 @@ service cloud.firestore {
       return url is string && url.matches('^https://.*');
     }
 
+    // Mirrors the staff/{staffId} HR-vs-admin-target guard above, for rules
+    // (staffRecords) keyed by staffId rather than by the caller's own doc.
+    function targetIsAdmin(staffId) {
+      return get(/databases/$(database)/documents/staff/$(staffId)).data.role == 'admin';
+    }
+
     match /staff/{staffId} {
       allow get: if request.auth != null && request.auth.token.email == staffId;
-      allow list: if isAdmin();
+      allow list: if isAdmin() || isHr();
+      // Admin has no target-role restriction. HR gets the same create/update/
+      // delete powers, EXCEPT it can never touch an admin account: not the
+      // existing doc (resource.data.role), not the incoming one (promoting
+      // someone to admin), so HR can't edit/delete admins or self-promote.
       allow create, update: if isAdmin()
-        && request.resource.data.role in ['admin', 'editor', 'developer'];
+        && request.resource.data.role in ['admin', 'editor', 'developer', 'hr'];
+      allow create, update: if isHr()
+        && (resource == null || resource.data.role != 'admin')
+        && request.resource.data.role in ['editor', 'developer', 'hr'];
       allow update: if request.auth.token.email == staffId
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name']);
       allow delete: if isAdmin();
+      allow delete: if isHr() && resource.data.role != 'admin';
+    }
+
+    // Sensitive personal data (NIC, birthday, address, phones, NIC scans),
+    // deliberately kept out of `staff` above so it never rides along with
+    // the isAdmin()/isStaff() lookups every other rule in this file does —
+    // only admin/hr can read or write any of it.
+    match /staffRecords/{staffId} {
+      // HR can never read or write an admin's personal info, same boundary
+      // as the staff/{staffId} rules above.
+      allow list: if isAdmin() || isHr();
+      allow get: if isAdmin() || (isHr() && !targetIsAdmin(staffId));
+      // `resource.data` doesn't exist yet on create (no doc to diff against),
+      // so create validates the incoming keys directly; update diffs against
+      // the existing doc — same allowlist, two different Firestore APIs.
+      allow create: if (isAdmin() || (isHr() && !targetIsAdmin(staffId)))
+        && request.resource.data.keys()
+             .hasOnly(['nic', 'birthday', 'address', 'phone1', 'phone2', 'nicFrontUrl', 'nicBackUrl', 'updatedAt', 'updatedBy'])
+        && (!('nicFrontUrl' in request.resource.data) || request.resource.data.nicFrontUrl == '' || isHttpsUrl(request.resource.data.nicFrontUrl))
+        && (!('nicBackUrl' in request.resource.data) || request.resource.data.nicBackUrl == '' || isHttpsUrl(request.resource.data.nicBackUrl));
+      allow update: if (isAdmin() || (isHr() && !targetIsAdmin(staffId)))
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['nic', 'birthday', 'address', 'phone1', 'phone2', 'nicFrontUrl', 'nicBackUrl', 'updatedAt', 'updatedBy'])
+        && (!('nicFrontUrl' in request.resource.data) || request.resource.data.nicFrontUrl == '' || isHttpsUrl(request.resource.data.nicFrontUrl))
+        && (!('nicBackUrl' in request.resource.data) || request.resource.data.nicBackUrl == '' || isHttpsUrl(request.resource.data.nicBackUrl));
+      allow delete: if isAdmin() || (isHr() && !targetIsAdmin(staffId));
     }
 
     // `customers` doc id is the Auth uid, not email — unlike `staff` invites,

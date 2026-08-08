@@ -5,6 +5,7 @@ import { collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc } from '
 
 const ADMIN_EMAIL = 'admin@example.com'
 const EDITOR_EMAIL = 'editor@example.com'
+const HR_EMAIL = 'hr@example.com'
 const OUTSIDER_EMAIL = 'outsider@example.com'
 
 let testEnv: RulesTestEnvironment
@@ -45,6 +46,13 @@ async function seedStaff() {
             invitedBy: ADMIN_EMAIL,
             createdAt: new Date(),
         })
+        await setDoc(doc(db, 'staff', HR_EMAIL), {
+            email: HR_EMAIL,
+            name: 'HR',
+            role: 'hr',
+            invitedBy: ADMIN_EMAIL,
+            createdAt: new Date(),
+        })
     })
 }
 
@@ -55,6 +63,9 @@ function adminDb() {
 }
 function editorDb() {
     return testEnv.authenticatedContext('editor-uid', { email: EDITOR_EMAIL }).firestore()
+}
+function hrDb() {
+    return testEnv.authenticatedContext('hr-uid', { email: HR_EMAIL }).firestore()
 }
 // Signed in with Google, but never invited — not present in `staff`.
 function outsiderDb() {
@@ -136,6 +147,144 @@ describe('staff', () => {
             }),
         )
         await assertFails(updateDoc(doc(adminDb(), 'staff', EDITOR_EMAIL), { role: 'superadmin' }))
+    })
+
+    it('gives hr staff-management parity with admin for non-admin staff', async () => {
+        await assertSucceeds(getDocs(collection(hrDb(), 'staff')))
+        await assertSucceeds(
+            setDoc(doc(hrDb(), 'staff', 'newhrinvite@example.com'), {
+                email: 'newhrinvite@example.com', name: '', role: 'editor', invitedBy: HR_EMAIL, createdAt: new Date(),
+            }),
+        )
+        await assertSucceeds(updateDoc(doc(hrDb(), 'staff', EDITOR_EMAIL), { role: 'developer' }))
+        await assertSucceeds(deleteDoc(doc(hrDb(), 'staff', 'newhrinvite@example.com')))
+    })
+
+    it('lets an admin create an hr staff member, and rejects invalid roles from hr too', async () => {
+        await assertSucceeds(
+            setDoc(doc(adminDb(), 'staff', 'newhr@example.com'), {
+                email: 'newhr@example.com', name: '', role: 'hr', invitedBy: ADMIN_EMAIL, createdAt: new Date(),
+            }),
+        )
+        await assertFails(
+            setDoc(doc(hrDb(), 'staff', 'bogus2@example.com'), {
+                email: 'bogus2@example.com', name: '', role: 'superadmin', invitedBy: HR_EMAIL, createdAt: new Date(),
+            }),
+        )
+    })
+
+    it('blocks hr from touching admin accounts at all', async () => {
+        await assertFails(updateDoc(doc(hrDb(), 'staff', ADMIN_EMAIL), { role: 'editor' }))
+        await assertFails(deleteDoc(doc(hrDb(), 'staff', ADMIN_EMAIL)))
+        await assertFails(
+            setDoc(doc(hrDb(), 'staff', 'newadmin@example.com'), {
+                email: 'newadmin@example.com', name: '', role: 'admin', invitedBy: HR_EMAIL, createdAt: new Date(),
+            }),
+        )
+    })
+
+    it('blocks hr from promoting a non-admin to admin', async () => {
+        await assertFails(updateDoc(doc(hrDb(), 'staff', EDITOR_EMAIL), { role: 'admin' }))
+    })
+
+    it('still lets admin fully manage admin accounts', async () => {
+        await assertSucceeds(updateDoc(doc(adminDb(), 'staff', ADMIN_EMAIL), { role: 'admin' }))
+    })
+})
+
+describe('staffRecords', () => {
+    async function seedStaffRecord() {
+        await testEnv.withSecurityRulesDisabled(async (context) => {
+            await setDoc(doc(context.firestore(), 'staffRecords', EDITOR_EMAIL), {
+                nic: '901234567V',
+                birthday: '1990-01-01',
+                address: '123 Main St',
+                phone1: '+94771234567',
+                phone2: '',
+                nicFrontUrl: 'https://res.cloudinary.com/demo/image/upload/front.jpg',
+                nicBackUrl: '',
+                updatedAt: new Date(),
+                updatedBy: ADMIN_EMAIL,
+            })
+        })
+    }
+
+    it('lets admin and hr read a staff record, denies everyone else', async () => {
+        await seedStaffRecord()
+        await assertSucceeds(getDoc(doc(adminDb(), 'staffRecords', EDITOR_EMAIL)))
+        await assertSucceeds(getDoc(doc(hrDb(), 'staffRecords', EDITOR_EMAIL)))
+        await assertFails(getDoc(doc(editorDb(), 'staffRecords', EDITOR_EMAIL)))
+        await assertFails(getDoc(doc(outsiderDb(), 'staffRecords', EDITOR_EMAIL)))
+        await assertFails(getDoc(doc(publicDb(), 'staffRecords', EDITOR_EMAIL)))
+    })
+
+    it('lets admin and hr list staff records, denies everyone else', async () => {
+        await seedStaffRecord()
+        await assertSucceeds(getDocs(collection(adminDb(), 'staffRecords')))
+        await assertSucceeds(getDocs(collection(hrDb(), 'staffRecords')))
+        await assertFails(getDocs(collection(editorDb(), 'staffRecords')))
+    })
+
+    it('lets admin and hr create/update a staff record, denies everyone else', async () => {
+        const payload = {
+            nic: '901234567V',
+            birthday: '1990-01-01',
+            address: '123 Main St',
+            phone1: '+94771234567',
+            phone2: '',
+            nicFrontUrl: '',
+            nicBackUrl: '',
+            updatedAt: new Date(),
+            updatedBy: ADMIN_EMAIL,
+        }
+        await assertSucceeds(setDoc(doc(adminDb(), 'staffRecords', EDITOR_EMAIL), payload))
+        await assertSucceeds(setDoc(doc(hrDb(), 'staffRecords', EDITOR_EMAIL), { ...payload, updatedBy: HR_EMAIL }))
+        await assertFails(setDoc(doc(editorDb(), 'staffRecords', EDITOR_EMAIL), payload))
+        await assertFails(setDoc(doc(outsiderDb(), 'staffRecords', EDITOR_EMAIL), payload))
+    })
+
+    it('rejects a non-https NIC image URL', async () => {
+        await assertFails(
+            setDoc(doc(adminDb(), 'staffRecords', EDITOR_EMAIL), {
+                nic: '', birthday: '', address: '', phone1: '', phone2: '',
+                nicFrontUrl: 'javascript:alert(1)',
+                nicBackUrl: '',
+                updatedAt: new Date(),
+                updatedBy: ADMIN_EMAIL,
+            }),
+        )
+    })
+
+    it('rejects a write that touches a field outside the allowlist', async () => {
+        await assertFails(
+            setDoc(doc(adminDb(), 'staffRecords', EDITOR_EMAIL), {
+                nic: '', birthday: '', address: '', phone1: '', phone2: '',
+                nicFrontUrl: '', nicBackUrl: '',
+                updatedAt: new Date(), updatedBy: ADMIN_EMAIL,
+                role: 'admin',
+            }),
+        )
+    })
+
+    it('lets admin and hr delete a staff record, denies everyone else', async () => {
+        await seedStaffRecord()
+        await assertFails(deleteDoc(doc(editorDb(), 'staffRecords', EDITOR_EMAIL)))
+        await assertSucceeds(deleteDoc(doc(hrDb(), 'staffRecords', EDITOR_EMAIL)))
+    })
+
+    it('blocks hr from reading or writing the admin staff record, but admin still can', async () => {
+        await testEnv.withSecurityRulesDisabled(async (context) => {
+            await setDoc(doc(context.firestore(), 'staffRecords', ADMIN_EMAIL), {
+                nic: '901234567V', birthday: '', address: '', phone1: '', phone2: '',
+                nicFrontUrl: '', nicBackUrl: '', updatedAt: new Date(), updatedBy: ADMIN_EMAIL,
+            })
+        })
+        await assertFails(getDoc(doc(hrDb(), 'staffRecords', ADMIN_EMAIL)))
+        await assertFails(deleteDoc(doc(hrDb(), 'staffRecords', ADMIN_EMAIL)))
+        await assertFails(
+            updateDoc(doc(hrDb(), 'staffRecords', ADMIN_EMAIL), { nic: 'hijacked' }),
+        )
+        await assertSucceeds(getDoc(doc(adminDb(), 'staffRecords', ADMIN_EMAIL)))
     })
 })
 

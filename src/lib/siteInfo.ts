@@ -5,7 +5,7 @@ export const SITE_NAME = 'JayarathnaTech Solutions'
 export const SITE_URL = 'https://www.jayarathnatechsolutions.com'
 
 export const siteContact = {
-    email: 'hello@jayarathnatechsolutions.com',
+    email: 'info@jayarathnatechsolutions.com',
     phone: '+94 78 628 7211',
     location: 'Negombo, Sri Lanka',
 }

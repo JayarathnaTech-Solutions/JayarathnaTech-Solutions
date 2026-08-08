@@ -113,7 +113,7 @@ const navItems: NavItemConfig[] = [
     {
         to: '/admin/staff',
         label: 'Staff',
-        visibleTo: ['admin'],
+        visibleTo: ['admin', 'hr'],
         icon: (
             <path
                 strokeLinecap="round"
@@ -299,6 +299,12 @@ export function AdminLayout() {
     // rendering a page they otherwise can't get to via the sidebar.
     if (staff.role === 'developer' && !pathname.startsWith('/admin/engagements')) {
         return <Navigate to="/admin/engagements" replace />
+    }
+
+    // HR is scoped to staff management only — nav hiding alone wouldn't stop
+    // a direct URL hit to e.g. /admin/settings, so enforce it here too.
+    if (staff.role === 'hr' && !pathname.startsWith('/admin/staff')) {
+        return <Navigate to="/admin/staff" replace />
     }
 
     return (

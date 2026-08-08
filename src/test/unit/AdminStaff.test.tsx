@@ -30,17 +30,25 @@ function staffMember(overrides: Partial<StaffMember>): StaffMember {
 }
 
 describe('AdminStaff', () => {
-    it('restricts the staff management screen to Admins', () => {
+    it('restricts the staff management screen to Admins and HR', () => {
         mockedUseAuth.mockReturnValue({ user: {} as User, staff: staffMember({ role: 'editor' }) })
 
         render(<AdminStaff />)
 
-        expect(screen.getByText(/admins only/i)).toBeInTheDocument()
+        expect(screen.getByRole('heading', { name: /restricted/i })).toBeInTheDocument()
         expect(screen.queryByRole('button', { name: /invite staff/i })).not.toBeInTheDocument()
     })
 
     it('shows the staff management UI for Admins', () => {
         mockedUseAuth.mockReturnValue({ user: {} as User, staff: staffMember({ role: 'admin' }) })
+
+        render(<AdminStaff />)
+
+        expect(screen.getByRole('button', { name: /invite staff/i })).toBeInTheDocument()
+    })
+
+    it('shows the staff management UI for HR', () => {
+        mockedUseAuth.mockReturnValue({ user: {} as User, staff: staffMember({ role: 'hr' }) })
 
         render(<AdminStaff />)
 

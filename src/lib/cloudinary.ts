@@ -1,6 +1,7 @@
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
 export const RECEIPTS_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_RECEIPTS_UPLOAD_PRESET
+export const NIC_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_NIC_UPLOAD_PRESET
 
 export function uploadImage(file: File, onProgress?: (percent: number) => void, uploadPreset: string = UPLOAD_PRESET): Promise<string> {
   const formData = new FormData()
@@ -30,4 +31,11 @@ export function uploadImage(file: File, onProgress?: (percent: number) => void, 
 
     xhr.send(formData)
   })
+}
+
+// Cloudinary serves images inline by default; inserting this transform flag
+// forces a Content-Disposition: attachment response so "Download" actually
+// downloads instead of just navigating to the image.
+export function toDownloadUrl(url: string): string {
+  return url.replace('/upload/', '/upload/fl_attachment/')
 }

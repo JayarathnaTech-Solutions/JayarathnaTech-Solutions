@@ -8,6 +8,7 @@ const statusStyles: Record<string, string> = {
     admin: 'bg-blue-500/10 text-blue-600',
     editor: 'bg-slate-200 text-slate-700',
     developer: 'bg-violet-500/10 text-violet-600',
+    hr: 'bg-teal-500/10 text-teal-600',
     'pending advance': 'bg-amber-500/10 text-amber-600',
     'in progress': 'bg-blue-500/10 text-blue-600',
     delivered: 'bg-emerald-500/10 text-emerald-600',

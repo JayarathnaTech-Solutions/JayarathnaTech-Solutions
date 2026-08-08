@@ -13,3 +13,12 @@ export function DeleteIcon() {
         </svg>
     )
 }
+
+export function IdCardIcon() {
+    return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6Z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 13.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm-3 4a3 3 0 0 1 6 0M14 9h5M14 12.5h5M14 16h3" />
+        </svg>
+    )
+}
