@@ -1,6 +1,6 @@
 import { useTheme } from '../lib/useTheme'
 
-export function ThemeToggle({ className = '' }: { className?: string }) {
+export function ThemeToggle({ className = '', forceLight = false }: { className?: string; forceLight?: boolean }) {
     const { theme, toggleTheme } = useTheme()
     const isDark = theme === 'dark'
 
@@ -10,7 +10,9 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
             onClick={toggleTheme}
             aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
             aria-pressed={isDark}
-            className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-300 text-slate-600 transition-colors hover:border-slate-400 hover:text-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:text-white ${className}`}
+            className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-300 text-slate-600 transition-colors hover:border-slate-400 hover:text-slate-900 ${
+                forceLight ? '' : 'dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:text-white'
+            } ${className}`}
         >
             {isDark ? (
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">

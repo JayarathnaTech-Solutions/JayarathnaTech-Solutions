@@ -10,8 +10,8 @@ export function Navbar() {
   const [open, setOpen] = useState(false)
 
   return (
-      <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur dark:border-slate-700/50 dark:bg-slate-900/75">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+      <header className="fixed inset-x-0 top-0 z-50 bg-transparent px-4 pt-4">
+        <div className="mx-auto flex max-w-3xl items-center justify-between rounded-full bg-white/90 px-6 py-2.5 shadow-lg backdrop-blur">
           <Link to="/" onClick={() => setOpen(false)}>
             <Logo />
           </Link>
@@ -24,9 +24,7 @@ export function Navbar() {
                     end={link.end}
                     className={({ isActive }) =>
                         `text-sm font-medium transition-colors ${
-                            isActive
-                                ? 'text-blue-600 dark:text-blue-400'
-                                : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white'
+                            isActive ? 'text-blue-600' : 'text-slate-600 hover:text-slate-900'
                         }`
                     }
                 >
@@ -36,7 +34,7 @@ export function Navbar() {
           </nav>
 
           <div className="hidden items-center gap-3 md:flex">
-            <ThemeToggle />
+            <ThemeToggle forceLight />
             <Link
                 to="/portal/login"
                 className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-500"
@@ -46,11 +44,11 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center gap-3 md:hidden">
-            <ThemeToggle />
+            <ThemeToggle forceLight />
             <button
                 type="button"
                 onClick={() => setOpen((value) => !value)}
-                className="text-slate-600 dark:text-slate-300"
+                className="text-slate-600"
                 aria-label="Toggle menu"
                 aria-expanded={open}
             >
@@ -69,7 +67,7 @@ export function Navbar() {
           {open && (
               <motion.nav
                   key="mobile-nav"
-                  className="flex flex-col gap-1 overflow-hidden border-t border-slate-200 px-6 py-4 dark:border-slate-700/50 md:hidden"
+                  className="flex flex-col gap-1 overflow-hidden border-t border-slate-200 bg-white px-6 py-4 md:hidden"
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
@@ -83,9 +81,7 @@ export function Navbar() {
                         onClick={() => setOpen(false)}
                         className={({ isActive }) =>
                             `rounded-md px-2 py-2 text-sm font-medium ${
-                                isActive
-                                    ? 'text-blue-600 dark:text-blue-400'
-                                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white'
+                                isActive ? 'text-blue-600' : 'text-slate-600 hover:text-slate-900'
                             }`
                         }
                     >
@@ -96,7 +92,7 @@ export function Navbar() {
                   <Link
                       to="/portal/login"
                       onClick={() => setOpen(false)}
-                      className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:border-slate-400 hover:text-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:text-white"
+                      className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:border-slate-400 hover:text-slate-900"
                   >
                       Account
                   </Link>
