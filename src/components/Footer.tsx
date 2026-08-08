@@ -64,12 +64,12 @@ function FacebookIcon() {
 
 export function Footer() {
     return (
-        <footer className="border-t border-slate-200 bg-slate-50 dark:border-slate-700/50 dark:bg-slate-900">
-            <div className="mx-auto max-w-7xl px-6 py-12 sm:py-16">
+        <footer className="border-t border-slate-200 bg-white">
+            <div className="mx-auto max-w-screen-2xl px-6 py-12 sm:py-16">
                 <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-10">
-                    <div className="col-span-2 flex flex-col items-center border-b border-slate-200 pb-10 text-center sm:items-start sm:border-b-0 sm:pb-0 sm:text-left lg:col-span-4 dark:border-slate-700/50">
+                    <div className="col-span-2 flex flex-col items-center border-b border-slate-200 pb-10 text-center sm:items-start sm:border-b-0 sm:pb-0 sm:text-left lg:col-span-4">
                         <Logo />
-                        <p className="mt-4 max-w-xs text-sm text-slate-600 dark:text-slate-400">
+                        <p className="mt-4 max-w-xs text-sm text-slate-600">
                             We build digital solutions that drive real business growth — web
                             applications, e-commerce platforms, and scalable software systems.
                         </p>
@@ -79,7 +79,7 @@ export function Footer() {
                                 target="_blank"
                                 rel="noreferrer"
                                 aria-label="Facebook"
-                                className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 text-slate-500 transition-colors hover:border-slate-400 hover:text-slate-900 dark:border-slate-700 dark:text-slate-400 dark:hover:border-slate-600 dark:hover:text-white"
+                                className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 text-slate-500 transition-colors hover:border-slate-400 hover:text-slate-900"
                             >
                                 <FacebookIcon />
                             </a>
@@ -88,7 +88,7 @@ export function Footer() {
                                 target="_blank"
                                 rel="noreferrer"
                                 aria-label="GitHub"
-                                className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 text-slate-500 transition-colors hover:border-slate-400 hover:text-slate-900 dark:border-slate-700 dark:text-slate-400 dark:hover:border-slate-600 dark:hover:text-white"
+                                className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 text-slate-500 transition-colors hover:border-slate-400 hover:text-slate-900"
                             >
                                 <GitHubIcon />
                             </a>
@@ -96,13 +96,13 @@ export function Footer() {
                     </div>
 
                     <div className="col-span-1 lg:col-span-2">
-                        <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Quick Links</h3>
+                        <h3 className="text-sm font-semibold text-slate-900">Quick Links</h3>
                         <ul className="mt-4 space-y-3 text-sm">
                             {navLinks.map((link) => (
                                 <li key={link.to}>
                                     <Link
                                         to={link.to}
-                                        className="text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                                        className="text-slate-600 transition-colors hover:text-slate-900"
                                     >
                                         {link.label}
                                     </Link>
@@ -112,13 +112,13 @@ export function Footer() {
                     </div>
 
                     <div className="col-span-1 lg:col-span-3">
-                        <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Services</h3>
+                        <h3 className="text-sm font-semibold text-slate-900">Services</h3>
                         <ul className="mt-4 space-y-3 text-sm">
                             {serviceLinks.map((service) => (
                                 <li key={service}>
                                     <Link
                                         to="/services"
-                                        className="text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                                        className="text-slate-600 transition-colors hover:text-slate-900"
                                     >
                                         {service}
                                     </Link>
@@ -127,9 +127,9 @@ export function Footer() {
                         </ul>
                     </div>
 
-                    <div className="col-span-2 border-t border-slate-200 pt-10 sm:col-span-2 sm:border-t-0 sm:pt-0 lg:col-span-3 dark:border-slate-700/50">
-                        <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Contact</h3>
-                        <ul className="mt-4 space-y-3 text-sm text-slate-600 dark:text-slate-400">
+                    <div className="col-span-2 border-t border-slate-200 pt-10 sm:col-span-2 sm:border-t-0 sm:pt-0 lg:col-span-3">
+                        <h3 className="text-sm font-semibold text-slate-900">Contact</h3>
+                        <ul className="mt-4 space-y-3 text-sm text-slate-600">
                             {contactRows.map((row) => (
                                 <li key={row.value} className="flex items-start gap-2.5">
                                     <svg
@@ -139,12 +139,12 @@ export function Footer() {
                                         fill="none"
                                         stroke="currentColor"
                                         strokeWidth="1.75"
-                                        className="mt-0.5 shrink-0 text-blue-600 dark:text-blue-400"
+                                        className="mt-0.5 shrink-0 text-blue-600"
                                     >
                                         {row.icon}
                                     </svg>
                                     {row.href ? (
-                                        <a href={row.href} className="transition-colors hover:text-slate-900 dark:hover:text-white">
+                                        <a href={row.href} className="transition-colors hover:text-slate-900">
                                             {row.value}
                                         </a>
                                     ) : (
@@ -157,8 +157,8 @@ export function Footer() {
                 </div>
             </div>
 
-            <div className="border-t border-slate-200 dark:border-slate-700/50">
-                <div className="mx-auto max-w-7xl px-6 py-6 text-center text-sm text-slate-500 sm:text-left">
+            <div className="border-t border-slate-200">
+                <div className="mx-auto max-w-screen-2xl px-6 py-6 text-center text-sm text-slate-500 sm:text-left">
                     <p>&copy; {new Date().getFullYear()} JayarathnaTech Solutions. All rights reserved.</p>
                 </div>
             </div>
