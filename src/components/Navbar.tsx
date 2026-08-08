@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Link, NavLink } from 'react-router'
 import { AnimatePresence, motion } from 'motion/react'
 import { Logo } from './Logo'
-import { ThemeToggle } from './ThemeToggle'
 import { navLinks as links } from '../lib/siteInfo'
 import { itemTransition } from '../lib/motion'
 
@@ -34,7 +33,6 @@ export function Navbar() {
           </nav>
 
           <div className="hidden items-center gap-3 md:flex">
-            <ThemeToggle forceLight />
             <Link
                 to="/portal/login"
                 className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-500"
@@ -44,7 +42,6 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center gap-3 md:hidden">
-            <ThemeToggle forceLight />
             <button
                 type="button"
                 onClick={() => setOpen((value) => !value)}
@@ -67,7 +64,7 @@ export function Navbar() {
           {open && (
               <motion.nav
                   key="mobile-nav"
-                  className="flex flex-col gap-1 overflow-hidden border-t border-slate-200 bg-white px-6 py-4 md:hidden"
+                  className="mt-2 flex flex-col gap-1 overflow-hidden rounded-3xl bg-white px-6 py-4 shadow-lg md:hidden"
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}

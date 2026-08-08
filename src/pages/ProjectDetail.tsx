@@ -37,7 +37,7 @@ function BackLink() {
     return (
         <Link
             to="/projects"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-slate-900"
         >
             Back to Projects
         </Link>
@@ -46,20 +46,20 @@ function BackLink() {
 
 function ProjectInfo({ project }: { project: Project }) {
     return (
-        <div className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-800/40">
+        <div className="rounded-xl border border-slate-200 bg-white p-6">
             <h3 className="text-lg font-semibold">Project Info</h3>
 
             <dl className="mt-4 space-y-4 text-sm">
                 {project.client && (
                     <div>
                         <dt className="text-slate-500">Client</dt>
-                        <dd className="mt-1 text-slate-700 dark:text-slate-200">{project.client}</dd>
+                        <dd className="mt-1 text-slate-700">{project.client}</dd>
                     </div>
                 )}
                 {project.category && (
                     <div>
                         <dt className="text-slate-500">Category</dt>
-                        <dd className="mt-1 text-slate-700 dark:text-slate-200">{project.category}</dd>
+                        <dd className="mt-1 text-slate-700">{project.category}</dd>
                     </div>
                 )}
                 {project.technologies && project.technologies.length > 0 && (
@@ -69,7 +69,7 @@ function ProjectInfo({ project }: { project: Project }) {
                             {project.technologies.map((tech) => (
                                 <span
                                     key={tech}
-                                    className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 dark:border-slate-700 dark:bg-slate-900/55 dark:text-slate-300"
+                                    className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600"
                                 >
                                     {tech}
                                 </span>
@@ -104,20 +104,20 @@ function ProjectBody({ project }: { project: Project }) {
         <div className="space-y-8">
             <div>
                 <h2 className="text-2xl font-bold sm:text-3xl">Project Overview</h2>
-                <p className="mt-3 text-slate-600 dark:text-slate-300">{project.description}</p>
+                <p className="mt-3 text-slate-600">{project.description}</p>
             </div>
 
             {project.challenge && (
                 <div>
                     <h2 className="text-2xl font-bold sm:text-3xl">The Challenge</h2>
-                    <p className="mt-3 text-slate-600 dark:text-slate-300">{project.challenge}</p>
+                    <p className="mt-3 text-slate-600">{project.challenge}</p>
                 </div>
             )}
 
             {project.solution && (
                 <div>
                     <h2 className="text-2xl font-bold sm:text-3xl">Our Solution</h2>
-                    <p className="mt-3 text-slate-600 dark:text-slate-300">{project.solution}</p>
+                    <p className="mt-3 text-slate-600">{project.solution}</p>
                 </div>
             )}
 
@@ -126,7 +126,7 @@ function ProjectBody({ project }: { project: Project }) {
                     <h2 className="text-2xl font-bold sm:text-3xl">Key Features</h2>
                     <ul className="mt-3 space-y-2.5">
                         {project.keyFeatures.map((feature) => (
-                            <li key={feature} className="flex items-start gap-2.5 text-slate-600 dark:text-slate-300">
+                            <li key={feature} className="flex items-start gap-2.5 text-slate-600">
                                 <svg
                                     width="20"
                                     height="20"
@@ -134,7 +134,7 @@ function ProjectBody({ project }: { project: Project }) {
                                     fill="none"
                                     stroke="currentColor"
                                     strokeWidth="1.75"
-                                    className="mt-0.5 shrink-0 text-blue-600 dark:text-blue-400"
+                                    className="mt-0.5 shrink-0 text-blue-600"
                                 >
                                     <path strokeLinecap="round" strokeLinejoin="round" d="m5 13 4 4L19 7" />
                                 </svg>
@@ -159,7 +159,7 @@ function ProjectView({ project }: { project: Project }) {
             <BackLink />
 
             <motion.div
-                className="relative mt-6 aspect-video overflow-hidden rounded-xl bg-slate-200 dark:bg-slate-800"
+                className="relative mt-6 aspect-video overflow-hidden rounded-xl bg-slate-200"
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
@@ -201,10 +201,10 @@ function NotFound() {
     return (
         <section className="mx-auto max-w-screen-2xl px-6 py-24 text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">Project not found</h1>
-            <p className="mt-3 text-slate-500 dark:text-slate-400">This project may have been removed or the link is incorrect.</p>
+            <p className="mt-3 text-slate-500">This project may have been removed or the link is incorrect.</p>
             <Link
                 to="/projects"
-                className="mt-6 inline-block text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+                className="mt-6 inline-block text-sm font-medium text-blue-600 hover:text-blue-500"
             >
                 Back to Projects
             </Link>
@@ -215,9 +215,9 @@ function NotFound() {
 function Loading() {
     return (
         <section className="mx-auto max-w-screen-2xl px-6 py-12">
-            <div className="h-5 w-32 animate-pulse rounded bg-slate-200 dark:bg-slate-800/50" />
-            <div className="mt-6 aspect-video animate-pulse rounded-xl bg-slate-200 dark:bg-slate-800/50" />
-            <div className="mt-8 h-9 w-72 animate-pulse rounded bg-slate-200 dark:bg-slate-800/50" />
+            <div className="h-5 w-32 animate-pulse rounded bg-slate-200" />
+            <div className="mt-6 aspect-video animate-pulse rounded-xl bg-slate-200" />
+            <div className="mt-8 h-9 w-72 animate-pulse rounded bg-slate-200" />
         </section>
     )
 }

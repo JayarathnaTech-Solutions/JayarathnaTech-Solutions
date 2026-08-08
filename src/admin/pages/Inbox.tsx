@@ -12,7 +12,7 @@ import type { ContactMessage } from '../../types'
 function SourceBadge({ source }: { source: ContactMessage['source'] }) {
     if (source !== 'chat') return null
     return (
-        <span className="inline-flex shrink-0 items-center rounded-full bg-blue-500/10 px-1.5 py-0.5 text-[10px] font-medium text-blue-600 dark:text-blue-400">
+        <span className="inline-flex shrink-0 items-center rounded-full bg-blue-500/10 px-1.5 py-0.5 text-[10px] font-medium text-blue-600">
             Chat
         </span>
     )
@@ -40,22 +40,22 @@ function MessageListItem({
         <button
             type="button"
             onClick={onSelect}
-            className={`flex w-full items-start gap-3 border-b border-slate-200 dark:border-slate-800 px-4 py-3 text-left transition-colors ${
-                active ? 'bg-blue-500/10' : 'hover:bg-slate-100 dark:hover:bg-slate-900/60'
+            className={`flex w-full items-start gap-3 border-b border-slate-200 px-4 py-3 text-left transition-colors ${
+                active ? 'bg-blue-500/10' : 'hover:bg-slate-100'
             }`}
         >
             <Avatar label={message.name} />
             <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
                     <div className="flex min-w-0 items-center gap-1.5">
-                        <p className={`truncate text-sm ${message.read ? 'font-medium text-slate-600 dark:text-slate-300' : 'font-semibold text-slate-900 dark:text-white'}`}>
+                        <p className={`truncate text-sm ${message.read ? 'font-medium text-slate-600' : 'font-semibold text-slate-900'}`}>
                             {message.name}
                         </p>
                         <SourceBadge source={message.source} />
                     </div>
-                    <span className="shrink-0 text-xs text-slate-500 dark:text-slate-400">{timeAgo(message.createdAt)}</span>
+                    <span className="shrink-0 text-xs text-slate-500">{timeAgo(message.createdAt)}</span>
                 </div>
-                <p className="truncate text-sm text-slate-500 dark:text-slate-400">{message.message}</p>
+                <p className="truncate text-sm text-slate-500">{message.message}</p>
             </div>
             {!message.read && <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-blue-500" />}
         </button>
@@ -76,7 +76,7 @@ function MessageDetail({
             <button
                 type="button"
                 onClick={onBack}
-                className="mb-4 flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white md:hidden"
+                className="mb-4 flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-slate-900 md:hidden"
             >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -88,18 +88,18 @@ function MessageDetail({
                     <h2 className="text-lg font-semibold">{message.name}</h2>
                     <SourceBadge source={message.source} />
                 </div>
-                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{message.email}</p>
-                {message.phone && <p className="text-sm text-slate-500 dark:text-slate-400">{message.phone}</p>}
-                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{formatDateTime(message.createdAt)}</p>
+                <p className="mt-1 text-sm text-slate-500">{message.email}</p>
+                {message.phone && <p className="text-sm text-slate-500">{message.phone}</p>}
+                <p className="mt-1 text-xs text-slate-500">{formatDateTime(message.createdAt)}</p>
             </div>
 
-            <p className="mt-6 flex-1 whitespace-pre-wrap text-sm text-slate-600 dark:text-slate-300">{message.message}</p>
+            <p className="mt-6 flex-1 whitespace-pre-wrap text-sm text-slate-600">{message.message}</p>
 
-            <div className="mt-6 flex justify-end gap-3 border-t border-slate-200 dark:border-slate-800 pt-4">
+            <div className="mt-6 flex justify-end gap-3 border-t border-slate-200 pt-4">
                 <button
                     type="button"
                     onClick={onToggleRead}
-                    className="rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600"
+                    className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-600 hover:border-slate-400"
                 >
                     {message.read ? 'Mark as Unread' : 'Mark as Read'}
                 </button>
@@ -151,9 +151,9 @@ export function AdminInbox() {
         <div>
             <h1 className="text-2xl font-bold">Messages</h1>
 
-            <div className="mt-6 flex h-[calc(100vh-13rem)] min-h-[28rem] overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40">
-                <div className={`${selected ? 'hidden md:flex' : 'flex'} w-full max-w-sm flex-col border-r border-slate-200 dark:border-slate-800`}>
-                    <div className="border-b border-slate-200 dark:border-slate-800 p-3">
+            <div className="mt-6 flex h-[calc(100vh-13rem)] min-h-[28rem] overflow-hidden rounded-xl border border-slate-200 bg-white">
+                <div className={`${selected ? 'hidden md:flex' : 'flex'} w-full max-w-sm flex-col border-r border-slate-200`}>
+                    <div className="border-b border-slate-200 p-3">
                         <input
                             type="search"
                             value={search}
@@ -176,7 +176,7 @@ export function AdminInbox() {
                                 ))}
                             </div>
                         ) : filtered.length === 0 ? (
-                            <p className="p-4 text-sm text-slate-500 dark:text-slate-400">No messages yet.</p>
+                            <p className="p-4 text-sm text-slate-500">No messages yet.</p>
                         ) : (
                             filtered.map((message) => (
                                 <MessageListItem
@@ -194,7 +194,7 @@ export function AdminInbox() {
                     {selected ? (
                         <MessageDetail message={selected} onToggleRead={handleToggleRead} onBack={() => setSelectedId(null)} />
                     ) : (
-                        <div className="flex mx-auto h-full items-center justify-center text-sm text-slate-500 dark:text-slate-400">
+                        <div className="flex mx-auto h-full items-center justify-center text-sm text-slate-500">
                             Select a message to view it
                         </div>
                     )}

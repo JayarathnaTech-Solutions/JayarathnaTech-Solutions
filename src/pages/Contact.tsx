@@ -49,7 +49,7 @@ function Info() {
             <motion.span
                 variants={staggerItem}
                 transition={itemTransition}
-                className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-600 dark:text-blue-400"
+                className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-600"
             >
                 <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
                 Get in Touch
@@ -62,10 +62,10 @@ function Info() {
             >
                 Let&rsquo;s Build Something
                 <br/>
-                <span className="bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-indigo-400">Amazing Together</span>
+                <span className="bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Amazing Together</span>
             </motion.h1>
 
-            <motion.p variants={staggerItem} transition={itemTransition} className="mt-5 max-w-md text-lg text-slate-600 dark:text-slate-300">
+            <motion.p variants={staggerItem} transition={itemTransition} className="mt-5 max-w-md text-lg text-slate-600">
                 Have a project in mind or want to learn more about our services? We&rsquo;d love to
                 hear from you.
             </motion.p>
@@ -73,13 +73,13 @@ function Info() {
             <motion.div variants={staggerItem} transition={itemTransition} className="mt-8 space-y-5">
                 {contactDetails.map((detail) => (
                     <div key={detail.label} className="flex items-center gap-4">
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                                 {detail.icon}
                             </svg>
                         </div>
                         <div>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">{detail.label}</p>
+                            <p className="text-sm text-slate-500">{detail.label}</p>
                             <p className="font-medium">{detail.value}</p>
                         </div>
                     </div>
@@ -104,7 +104,7 @@ function Field({
 }) {
     return (
         <div>
-            <label htmlFor={name} className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+            <label htmlFor={name} className="mb-1.5 block text-sm font-medium text-slate-700">
                 {label}
             </label>
             <input
@@ -124,19 +124,19 @@ type Status = 'idle' | 'submitting' | 'success' | 'error'
 function SuccessState({ onReset }: { onReset: () => void }) {
     return (
         <div className="flex flex-col items-center py-8 text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-500/10 text-blue-600">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                     <path strokeLinecap="round" strokeLinejoin="round" d="m5 13 4 4L19 7" />
                 </svg>
             </div>
             <h3 className="mt-4 text-lg font-semibold">Message Sent!</h3>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+            <p className="mt-2 text-sm text-slate-600">
                 Thanks for reaching out — we&rsquo;ll get back to you within 1-2 business days.
             </p>
             <button
                 type="button"
                 onClick={onReset}
-                className="mt-6 text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+                className="mt-6 text-sm font-medium text-blue-600 hover:text-blue-500"
             >
                 Send another message
             </button>
@@ -188,7 +188,7 @@ function ContactForm() {
 
     return (
         <motion.div
-            className="rounded-xl border border-slate-200 bg-white p-8 dark:border-slate-700 dark:bg-slate-800/40"
+            className="rounded-xl border border-slate-200 bg-white p-8"
             initial={{ opacity: 0, x: 24 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -204,7 +204,7 @@ function ContactForm() {
                     <Field label="Phone" name="phone" type="tel" placeholder="Your phone number" required />
 
                     <div>
-                        <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                        <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-slate-700">
                             Message
                         </label>
                         <textarea
@@ -244,7 +244,7 @@ export function Contact() {
                 description="Get in touch with JayarathnaTech Solutions, a software company in Negombo, Sri Lanka, working with clients across Sri Lanka and around the world."
             />
 
-            <section className="mx-auto max-w-7xl px-6 py-16 md:py-24">
+            <section className="mx-auto max-w-7xl px-6 py-24">
                 <div className="grid gap-12 lg:grid-cols-2">
                     <Info />
                     <ContactForm />

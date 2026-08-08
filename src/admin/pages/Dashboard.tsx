@@ -95,10 +95,10 @@ function useDashboardData(isAdmin: boolean) {
 
 function StatCard({ label, value, icon }: { label: string; value: number; icon: ReactNode }) {
     return (
-        <div className="rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900/40">
+        <div className="rounded-xl border border-slate-200 bg-white p-5">
             <div className="flex items-center justify-between">
-                <p className="text-sm text-slate-500 dark:text-slate-400">{label}</p>
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                <p className="text-sm text-slate-500">{label}</p>
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                         {icon}
                     </svg>
@@ -189,7 +189,7 @@ function StatCards({ data }: { data: DashboardData }) {
 function MiniStars({ rating }: { rating?: number }) {
     if (!rating) return null
     return (
-        <div className="flex gap-0.5 text-amber-500 dark:text-amber-400">
+        <div className="flex gap-0.5 text-amber-500">
             {Array.from({ length: 5 }, (_, i) => (
                 <svg key={i} width="12" height="12" viewBox="0 0 20 20" fill={i < rating ? 'currentColor' : 'none'} stroke="currentColor">
                     <path d="M10 1.5l2.6 5.27 5.82.85-4.21 4.1.99 5.8L10 14.9l-5.2 2.72.99-5.8-4.21-4.1 5.82-.85z" />
@@ -201,16 +201,16 @@ function MiniStars({ rating }: { rating?: number }) {
 
 function RecentMessages({ messages }: { messages: ContactMessage[] }) {
     return (
-        <div className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900/40">
+        <div className="rounded-xl border border-slate-200 bg-white p-6">
             <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold">Recent Messages</h2>
-                <Link to="/admin/inbox" className="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
+                <Link to="/admin/inbox" className="text-sm font-medium text-blue-600 hover:text-blue-500">
                     View all messages
                 </Link>
             </div>
 
             {messages.length === 0 ? (
-                <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">No messages yet.</p>
+                <p className="mt-6 text-sm text-slate-500">No messages yet.</p>
             ) : (
                 <ul className="mt-5 space-y-4">
                     {messages.map((message) => (
@@ -219,9 +219,9 @@ function RecentMessages({ messages }: { messages: ContactMessage[] }) {
                             <div className="min-w-0 flex-1">
                                 <div className="flex items-center justify-between gap-2">
                                     <p className="truncate text-sm font-medium">{message.name}</p>
-                                    <span className="shrink-0 text-xs text-slate-500 dark:text-slate-400">{timeAgo(message.createdAt)}</span>
+                                    <span className="shrink-0 text-xs text-slate-500">{timeAgo(message.createdAt)}</span>
                                 </div>
-                                <p className="truncate text-sm text-slate-500 dark:text-slate-400">{message.message}</p>
+                                <p className="truncate text-sm text-slate-500">{message.message}</p>
                             </div>
                         </li>
                     ))}
@@ -233,16 +233,16 @@ function RecentMessages({ messages }: { messages: ContactMessage[] }) {
 
 function PendingTestimonials({ testimonials }: { testimonials: Testimonial[] }) {
     return (
-        <div className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900/40">
+        <div className="rounded-xl border border-slate-200 bg-white p-6">
             <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold">Pending Testimonials</h2>
-                <Link to="/admin/testimonials" className="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
+                <Link to="/admin/testimonials" className="text-sm font-medium text-blue-600 hover:text-blue-500">
                     View all testimonials
                 </Link>
             </div>
 
             {testimonials.length === 0 ? (
-                <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">No pending testimonials.</p>
+                <p className="mt-6 text-sm text-slate-500">No pending testimonials.</p>
             ) : (
                 <ul className="mt-5 space-y-4">
                     {testimonials.map((testimonial) => (
@@ -251,9 +251,9 @@ function PendingTestimonials({ testimonials }: { testimonials: Testimonial[] }) 
                             <div className="min-w-0 flex-1">
                                 <div className="flex items-center justify-between gap-2">
                                     <p className="truncate text-sm font-medium">{testimonial.clientName}</p>
-                                    <span className="shrink-0 text-xs text-slate-500 dark:text-slate-400">{timeAgo(testimonial.createdAt)}</span>
+                                    <span className="shrink-0 text-xs text-slate-500">{timeAgo(testimonial.createdAt)}</span>
                                 </div>
-                                <p className="truncate text-sm text-slate-500 dark:text-slate-400">{testimonial.message}</p>
+                                <p className="truncate text-sm text-slate-500">{testimonial.message}</p>
                                 <div className="mt-1">
                                     <MiniStars rating={testimonial.rating} />
                                 </div>
@@ -268,9 +268,9 @@ function PendingTestimonials({ testimonials }: { testimonials: Testimonial[] }) 
 
 function ErrorBanner({ onDismiss }: { onDismiss: () => void }) {
     return (
-        <div className="mb-6 flex items-center justify-between gap-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-300">
+        <div className="mb-6 flex items-center justify-between gap-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-700">
             <span>Couldn&rsquo;t load dashboard data — try refreshing.</span>
-            <button type="button" onClick={onDismiss} aria-label="Dismiss" className="text-red-700 hover:text-red-800 dark:text-red-300 dark:hover:text-red-200">
+            <button type="button" onClick={onDismiss} aria-label="Dismiss" className="text-red-700 hover:text-red-800">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6 6 18" />
                 </svg>
@@ -284,12 +284,12 @@ function Loading() {
         <div className="space-y-6">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {[0, 1, 2, 3, 4, 5].map((i) => (
-                    <div key={i} className="h-24 animate-pulse rounded-xl border border-slate-200 bg-slate-100 dark:border-slate-800 dark:bg-slate-900/50" />
+                    <div key={i} className="h-24 animate-pulse rounded-xl border border-slate-200 bg-slate-100" />
                 ))}
             </div>
             <div className="grid gap-6 lg:grid-cols-2">
-                <div className="h-64 animate-pulse rounded-xl border border-slate-200 bg-slate-100 dark:border-slate-800 dark:bg-slate-900/50" />
-                <div className="h-64 animate-pulse rounded-xl border border-slate-200 bg-slate-100 dark:border-slate-800 dark:bg-slate-900/50" />
+                <div className="h-64 animate-pulse rounded-xl border border-slate-200 bg-slate-100" />
+                <div className="h-64 animate-pulse rounded-xl border border-slate-200 bg-slate-100" />
             </div>
         </div>
     )

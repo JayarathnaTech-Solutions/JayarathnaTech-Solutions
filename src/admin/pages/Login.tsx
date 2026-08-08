@@ -51,15 +51,15 @@ export function Login() {
         <>
             <Seo title="Admin Login — JayarathnaTech Solutions" description="Staff sign-in for JayarathnaTech Solutions." />
 
-            <div className="flex min-h-screen items-center justify-center bg-slate-50 px-6 text-slate-900 dark:bg-slate-950 dark:text-white">
+            <div className="flex min-h-screen items-center justify-center bg-slate-50 px-6 text-slate-900">
                 <div className="w-full max-w-sm">
                     <div className="flex justify-center">
                         <Logo />
                     </div>
 
-                    <div className="mt-8 rounded-xl border border-slate-200 bg-white p-8 text-center dark:border-slate-800 dark:bg-slate-900/40">
+                    <div className="mt-8 rounded-xl border border-slate-200 bg-white p-8 text-center">
                         <h1 className="text-xl font-semibold">Admin Sign In</h1>
-                        <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">Staff access only</p>
+                        <p className="mt-1.5 text-sm text-slate-500">Staff access only</p>
 
                         <button
                             type="button"
@@ -72,16 +72,16 @@ export function Login() {
                         </button>
 
                         {signInStatus === 'error' && (
-                            <p className="mt-4 text-sm text-red-600 dark:text-red-400">Sign-in failed — please try again.</p>
+                            <p className="mt-4 text-sm text-red-600">Sign-in failed — please try again.</p>
                         )}
 
                         {authStatus.status === 'not-staff' && (
                             <div className="mt-4 space-y-2">
-                                <p className="text-sm text-red-600 dark:text-red-400">This Google account isn&rsquo;t on the staff list.</p>
+                                <p className="text-sm text-red-600">This Google account isn&rsquo;t on the staff list.</p>
                                 <button
                                     type="button"
                                     onClick={() => signOut(auth)}
-                                    className="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+                                    className="text-sm font-medium text-blue-600 hover:text-blue-500"
                                 >
                                     Try a different account
                                 </button>
@@ -89,7 +89,7 @@ export function Login() {
                         )}
                     </div>
 
-                    <p className="mt-6 text-center text-xs text-slate-500 dark:text-slate-400">Access is invite-only</p>
+                    <p className="mt-6 text-center text-xs text-slate-500">Access is invite-only</p>
                 </div>
             </div>
         </>

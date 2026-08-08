@@ -257,8 +257,8 @@ export function ChatWidget() {
   return (
     <div className="fixed right-4 bottom-20 z-50 md:right-6 md:bottom-6">
       {isOpen && (
-        <div className="mb-3 flex h-[28rem] w-[calc(100vw-2rem)] max-w-sm flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-800 dark:bg-slate-900">
-          <div className="flex items-center justify-between border-b border-slate-200 bg-blue-600 px-4 py-3 dark:border-slate-800">
+        <div className="mb-3 flex h-[28rem] w-[calc(100vw-2rem)] max-w-sm flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
+          <div className="flex items-center justify-between border-b border-slate-200 bg-blue-600 px-4 py-3">
             <p className="text-sm font-semibold text-white">{SITE_NAME} Assistant</p>
             <button
               type="button"
@@ -279,7 +279,7 @@ export function ChatWidget() {
                   className={`max-w-[85%] rounded-xl px-3 py-2 text-sm whitespace-pre-wrap ${
                     message.role === 'user'
                       ? 'bg-blue-600 text-white'
-                      : 'bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100'
+                      : 'bg-slate-100 text-slate-900'
                   }`}
                 >
                   {renderMessageText(message.text)}
@@ -288,17 +288,17 @@ export function ChatWidget() {
             ))}
             {isSending && (
               <div className="flex justify-start">
-                <p className="max-w-[85%] rounded-xl bg-slate-100 px-3 py-2 text-sm text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+                <p className="max-w-[85%] rounded-xl bg-slate-100 px-3 py-2 text-sm text-slate-500">
                   Typing…
                 </p>
               </div>
             )}
-            {error && <p className="text-center text-xs text-red-600 dark:text-red-400">{error}</p>}
+            {error && <p className="text-center text-xs text-red-600">{error}</p>}
 
             {(leadCardState === 'visible' || leadCardState === 'submitting') && (
-              <div className="rounded-xl border border-blue-200 bg-blue-50 p-3 dark:border-blue-900/50 dark:bg-blue-950/30">
-                <p className="text-sm font-medium text-slate-900 dark:text-slate-100">Want us to follow up?</p>
-                <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
+              <div className="rounded-xl border border-blue-200 bg-blue-50 p-3">
+                <p className="text-sm font-medium text-slate-900">Want us to follow up?</p>
+                <p className="mt-1 text-xs text-slate-600">
                   Leave your contact info and we&rsquo;ll reach out.
                 </p>
                 <form onSubmit={submitLead} className="mt-3 space-y-2">
@@ -308,7 +308,7 @@ export function ChatWidget() {
                     onChange={(e) => setLeadName(e.target.value)}
                     placeholder="Your name"
                     disabled={leadCardState === 'submitting'}
-                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
+                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 disabled:opacity-60"
                   />
                   <input
                     type="email"
@@ -316,7 +316,7 @@ export function ChatWidget() {
                     onChange={(e) => setLeadEmail(e.target.value)}
                     placeholder="Your email"
                     disabled={leadCardState === 'submitting'}
-                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
+                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 disabled:opacity-60"
                   />
                   <input
                     type="tel"
@@ -324,9 +324,9 @@ export function ChatWidget() {
                     onChange={(e) => setLeadPhone(e.target.value)}
                     placeholder="Phone (optional)"
                     disabled={leadCardState === 'submitting'}
-                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
+                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 disabled:opacity-60"
                   />
-                  {leadError && <p className="text-xs text-red-600 dark:text-red-400">{leadError}</p>}
+                  {leadError && <p className="text-xs text-red-600">{leadError}</p>}
                   <div className="flex items-center gap-2 pt-1">
                     <button
                       type="submit"
@@ -339,7 +339,7 @@ export function ChatWidget() {
                       type="button"
                       onClick={dismissLead}
                       disabled={leadCardState === 'submitting'}
-                      className="text-sm text-slate-500 hover:text-slate-700 disabled:opacity-60 dark:text-slate-400 dark:hover:text-slate-200"
+                      className="text-sm text-slate-500 hover:text-slate-700 disabled:opacity-60"
                     >
                       No thanks
                     </button>
@@ -349,13 +349,13 @@ export function ChatWidget() {
             )}
 
             {leadCardState === 'submitted' && (
-              <p className="rounded-xl bg-slate-100 px-3 py-2 text-sm text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+              <p className="rounded-xl bg-slate-100 px-3 py-2 text-sm text-slate-700">
                 Thanks{leadName ? `, ${leadName}` : ''}! We&rsquo;ve got your info and will be in touch soon.
               </p>
             )}
           </div>
 
-          <form onSubmit={sendMessage} className="flex items-center gap-2 border-t border-slate-200 p-3 dark:border-slate-800">
+          <form onSubmit={sendMessage} className="flex items-center gap-2 border-t border-slate-200 p-3">
             <input
               type="text"
               value={input}
@@ -363,7 +363,7 @@ export function ChatWidget() {
               placeholder="Ask about our services..."
               maxLength={2000}
               disabled={isSending}
-              className="flex-1 rounded-lg border border-slate-300 bg-transparent px-3 py-2 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 disabled:opacity-60 dark:border-slate-700 dark:text-white"
+              className="flex-1 rounded-lg border border-slate-300 bg-transparent px-3 py-2 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 disabled:opacity-60"
             />
             <button
               type="submit"

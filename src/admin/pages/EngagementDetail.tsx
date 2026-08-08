@@ -70,9 +70,9 @@ function SetContractValueForm({ engagement, onSaved }: { engagement: Engagement;
     }
 
     return (
-        <form onSubmit={handleSubmit} className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6">
-            <h2 className="text-sm font-semibold text-slate-600 dark:text-slate-300">Set Contract Value</h2>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        <form onSubmit={handleSubmit} className="rounded-xl border border-slate-200 bg-white p-6">
+            <h2 className="text-sm font-semibold text-slate-600">Set Contract Value</h2>
+            <p className="mt-1 text-sm text-slate-500">
                 Generates a 50% advance and 50% final invoice. This can only be done once.
             </p>
             <div className="mt-4 grid grid-cols-[1fr_8rem] gap-3">
@@ -82,7 +82,7 @@ function SetContractValueForm({ engagement, onSaved }: { engagement: Engagement;
                     <option value="LKR">LKR</option>
                 </select>
             </div>
-            {error && <p className="mt-3 text-sm text-red-600 dark:text-red-400">Something went wrong — please try again.</p>}
+            {error && <p className="mt-3 text-sm text-red-600">Something went wrong — please try again.</p>}
             <div className="mt-4 flex justify-end">
                 <button
                     type="submit"
@@ -130,9 +130,9 @@ function SprintsForm({ engagement, onSaved }: { engagement: Engagement; onSaved:
     }
 
     return (
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6">
-            <h2 className="text-sm font-semibold text-slate-600 dark:text-slate-300">Define Sprint 1 &amp; Start Project</h2>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        <div className="rounded-xl border border-slate-200 bg-white p-6">
+            <h2 className="text-sm font-semibold text-slate-600">Define Sprint 1 &amp; Start Project</h2>
+            <p className="mt-1 text-sm text-slate-500">
                 Advance payment verified. Lay out Sprint 1's phase checklist — the last phase is the delivery phase.
                 More sprints can be added later.
             </p>
@@ -149,7 +149,7 @@ function SprintsForm({ engagement, onSaved }: { engagement: Engagement; onSaved:
                             type="button"
                             onClick={() => removePhase(index)}
                             aria-label="Remove phase"
-                            className="shrink-0 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400"
+                            className="shrink-0 text-slate-500 hover:text-red-600"
                         >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6 6 18" />
@@ -158,10 +158,10 @@ function SprintsForm({ engagement, onSaved }: { engagement: Engagement; onSaved:
                     </div>
                 ))}
             </div>
-            <button type="button" onClick={addPhase} className="mt-3 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
+            <button type="button" onClick={addPhase} className="mt-3 text-sm font-medium text-blue-600 hover:text-blue-500">
                 + Add Phase
             </button>
-            {error && <p className="mt-3 text-sm text-red-600 dark:text-red-400">Something went wrong — please try again.</p>}
+            {error && <p className="mt-3 text-sm text-red-600">Something went wrong — please try again.</p>}
             <div className="mt-4 flex justify-end">
                 <button
                     type="button"
@@ -224,21 +224,21 @@ function SprintsPanel({ engagement, isAdmin, onSaved }: { engagement: Engagement
     }
 
     return (
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6">
-            <h2 className="text-sm font-semibold text-slate-600 dark:text-slate-300">Sprints</h2>
-            {isAdmin && <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Each sprint has its own phase checklist, tracked independently.</p>}
+        <div className="rounded-xl border border-slate-200 bg-white p-6">
+            <h2 className="text-sm font-semibold text-slate-600">Sprints</h2>
+            {isAdmin && <p className="mt-1 text-xs text-slate-500">Each sprint has its own phase checklist, tracked independently.</p>}
 
             <div className="mt-4 space-y-6">
                 {engagement.sprints.map((sprint, sprintIndex) => (
-                    <div key={sprintIndex} className={sprintIndex > 0 ? 'border-t border-slate-200 dark:border-slate-800 pt-6' : ''}>
-                        <h3 className="text-sm font-semibold text-slate-900 dark:text-white">{sprint.name}</h3>
+                    <div key={sprintIndex} className={sprintIndex > 0 ? 'border-t border-slate-200 pt-6' : ''}>
+                        <h3 className="text-sm font-semibold text-slate-900">{sprint.name}</h3>
                         <ol className="mt-3 space-y-2">
                             {sprint.phases.map((phase, phaseIndex) => (
                                 <li key={phaseIndex} className="flex items-center gap-3 text-sm">
                                     <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${phaseDotClass[phase.status]}`}>
                                         {phaseIndex + 1}
                                     </span>
-                                    <span className={`flex-1 ${phase.status !== 'not_started' ? 'font-medium text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400'}`}>
+                                    <span className={`flex-1 ${phase.status !== 'not_started' ? 'font-medium text-slate-900' : 'text-slate-500'}`}>
                                         {phase.name}
                                     </span>
                                     {isAdmin ? (
@@ -246,7 +246,7 @@ function SprintsPanel({ engagement, isAdmin, onSaved }: { engagement: Engagement
                                             value={phase.status}
                                             onChange={(event) => handlePhaseStatus(sprintIndex, phaseIndex, event.target.value as PhaseStatus)}
                                             disabled={saving}
-                                            className="shrink-0 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-950/60 px-2 py-1.5 text-xs text-slate-600 dark:text-slate-300 disabled:opacity-60"
+                                            className="shrink-0 rounded-lg border border-slate-300 bg-slate-100 px-2 py-1.5 text-xs text-slate-600 disabled:opacity-60"
                                         >
                                             {(['not_started', 'in_progress', 'completed'] as const).map((status) => (
                                                 <option key={status} value={status}>
@@ -273,7 +273,7 @@ function SprintsPanel({ engagement, isAdmin, onSaved }: { engagement: Engagement
                                     type="button"
                                     onClick={() => handleAddPhase(sprintIndex)}
                                     disabled={saving || !(newPhaseNames[sprintIndex] ?? '').trim()}
-                                    className="shrink-0 rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2 text-xs font-medium text-slate-600 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600 disabled:opacity-60"
+                                    className="shrink-0 rounded-lg border border-slate-300 px-4 py-2 text-xs font-medium text-slate-600 hover:border-slate-400 disabled:opacity-60"
                                 >
                                     Add Phase
                                 </button>
@@ -284,7 +284,7 @@ function SprintsPanel({ engagement, isAdmin, onSaved }: { engagement: Engagement
             </div>
 
             {isAdmin && (
-                <div className="mt-6 flex items-center gap-2 border-t border-slate-200 dark:border-slate-800 pt-4">
+                <div className="mt-6 flex items-center gap-2 border-t border-slate-200 pt-4">
                     <input
                         value={newSprintName}
                         onChange={(event) => setNewSprintName(event.target.value)}
@@ -301,7 +301,7 @@ function SprintsPanel({ engagement, isAdmin, onSaved }: { engagement: Engagement
                     </button>
                 </div>
             )}
-            {error && <p className="mt-2 text-sm text-red-600 dark:text-red-400">Something went wrong — please try again.</p>}
+            {error && <p className="mt-2 text-sm text-red-600">Something went wrong — please try again.</p>}
         </div>
     )
 }
@@ -328,9 +328,9 @@ function DeliverAction({
     }
 
     return (
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6">
-            <h2 className="text-sm font-semibold text-slate-600 dark:text-slate-300">Delivery</h2>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        <div className="rounded-xl border border-slate-200 bg-white p-6">
+            <h2 className="text-sm font-semibold text-slate-600">Delivery</h2>
+            <p className="mt-1 text-sm text-slate-500">
                 {finalVerified
                     ? 'The final payment is verified — this engagement can be marked delivered.'
                     : 'Waiting on the final payment to be verified before this can be marked delivered.'}
@@ -371,19 +371,19 @@ function AssignedDevelopers({ engagement, onSaved }: { engagement: Engagement; o
     if (developers === null) return <Skeleton className="h-24 w-full" />
 
     return (
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6">
-            <h2 className="text-sm font-semibold text-slate-600 dark:text-slate-300">Assigned Developers</h2>
+        <div className="rounded-xl border border-slate-200 bg-white p-6">
+            <h2 className="text-sm font-semibold text-slate-600">Assigned Developers</h2>
             {developers.length === 0 ? (
-                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">No developer accounts yet — add one in Staff.</p>
+                <p className="mt-2 text-sm text-slate-500">No developer accounts yet — add one in Staff.</p>
             ) : (
                 <div className="mt-3 space-y-2">
                     {developers.map((dev) => (
-                        <label key={dev.id} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+                        <label key={dev.id} className="flex items-center gap-2 text-sm text-slate-600">
                             <input
                                 type="checkbox"
                                 checked={selected.includes(dev.email)}
                                 onChange={() => toggle(dev.email)}
-                                className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950"
+                                className="h-4 w-4 rounded border-slate-300 bg-slate-50"
                             />
                             {dev.name || dev.email}
                         </label>
@@ -395,7 +395,7 @@ function AssignedDevelopers({ engagement, onSaved }: { engagement: Engagement; o
                     type="button"
                     onClick={handleSave}
                     disabled={saving}
-                    className="rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600 disabled:opacity-60"
+                    className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-600 hover:border-slate-400 disabled:opacity-60"
                 >
                     {saving ? 'Saving…' : 'Save Assignments'}
                 </button>
@@ -444,27 +444,27 @@ function InvoiceCard({
     }
 
     return (
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6">
+        <div className="rounded-xl border border-slate-200 bg-white p-6">
             <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold capitalize text-slate-600 dark:text-slate-300">{invoice.type} Invoice</h3>
+                <h3 className="text-sm font-semibold capitalize text-slate-600">{invoice.type} Invoice</h3>
                 <StatusBadge status={invoice.status} />
             </div>
-            <p className="mt-2 text-2xl font-bold text-slate-900 dark:text-white">{formatCurrency(invoice.amount, invoice.currency)}</p>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 capitalize">{invoice.paymentMethod.replace('_', ' ')}</p>
+            <p className="mt-2 text-2xl font-bold text-slate-900">{formatCurrency(invoice.amount, invoice.currency)}</p>
+            <p className="mt-1 text-sm text-slate-500 capitalize">{invoice.paymentMethod.replace('_', ' ')}</p>
 
             {invoice.proofUrl && (
                 <a
                     href={invoice.proofUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-3 inline-block text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300"
+                    className="mt-3 inline-block text-sm font-medium text-blue-600 hover:text-blue-500"
                 >
                     View payment proof
                 </a>
             )}
 
             {invoice.status === 'verified' && invoice.verifiedBy && invoice.verifiedAt && (
-                <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
+                <p className="mt-3 text-xs text-slate-500">
                     Verified by {invoice.verifiedBy} on {formatDateTime(invoice.verifiedAt)}
                 </p>
             )}
@@ -474,7 +474,7 @@ function InvoiceCard({
                     type="button"
                     onClick={handleExport}
                     disabled={exporting}
-                    className="rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600 disabled:opacity-60"
+                    className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 hover:border-slate-400 disabled:opacity-60"
                 >
                     {exporting ? 'Exporting…' : 'Export PDF'}
                 </button>
@@ -512,9 +512,9 @@ export function AdminEngagementDetail() {
 
     if (engagement === null) {
         return (
-            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-10 text-center">
+            <div className="rounded-xl border border-slate-200 bg-white p-10 text-center">
                 <h1 className="text-lg font-semibold">Engagement not found</h1>
-                <Link to="/admin/engagements" className="mt-3 inline-block text-sm text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
+                <Link to="/admin/engagements" className="mt-3 inline-block text-sm text-blue-600 hover:text-blue-500">
                     Back to Engagements
                 </Link>
             </div>
@@ -529,17 +529,17 @@ export function AdminEngagementDetail() {
 
     return (
         <div>
-            <Link to="/admin/engagements" className="text-sm text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">
+            <Link to="/admin/engagements" className="text-sm text-slate-500 hover:text-slate-900">
                 Engagements
             </Link>
             <div className="mt-3 flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold">{engagement.title}</h1>
-                    <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{engagement.customerEmail}</p>
+                    <p className="mt-1 text-sm text-slate-500">{engagement.customerEmail}</p>
                 </div>
                 <StatusBadge status={engagementStatusLabels[engagement.status]} />
             </div>
-            {engagement.description && <p className="mt-4 max-w-2xl text-sm text-slate-500 dark:text-slate-400">{engagement.description}</p>}
+            {engagement.description && <p className="mt-4 max-w-2xl text-sm text-slate-500">{engagement.description}</p>}
 
             <div className="mt-8 grid gap-6 lg:grid-cols-2">
                 <div className="space-y-6">
@@ -551,7 +551,7 @@ export function AdminEngagementDetail() {
                         advanceVerified ? (
                             <SprintsForm engagement={engagement} onSaved={refreshAll} />
                         ) : (
-                            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6 text-sm text-slate-500 dark:text-slate-400">
+                            <div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-500">
                                 Waiting on the advance payment to be verified before sprints can be planned and the project started.
                             </div>
                         )
@@ -569,9 +569,9 @@ export function AdminEngagementDetail() {
                 </div>
 
                 <div className="space-y-6">
-                    <h2 className="text-sm font-semibold text-slate-600 dark:text-slate-300">Invoices</h2>
+                    <h2 className="text-sm font-semibold text-slate-600">Invoices</h2>
                     {!advanceInvoice && !finalInvoice ? (
-                        <p className="text-sm text-slate-500 dark:text-slate-400">No invoices yet — set the contract value to generate them.</p>
+                        <p className="text-sm text-slate-500">No invoices yet — set the contract value to generate them.</p>
                     ) : (
                         <div className="space-y-4">
                             {advanceInvoice && (

@@ -68,7 +68,7 @@ function InviteForm({
     return (
         <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-                <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">
+                <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-600">
                     Email
                 </label>
                 <input
@@ -84,7 +84,7 @@ function InviteForm({
             </div>
 
             <div>
-                <label htmlFor="role" className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">
+                <label htmlFor="role" className="mb-1.5 block text-sm font-medium text-slate-600">
                     Role
                 </label>
                 <select
@@ -103,13 +103,13 @@ function InviteForm({
                 </select>
             </div>
 
-            {error && <p className="text-sm text-red-600 dark:text-red-400">Something went wrong — please try again.</p>}
+            {error && <p className="text-sm text-red-600">Something went wrong — please try again.</p>}
 
             <div className="flex justify-end gap-3 pt-2">
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600"
+                    className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-600 hover:border-slate-400"
                 >
                     Cancel
                 </button>
@@ -134,9 +134,9 @@ export function AdminStaff() {
 
     if (currentStaff.role !== 'admin') {
         return (
-            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-10 text-center">
+            <div className="rounded-xl border border-slate-200 bg-white p-10 text-center">
                 <h1 className="text-lg font-semibold">Admins only</h1>
-                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Staff management is restricted to Admin accounts.</p>
+                <p className="mt-2 text-sm text-slate-500">Staff management is restricted to Admin accounts.</p>
             </div>
         )
     }
@@ -176,9 +176,9 @@ export function AdminStaff() {
                 </button>
             </div>
 
-            <div className="mt-6 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40">
+            <div className="mt-6 overflow-hidden rounded-xl border border-slate-200 bg-white">
                 {staff === null ? (
-                    <div className="divide-y divide-slate-200 dark:divide-slate-800">
+                    <div className="divide-y divide-slate-200">
                         {[0, 1, 2, 3].map((i) => (
                             <div key={i} className="flex items-center gap-4 px-6 py-4">
                                 <Skeleton className="h-9 w-9 shrink-0 rounded-full" />
@@ -189,10 +189,10 @@ export function AdminStaff() {
                         ))}
                     </div>
                 ) : staff.length === 0 ? (
-                    <div className="p-10 text-center text-sm text-slate-500 dark:text-slate-400">No staff yet — invite your first teammate.</div>
+                    <div className="p-10 text-center text-sm text-slate-500">No staff yet — invite your first teammate.</div>
                 ) : (
                     <table className="w-full text-left text-sm">
-                        <thead className="border-b border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
+                        <thead className="border-b border-slate-200 text-xs text-slate-500">
                             <tr>
                                 <th className="px-6 py-3 font-medium">Staff</th>
                                 <th className="px-6 py-3 font-medium">Email</th>
@@ -201,7 +201,7 @@ export function AdminStaff() {
                                 <th className="px-6 py-3 font-medium text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+                        <tbody className="divide-y divide-slate-200">
                             {staff.map((member) => (
                                 <tr key={member.id}>
                                     <td className="px-6 py-3">
@@ -210,18 +210,18 @@ export function AdminStaff() {
                                             <span className="font-medium">{member.name || '(pending sign-in)'}</span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-3 text-slate-500 dark:text-slate-400">{member.email}</td>
+                                    <td className="px-6 py-3 text-slate-500">{member.email}</td>
                                     <td className="px-6 py-3">
                                         <StatusBadge status={member.role} />
                                     </td>
-                                    <td className="px-6 py-3 text-slate-500 dark:text-slate-400">{formatDate(member.createdAt)}</td>
+                                    <td className="px-6 py-3 text-slate-500">{formatDate(member.createdAt)}</td>
                                     <td className="px-6 py-3">
                                         <div className="flex justify-end gap-2">
                                             <button
                                                 type="button"
                                                 onClick={() => openEdit(member)}
                                                 aria-label={`Edit ${member.email}`}
-                                                className="rounded-lg p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white"
+                                                className="rounded-lg p-2 text-slate-500 hover:bg-slate-200 hover:text-slate-900"
                                             >
                                                 <EditIcon />
                                             </button>
@@ -230,7 +230,7 @@ export function AdminStaff() {
                                                 onClick={() => setRemoving(member)}
                                                 disabled={member.id === currentStaff.id}
                                                 aria-label={`Remove ${member.email}`}
-                                                className="rounded-lg p-2 text-slate-500 dark:text-slate-400 hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 disabled:opacity-30"
+                                                className="rounded-lg p-2 text-slate-500 hover:bg-red-500/10 hover:text-red-600 disabled:opacity-30"
                                             >
                                                 <DeleteIcon />
                                             </button>

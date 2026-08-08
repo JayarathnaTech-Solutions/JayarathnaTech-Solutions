@@ -10,7 +10,7 @@ export function FeaturedTestimonials({ testimonials }: { testimonials: Testimoni
     return (
         <section className="mx-auto max-w-7xl px-6 py-16">
             <Reveal>
-      <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-600 dark:text-blue-400">
+      <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-600">
         <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
         Testimonials
       </span>
@@ -20,7 +20,7 @@ export function FeaturedTestimonials({ testimonials }: { testimonials: Testimoni
             {testimonials === null ? (
                 <div className="mt-8 grid gap-6 md:grid-cols-3">
                     {[0, 1, 2].map((i) => (
-                        <div key={i} className="h-48 animate-pulse rounded-xl border border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-800/50" />
+                        <div key={i} className="h-48 animate-pulse rounded-xl border border-slate-200 bg-slate-100" />
                     ))}
                 </div>
             ) : testimonials.length === 0 ? (
@@ -42,10 +42,10 @@ export function FeaturedTestimonials({ testimonials }: { testimonials: Testimoni
                             key={testimonial.id}
                             variants={staggerItem}
                             transition={itemTransition}
-                            className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-800/40"
+                            className="rounded-xl border border-slate-200 bg-white p-6"
                         >
-                            <p className="text-2xl leading-none text-blue-600 dark:text-blue-400">&ldquo;</p>
-                            <p className="text-sm text-slate-600 dark:text-slate-300">{testimonial.message}</p>
+                            <p className="text-2xl leading-none text-blue-600">&ldquo;</p>
+                            <p className="text-sm text-slate-600">{testimonial.message}</p>
                             <div className="mt-4">
                                 <StarRating rating={testimonial.rating} />
                             </div>

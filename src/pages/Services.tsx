@@ -161,18 +161,18 @@ function ServicesGrid() {
                         key={service.title}
                         variants={staggerItem}
                         transition={itemTransition}
-                        className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-800/40"
+                        className="rounded-xl border border-slate-200 bg-white p-6"
                     >
-                        <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                                 {service.icon}
                             </svg>
                         </div>
                         <h3 className="mt-4 text-lg font-semibold">{service.title}</h3>
-                        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{service.description}</p>
+                        <p className="mt-2 text-sm text-slate-600">{service.description}</p>
                         <Link
                             to="/contact"
-                            className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+                            className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-500"
                         >
                             Learn more
                         </Link>
@@ -187,7 +187,7 @@ function EngagementModels() {
     return (
         <section className="mx-auto max-w-7xl px-6 py-16">
             <Reveal>
-      <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-600 dark:text-blue-400">
+      <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-600">
         <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
         How We Work With You
       </span>
@@ -200,15 +200,15 @@ function EngagementModels() {
                         key={model.title}
                         variants={staggerItem}
                         transition={itemTransition}
-                        className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-800/40"
+                        className="rounded-xl border border-slate-200 bg-white p-6"
                     >
-                        <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                                 {model.icon}
                             </svg>
                         </div>
                         <h3 className="mt-4 text-lg font-semibold">{model.title}</h3>
-                        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{model.description}</p>
+                        <p className="mt-2 text-sm text-slate-600">{model.description}</p>
                     </motion.div>
                 ))}
             </StaggerGroup>
@@ -227,7 +227,7 @@ function Faq() {
                         key={faq.question}
                         variants={staggerItem}
                         transition={itemTransition}
-                        className="group rounded-xl border border-slate-200 bg-white p-6 open:bg-slate-50 dark:border-slate-700 dark:bg-slate-800/40 dark:open:bg-slate-800/55"
+                        className="group rounded-xl border border-slate-200 bg-white p-6 open:bg-slate-50"
                     >
                         <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold [&::-webkit-details-marker]:hidden">
                             {faq.question}
@@ -238,12 +238,12 @@ function Faq() {
                                 fill="none"
                                 stroke="currentColor"
                                 strokeWidth="1.75"
-                                className="shrink-0 text-blue-600 transition-transform duration-200 group-open:rotate-180 dark:text-blue-400"
+                                className="shrink-0 text-blue-600 transition-transform duration-200 group-open:rotate-180"
                             >
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m6 9 6 6 6-6" />
                             </svg>
                         </summary>
-                        <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">{faq.answer}</p>
+                        <p className="mt-3 text-sm text-slate-600">{faq.answer}</p>
                     </motion.details>
                 ))}
             </StaggerGroup>

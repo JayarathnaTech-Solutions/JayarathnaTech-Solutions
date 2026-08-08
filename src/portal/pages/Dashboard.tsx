@@ -25,7 +25,7 @@ export function PortalDashboard() {
     return (
         <div>
             <h1 className="text-2xl font-bold">Your Projects</h1>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Welcome back, {customer.name}.</p>
+            <p className="mt-1 text-sm text-slate-500">Welcome back, {customer.name}.</p>
 
             <div className="mt-6 space-y-3">
                 {engagements === null ? (
@@ -34,7 +34,7 @@ export function PortalDashboard() {
                         <Skeleton className="h-20 w-full rounded-xl" />
                     </>
                 ) : engagements.length === 0 ? (
-                    <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-10 text-center text-sm text-slate-500 dark:text-slate-400">
+                    <div className="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500">
                         No projects yet — we'll set one up for you shortly.
                     </div>
                 ) : (
@@ -45,12 +45,12 @@ export function PortalDashboard() {
                             <Link
                                 key={engagement.id}
                                 to={`/portal/engagements/${engagement.id}`}
-                                className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6 transition-colors hover:border-slate-400 dark:hover:border-slate-700"
+                                className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-6 transition-colors hover:border-slate-400"
                             >
                                 <div>
-                                    <h2 className="font-medium text-slate-900 dark:text-white">{engagement.title}</h2>
+                                    <h2 className="font-medium text-slate-900">{engagement.title}</h2>
                                     {engagement.status === 'in_progress' && sprint && (
-                                        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                                        <p className="mt-1 text-sm text-slate-500">
                                             {sprint.name}
                                             {phase && ` — ${phase.name}`}
                                         </p>

@@ -64,7 +64,7 @@ function LineItemsEditor({
 
     return (
         <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">Line Items</label>
+            <label className="mb-1.5 block text-sm font-medium text-slate-600">Line Items</label>
             <div className="space-y-3">
                 {items.map((item, index) => (
                     <div key={index} className="grid grid-cols-[1fr_4rem_5rem_5rem_1.5rem] items-start gap-2">
@@ -92,14 +92,14 @@ function LineItemsEditor({
                             onChange={(event) => updateItem(index, { unitPrice: Number(event.target.value) })}
                             className={`min-w-0 ${inputClass}`}
                         />
-                        <span className="pt-2.5 text-right text-sm text-slate-500 dark:text-slate-400">
+                        <span className="pt-2.5 text-right text-sm text-slate-500">
                             {formatCurrency(lineItemTotal(item), currency)}
                         </span>
                         <button
                             type="button"
                             onClick={() => removeItem(index)}
                             aria-label="Remove line item"
-                            className="mt-2 justify-self-end text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400"
+                            className="mt-2 justify-self-end text-slate-500 hover:text-red-600"
                         >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6 6 18" />
@@ -108,7 +108,7 @@ function LineItemsEditor({
                     </div>
                 ))}
             </div>
-            <button type="button" onClick={addItem} className="mt-3 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
+            <button type="button" onClick={addItem} className="mt-3 text-sm font-medium text-blue-600 hover:text-blue-500">
                 + Add Line Item
             </button>
         </div>
@@ -185,9 +185,9 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
     return (
         <div className="space-y-6">
             <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300">Client Information</h3>
+                <h3 className="text-sm font-semibold text-slate-600">Client Information</h3>
                 <div>
-                    <label htmlFor="clientName" className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">
+                    <label htmlFor="clientName" className="mb-1.5 block text-sm font-medium text-slate-600">
                         Client Name
                     </label>
                     <input
@@ -199,7 +199,7 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
                     />
                 </div>
                 <div>
-                    <label htmlFor="clientEmail" className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">
+                    <label htmlFor="clientEmail" className="mb-1.5 block text-sm font-medium text-slate-600">
                         Email
                     </label>
                     <input
@@ -213,7 +213,7 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label htmlFor="status" className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">
+                        <label htmlFor="status" className="mb-1.5 block text-sm font-medium text-slate-600">
                             Status
                         </label>
                         <select
@@ -229,7 +229,7 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
                         </select>
                     </div>
                     <div>
-                        <label htmlFor="currency" className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">
+                        <label htmlFor="currency" className="mb-1.5 block text-sm font-medium text-slate-600">
                             Currency
                         </label>
                         <select
@@ -248,13 +248,13 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
             <LineItemsEditor items={lineItems} currency={currency} onChange={setLineItems} />
 
             <div>
-                <p className="mb-1.5 text-sm font-medium text-slate-600 dark:text-slate-300">
+                <p className="mb-1.5 text-sm font-medium text-slate-600">
                     Internal Margin{' '}
-                    <span className="font-normal text-slate-500 dark:text-slate-400">(rolled into the total, never shown to the client)</span>
+                    <span className="font-normal text-slate-500">(rolled into the total, never shown to the client)</span>
                 </p>
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label htmlFor="bufferPercent" className="mb-1.5 block text-xs text-slate-500 dark:text-slate-400">
+                        <label htmlFor="bufferPercent" className="mb-1.5 block text-xs text-slate-500">
                             Buffer / Contingency %
                         </label>
                         <input
@@ -268,7 +268,7 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
                         />
                     </div>
                     <div>
-                        <label htmlFor="profitPercent" className="mb-1.5 block text-xs text-slate-500 dark:text-slate-400">
+                        <label htmlFor="profitPercent" className="mb-1.5 block text-xs text-slate-500">
                             Profit Margin %
                         </label>
                         <input
@@ -284,52 +284,52 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
                 </div>
             </div>
 
-            <div className="space-y-2 border-t border-slate-200 dark:border-slate-800 pt-4">
-                <div className="flex items-center justify-between text-sm text-slate-500 dark:text-slate-400">
+            <div className="space-y-2 border-t border-slate-200 pt-4">
+                <div className="flex items-center justify-between text-sm text-slate-500">
                     <span>Subtotal</span>
                     <span>{formatCurrency(subtotal, currency)}</span>
                 </div>
                 {bufferPercent > 0 && (
-                    <div className="flex items-center justify-between text-sm text-slate-500 dark:text-slate-400">
+                    <div className="flex items-center justify-between text-sm text-slate-500">
                         <span>Buffer ({bufferPercent}%)</span>
                         <span>{formatCurrency(bufferAmount, currency)}</span>
                     </div>
                 )}
                 {profitPercent > 0 && (
-                    <div className="flex items-center justify-between text-sm text-slate-500 dark:text-slate-400">
+                    <div className="flex items-center justify-between text-sm text-slate-500">
                         <span>Profit Margin ({profitPercent}%)</span>
                         <span>{formatCurrency(profitAmount, currency)}</span>
                     </div>
                 )}
-                <div className="flex items-center justify-between text-sm text-slate-500 dark:text-slate-400">
+                <div className="flex items-center justify-between text-sm text-slate-500">
                     <span>Deposit (50%) — Due at Project Start</span>
                     <span>{formatCurrency(calcDeposit(total), currency)}</span>
                 </div>
-                <div className="flex items-center justify-between text-sm text-slate-500 dark:text-slate-400">
+                <div className="flex items-center justify-between text-sm text-slate-500">
                     <span>Balance (50%) — Due on Completion</span>
                     <span>{formatCurrency(calcBalance(total), currency)}</span>
                 </div>
-                <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 pt-3">
-                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">Grand Total</span>
-                    <span className="text-xl font-bold text-blue-600 dark:text-blue-400">{formatCurrency(total, currency)}</span>
+                <div className="flex items-center justify-end gap-3 border-t border-slate-200 pt-3">
+                    <span className="text-sm font-semibold text-slate-600">Grand Total</span>
+                    <span className="text-xl font-bold text-blue-600">{formatCurrency(total, currency)}</span>
                 </div>
             </div>
 
-            {error && <p className="text-sm text-red-600 dark:text-red-400">Something went wrong — please try again.</p>}
+            {error && <p className="text-sm text-red-600">Something went wrong — please try again.</p>}
 
             <div className="flex justify-end gap-3">
                 <button
                     type="button"
                     onClick={handleExport}
                     disabled={exporting}
-                    className="rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600 disabled:opacity-60"
+                    className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-600 hover:border-slate-400 disabled:opacity-60"
                 >
                     {exporting ? 'Exporting…' : 'Export PDF'}
                 </button>
                 <button
                     type="button"
                     onClick={onClose}
-                    className="rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600"
+                    className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-600 hover:border-slate-400"
                 >
                     Cancel
                 </button>
@@ -355,7 +355,7 @@ function FilterTabs({ active, onChange }: { active: QuoteStatus | 'all'; onChang
                     type="button"
                     onClick={() => onChange(tab.value)}
                     className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                        active === tab.value ? 'bg-blue-600 text-white' : 'border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-700'
+                        active === tab.value ? 'bg-blue-600 text-white' : 'border border-slate-200 text-slate-600 hover:border-slate-400'
                     }`}
                 >
                     {tab.label}
@@ -403,9 +403,9 @@ export function AdminQuotes() {
                 <FilterTabs active={filter} onChange={setFilter} />
             </div>
 
-            <div className="mt-6 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40">
+            <div className="mt-6 overflow-hidden rounded-xl border border-slate-200 bg-white">
                 {quotes === null ? (
-                    <div className="divide-y divide-slate-200 dark:divide-slate-800">
+                    <div className="divide-y divide-slate-200">
                         {[0, 1, 2, 3].map((i) => (
                             <div key={i} className="flex items-center gap-4 px-6 py-4">
                                 <Skeleton className="h-3.5 w-32" />
@@ -416,10 +416,10 @@ export function AdminQuotes() {
                         ))}
                     </div>
                 ) : quotes.length === 0 ? (
-                    <div className="p-10 text-center text-sm text-slate-500 dark:text-slate-400">No quotes yet — create your first one.</div>
+                    <div className="p-10 text-center text-sm text-slate-500">No quotes yet — create your first one.</div>
                 ) : (
                     <table className="w-full text-left text-sm">
-                        <thead className="border-b border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
+                        <thead className="border-b border-slate-200 text-xs text-slate-500">
                             <tr>
                                 <th className="px-6 py-3 font-medium">Client</th>
                                 <th className="px-6 py-3 font-medium">Date</th>
@@ -427,16 +427,16 @@ export function AdminQuotes() {
                                 <th className="px-6 py-3 font-medium">Status</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+                        <tbody className="divide-y divide-slate-200">
                             {quotes.map((quote) => (
                                 <tr
                                     key={quote.id}
                                     onClick={() => openEdit(quote)}
-                                    className="cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-900/60"
+                                    className="cursor-pointer hover:bg-slate-100"
                                 >
                                     <td className="px-6 py-3 font-medium">{quote.clientName}</td>
-                                    <td className="px-6 py-3 text-slate-500 dark:text-slate-400">{formatDate(quote.createdAt)}</td>
-                                    <td className="px-6 py-3 text-slate-500 dark:text-slate-400">
+                                    <td className="px-6 py-3 text-slate-500">{formatDate(quote.createdAt)}</td>
+                                    <td className="px-6 py-3 text-slate-500">
                                         {formatCurrency(
                                             calcGrandTotal(calcQuoteTotal(quote.lineItems), quote.bufferPercent, quote.profitPercent),
                                             quote.currency,

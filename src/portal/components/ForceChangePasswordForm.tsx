@@ -37,26 +37,26 @@ export function ForceChangePasswordForm({ user, onChanged }: { user: User; onCha
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950 px-6 text-slate-900 dark:text-white">
-            <div className="w-full max-w-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-8">
+        <div className="flex min-h-screen items-center justify-center bg-slate-50 px-6 text-slate-900">
+            <div className="w-full max-w-sm rounded-xl border border-slate-200 bg-white p-8">
                 <h1 className="text-xl font-semibold">Set a new password</h1>
-                <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">You're using a temporary password — set your own to continue.</p>
+                <p className="mt-1.5 text-sm text-slate-500">You're using a temporary password — set your own to continue.</p>
 
                 <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                     <div>
-                        <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">
+                        <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-slate-600">
                             New Password
                         </label>
                         <input id="password" name="password" type="password" required minLength={8} className={inputClass} />
                     </div>
                     <div>
-                        <label htmlFor="confirm" className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">
+                        <label htmlFor="confirm" className="mb-1.5 block text-sm font-medium text-slate-600">
                             Confirm Password
                         </label>
                         <input id="confirm" name="confirm" type="password" required minLength={8} className={inputClass} />
                     </div>
 
-                    {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+                    {error && <p className="text-sm text-red-600">{error}</p>}
 
                     <button
                         type="submit"

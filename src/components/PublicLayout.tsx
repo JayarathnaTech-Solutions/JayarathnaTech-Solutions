@@ -16,8 +16,8 @@ export function PublicLayout() {
   }, [location.pathname])
 
   return (
-    <div className="relative flex min-h-screen flex-col bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-white">
-      <div className="pointer-events-none fixed inset-0 -z-10 hidden overflow-hidden dark:block" aria-hidden="true">
+    <div className="relative flex min-h-screen flex-col bg-slate-50 text-slate-900">
+      <div className="pointer-events-none fixed inset-0 -z-10 hidden overflow-hidden" aria-hidden="true">
         <div className="absolute -top-40 left-1/4 h-[36rem] w-[36rem] rounded-full bg-blue-600/20 blur-[120px]" />
         <div className="absolute top-1/3 -right-40 h-[30rem] w-[30rem] rounded-full bg-indigo-600/15 blur-[120px]" />
       </div>

@@ -6,7 +6,6 @@ import { auth } from '../firebase/config'
 import { useAuth } from './AuthContext'
 import { useEscapeKey } from '../lib/useEscapeKey'
 import { Logo } from '../components/Logo'
-import { ThemeToggle } from '../components/ThemeToggle'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import type { StaffRole } from '../types'
 
@@ -166,8 +165,8 @@ function NavItem({
             className={({ isActive }) =>
                 `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                     isActive
-                        ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
-                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-900/60 dark:hover:text-white'
+                        ? 'bg-blue-500/10 text-blue-600'
+                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
                 }`
             }
         >
@@ -193,7 +192,7 @@ function NavList({ role, onNavigate }: { role: StaffRole; onNavigate?: () => voi
 
 function Sidebar({ role }: { role: StaffRole }) {
     return (
-        <aside className="hidden w-64 shrink-0 border-r border-slate-200 bg-white px-4 py-6 md:flex md:flex-col dark:border-slate-800 dark:bg-slate-900/40">
+        <aside className="hidden w-64 shrink-0 border-r border-slate-200 bg-white px-4 py-6 md:flex md:flex-col">
             <div className="px-2">
                 <Logo />
             </div>
@@ -210,7 +209,7 @@ function MobileNavDrawer({ role, open, onClose }: { role: StaffRole; open: boole
             {open && (
                 <>
                     <motion.div
-                        className="fixed inset-0 z-40 bg-slate-950/50 md:hidden dark:bg-slate-950/70"
+                        className="fixed inset-0 z-40 bg-slate-950/50 md:hidden"
                         onClick={onClose}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -221,7 +220,7 @@ function MobileNavDrawer({ role, open, onClose }: { role: StaffRole; open: boole
                         role="dialog"
                         aria-modal="true"
                         aria-label="Navigation"
-                        className="fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-slate-200 bg-white px-4 py-6 md:hidden dark:border-slate-800 dark:bg-slate-900"
+                        className="fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-slate-200 bg-white px-4 py-6 md:hidden"
                         initial={{ x: '-100%' }}
                         animate={{ x: 0 }}
                         exit={{ x: '-100%' }}
@@ -244,12 +243,12 @@ function Topbar({ name, onMenuClick, mobileNavOpen }: { name: string; onMenuClic
     const [signOutOpen, setSignOutOpen] = useState(false)
 
     return (
-        <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4 dark:border-slate-800 dark:bg-slate-900/40">
+        <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
             <div className="flex items-center gap-3">
                 <button
                     type="button"
                     onClick={onMenuClick}
-                    className="text-slate-600 md:hidden dark:text-slate-300"
+                    className="text-slate-600 md:hidden"
                     aria-label="Toggle navigation"
                     aria-expanded={mobileNavOpen}
                 >
@@ -265,15 +264,14 @@ function Topbar({ name, onMenuClick, mobileNavOpen }: { name: string; onMenuClic
             </div>
 
             <div className="flex items-center gap-3">
-                <ThemeToggle />
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-500/10 text-sm font-semibold text-blue-600 dark:text-blue-400">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-500/10 text-sm font-semibold text-blue-600">
                     {initial}
                 </div>
                 <span className="hidden text-sm font-medium sm:inline">{name}</span>
                 <button
                     type="button"
                     onClick={() => setSignOutOpen(true)}
-                    className="text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                    className="text-sm font-medium text-slate-500 hover:text-slate-900"
                 >
                     Sign out
                 </button>
@@ -304,7 +302,7 @@ export function AdminLayout() {
     }
 
     return (
-        <div className="flex min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-white">
+        <div className="flex min-h-screen bg-slate-50 text-slate-900">
             <Sidebar role={staff.role} />
             <MobileNavDrawer role={staff.role} open={mobileNavOpen} onClose={() => setMobileNavOpen(false)} />
             <div className="flex min-w-0 flex-1 flex-col">

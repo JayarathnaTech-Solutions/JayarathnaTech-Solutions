@@ -37,11 +37,11 @@ function useInvite(token: string | undefined) {
 
 function Loading() {
     return (
-        <section className="mx-auto max-w-xl px-6 py-16 md:py-24">
-            <div className="rounded-xl border border-slate-200 bg-white p-8 dark:border-slate-700 dark:bg-slate-800/40">
-                <div className="h-6 w-40 animate-pulse rounded bg-slate-200 dark:bg-slate-800/60" />
-                <div className="mt-4 h-9 w-64 animate-pulse rounded bg-slate-200 dark:bg-slate-800/60" />
-                <div className="mt-8 h-24 animate-pulse rounded bg-slate-200 dark:bg-slate-800/60" />
+        <section className="mx-auto max-w-xl px-6 py-24">
+            <div className="rounded-xl border border-slate-200 bg-white p-8">
+                <div className="h-6 w-40 animate-pulse rounded bg-slate-200" />
+                <div className="mt-4 h-9 w-64 animate-pulse rounded bg-slate-200" />
+                <div className="mt-8 h-24 animate-pulse rounded bg-slate-200" />
             </div>
         </section>
     )
@@ -49,8 +49,8 @@ function Loading() {
 
 function InvalidLink() {
     return (
-        <section className="mx-auto max-w-xl px-6 py-16 md:py-24">
-            <div className="flex flex-col items-center rounded-xl border border-slate-200 bg-white p-8 text-center dark:border-slate-700 dark:bg-slate-800/40">
+        <section className="mx-auto max-w-xl px-6 py-24">
+            <div className="flex flex-col items-center rounded-xl border border-slate-200 bg-white p-8 text-center">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red-500/10 text-red-400">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                         <circle cx="12" cy="12" r="9" />
@@ -58,7 +58,7 @@ function InvalidLink() {
                     </svg>
                 </div>
                 <h1 className="mt-4 text-xl font-semibold">This link is no longer valid.</h1>
-                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                <p className="mt-2 text-sm text-slate-500">
                     It looks like the testimonial link has expired or has already been used.
                 </p>
                 <Link
@@ -112,13 +112,13 @@ type Status = 'idle' | 'submitting' | 'success' | 'error'
 function SuccessState() {
     return (
         <div className="flex flex-col items-center py-8 text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-500/10 text-blue-600">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                     <path strokeLinecap="round" strokeLinejoin="round" d="m5 13 4 4L19 7" />
                 </svg>
             </div>
             <h3 className="mt-4 text-lg font-semibold">Thank You!</h3>
-            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            <p className="mt-2 text-sm text-slate-500">
                 A big thank you — your feedback means a lot and helps us improve.
             </p>
         </div>
@@ -154,14 +154,14 @@ function SubmissionForm({ invite }: { invite: TestimonialInvite }) {
     }
 
     return (
-        <div className="rounded-xl border border-slate-200 bg-white p-8 dark:border-slate-700 dark:bg-slate-800/40">
-            <span className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-600 dark:text-blue-400">
+        <div className="rounded-xl border border-slate-200 bg-white p-8">
+            <span className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-600">
                 <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
                 Share Your Experience
             </span>
 
             <h1 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">We&rsquo;d Love Your Feedback</h1>
-            <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
+            <p className="mt-3 text-sm text-slate-500">
                 Your feedback helps us improve and deliver even better solutions.
             </p>
 
@@ -170,7 +170,7 @@ function SubmissionForm({ invite }: { invite: TestimonialInvite }) {
             ) : (
                 <form onSubmit={handleSubmit} className="mt-8 space-y-5">
                     <div>
-                        <label htmlFor="clientName" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                        <label htmlFor="clientName" className="mb-1.5 block text-sm font-medium text-slate-700">
                             Your Name
                         </label>
                         <input
@@ -184,7 +184,7 @@ function SubmissionForm({ invite }: { invite: TestimonialInvite }) {
                     </div>
 
                     <div>
-                        <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                        <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-slate-700">
                             Your Message
                         </label>
                         <textarea
@@ -198,7 +198,7 @@ function SubmissionForm({ invite }: { invite: TestimonialInvite }) {
                     </div>
 
                     <div>
-                        <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">Rating</span>
+                        <span className="mb-1.5 block text-sm font-medium text-slate-700">Rating</span>
                         <StarRating value={rating} onChange={setRating} />
                     </div>
 
@@ -235,7 +235,7 @@ export function TestimonialSubmission() {
             ) : invite === null ? (
                 <InvalidLink />
             ) : (
-                <section className="mx-auto max-w-xl px-6 py-16 md:py-24">
+                <section className="mx-auto max-w-xl px-6 py-24">
                     <SubmissionForm invite={invite} />
                 </section>
             )}

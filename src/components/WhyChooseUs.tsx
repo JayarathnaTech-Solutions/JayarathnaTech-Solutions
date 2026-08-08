@@ -47,7 +47,7 @@ export function WhyChooseUs() {
     return (
         <section className="mx-auto max-w-7xl px-6 py-16">
             <Reveal>
-      <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-600 dark:text-blue-400">
+      <span className="inline-flex items-center gap-2 text-xs font-medium text-blue-600">
         <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
         Why Choose Us
       </span>
@@ -60,15 +60,15 @@ export function WhyChooseUs() {
                         key={item.title}
                         variants={staggerItem}
                         transition={itemTransition}
-                        className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-800/40"
+                        className="rounded-xl border border-slate-200 bg-white p-6"
                     >
-                        <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                                 {item.icon}
                             </svg>
                         </div>
                         <h3 className="mt-4 text-lg font-semibold">{item.title}</h3>
-                        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{item.description}</p>
+                        <p className="mt-2 text-sm text-slate-600">{item.description}</p>
                     </motion.div>
                 ))}
             </StaggerGroup>
