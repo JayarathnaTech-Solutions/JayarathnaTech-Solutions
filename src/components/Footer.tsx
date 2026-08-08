@@ -65,7 +65,7 @@ function FacebookIcon() {
 export function Footer() {
     return (
         <footer className="border-t border-slate-200 bg-white">
-            <div className="mx-auto max-w-screen-2xl px-6 py-12 sm:py-16">
+            <div className="mx-auto max-w-7xl px-6 py-12 sm:py-16">
                 <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-10">
                     <div className="col-span-2 flex flex-col items-center border-b border-slate-200 pb-10 text-center sm:items-start sm:border-b-0 sm:pb-0 sm:text-left lg:col-span-4">
                         <Logo />
