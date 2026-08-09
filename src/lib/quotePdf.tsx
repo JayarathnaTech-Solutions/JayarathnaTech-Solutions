@@ -6,6 +6,7 @@ import { Document, Image, Page, StyleSheet, Text, View, pdf } from '@react-pdf/r
 import { calcBalance, calcDeposit, calcQuoteTotal, formatCurrency, lineItemTotal } from './quote'
 import { siteContact, siteLetterhead } from './siteInfo'
 import logo from '../assets/logo.png'
+import signature from '../assets/signature.png'
 import type { Quote, QuoteLineItem } from '../types'
 
 const styles = StyleSheet.create({
@@ -13,10 +14,10 @@ const styles = StyleSheet.create({
     header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 30, borderBottom: '1 solid #e2e8f0', paddingBottom: 16 },
     logo: { width: 130, height: 34 },
     brand: { fontSize: 15, fontFamily: 'Helvetica-Bold' },
-    brandSub: { fontSize: 8, color: '#64748b', marginTop: 2 },
     letterhead: { alignItems: 'flex-end' },
     letterheadBrand: { alignItems: 'flex-end', marginBottom: 10 },
-    letterheadLine: { fontSize: 8, color: '#64748b', textAlign: 'right' },
+    letterheadLine: { fontSize: 8, color: '#64748b', textAlign: 'right', marginTop: 2 },
+    letterheadContact: { fontSize: 8, color: '#2563eb', textAlign: 'right', marginTop: 3 },
     quoteTitle: { fontSize: 24, fontFamily: 'Helvetica-Bold', textAlign: 'center', letterSpacing: 2, marginBottom: 24 },
     section: { marginBottom: 20 },
     label: { fontSize: 9, color: '#64748b', marginBottom: 2 },
@@ -37,7 +38,26 @@ const styles = StyleSheet.create({
     requirementsText: { fontSize: 10, lineHeight: 1.5, color: '#334155' },
     requirementsNote: { fontSize: 8, fontFamily: 'Helvetica-Oblique', color: '#94a3b8', marginTop: 6 },
     footer: { position: 'absolute', bottom: 40, left: 40, right: 40, fontSize: 9, color: '#94a3b8', textAlign: 'center' },
+    signatureSection: { marginTop: 36, alignItems: 'flex-end' },
+    signatureColumn: { width: '45%', alignItems: 'center' },
+    signatureHeading: { fontSize: 10, fontFamily: 'Helvetica-Bold', textAlign: 'center' },
+    signatureImage: { width: 130, height: 40, marginTop: 2, marginBottom: -6, objectFit: 'contain' },
+    signatureLine: { width: '100%', borderBottom: '1 dotted #0f172a', marginTop: 4 },
+    signatureLabel: { fontSize: 9, color: '#334155', textAlign: 'center', marginTop: 6 },
 })
+
+function SignatureBlock() {
+    return (
+        <View style={styles.signatureSection}>
+            <View style={styles.signatureColumn}>
+                <Text style={styles.signatureHeading}>JAYARATHNATECH SOLUTIONS{'\n'}(PVT) LTD</Text>
+                <Image src={signature} style={styles.signatureImage} />
+                <View style={styles.signatureLine} />
+                <Text style={styles.signatureLabel}>Managing Director</Text>
+            </View>
+        </View>
+    )
+}
 
 // Buffer/contingency and profit margin % are never shown as their own lines
 // to the client — they're folded into each line item's displayed price so the
@@ -62,11 +82,10 @@ function QuoteDocument({ quote }: { quote: Quote }) {
                     <View style={styles.letterhead}>
                         <View style={styles.letterheadBrand}>
                             <Text style={styles.brand}>JayarathnaTech Solutions</Text>
-                            <Text style={styles.brandSub}>{siteLetterhead.regNo}</Text>
                         </View>
                         <Text style={styles.letterheadLine}>{siteLetterhead.address}</Text>
-                        <Text style={styles.letterheadLine}>{siteLetterhead.phone} / {siteLetterhead.phoneAlt}</Text>
-                        <Text style={styles.letterheadLine}>{siteLetterhead.website}  |  {siteLetterhead.email}</Text>
+                        <Text style={styles.letterheadLine}>Tel: {siteLetterhead.phone}  |  {siteLetterhead.phoneAlt}</Text>
+                        <Text style={styles.letterheadContact}>{siteLetterhead.website}   •   {siteLetterhead.email}</Text>
                     </View>
                 </View>
 
@@ -122,6 +141,8 @@ function QuoteDocument({ quote }: { quote: Quote }) {
                     <Text style={styles.totalLabel}>Grand Total  </Text>
                     <Text style={styles.totalValue}>{formatCurrency(total, quote.currency)}</Text>
                 </View>
+
+                <SignatureBlock />
 
                 <Text style={styles.footer}>JayarathnaTech Solutions — {siteContact.email}</Text>
             </Page>

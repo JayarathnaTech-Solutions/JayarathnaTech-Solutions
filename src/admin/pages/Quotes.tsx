@@ -18,6 +18,8 @@ import { SlidePanel } from '../../components/SlidePanel'
 import { StatusBadge } from '../../components/StatusBadge'
 import { inputClass } from '../../lib/ui'
 import { Skeleton } from '../../components/Skeleton'
+import { MermaidPreview } from '../components/MermaidPreview'
+import type { SrsDiagramImages } from '../../lib/requirementsDocPdf'
 import type { Quote, QuoteCurrency, QuoteLineItem, QuoteStatus } from '../../types'
 
 const filterTabs: { value: QuoteStatus | 'all'; label: string }[] = [
@@ -115,6 +117,36 @@ function LineItemsEditor({
     )
 }
 
+function DiagramEditor({
+    id,
+    label,
+    value,
+    onChange,
+}: {
+    id: string
+    label: string
+    value: string
+    onChange: (value: string) => void
+}) {
+    if (!value) return null
+
+    return (
+        <div>
+            <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-slate-600">
+                {label}
+            </label>
+            <MermaidPreview definition={value} />
+            <textarea
+                id={id}
+                rows={6}
+                value={value}
+                onChange={(event) => onChange(event.target.value)}
+                className={`mt-2 font-mono text-xs ${inputClass}`}
+            />
+        </div>
+    )
+}
+
 function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: () => void; onClose: () => void }) {
     const [clientName, setClientName] = useState(quote?.clientName ?? '')
     const [clientEmail, setClientEmail] = useState(quote?.clientEmail ?? '')
@@ -127,7 +159,20 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
     )
     const [customerRequirements, setCustomerRequirements] = useState(quote?.customerRequirements ?? '')
     const [beautifying, setBeautifying] = useState(false)
-    const [beautifyError, setBeautifyError] = useState(false)
+    const [beautifyError, setBeautifyError] = useState<string | null>(null)
+    const [brdContent, setBrdContent] = useState(quote?.brdContent ?? '')
+    const [srsContent, setSrsContent] = useState(quote?.srsContent ?? '')
+    const [techStack, setTechStack] = useState(quote?.techStack ?? '')
+    const [userRoles, setUserRoles] = useState(quote?.userRoles ?? '')
+    const [externalIntegrations, setExternalIntegrations] = useState(quote?.externalIntegrations ?? '')
+    const [dataEntities, setDataEntities] = useState(quote?.dataEntities ?? '')
+    const [architectureDiagram, setArchitectureDiagram] = useState(quote?.architectureDiagram ?? '')
+    const [workflowDiagram, setWorkflowDiagram] = useState(quote?.workflowDiagram ?? '')
+    const [dfdDiagram, setDfdDiagram] = useState(quote?.dfdDiagram ?? '')
+    const [generatingDocs, setGeneratingDocs] = useState(false)
+    const [docsError, setDocsError] = useState<string | null>(null)
+    const [exportingBrd, setExportingBrd] = useState(false)
+    const [exportingSrs, setExportingSrs] = useState(false)
     const [saving, setSaving] = useState(false)
     const [exporting, setExporting] = useState(false)
     const [error, setError] = useState(false)
@@ -135,7 +180,7 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
     async function handleBeautify() {
         if (!customerRequirements.trim()) return
         setBeautifying(true)
-        setBeautifyError(false)
+        setBeautifyError(null)
         try {
             const response = await fetch('/api/quoteAi', {
                 method: 'POST',
@@ -143,12 +188,114 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
                 body: JSON.stringify({ notes: customerRequirements }),
             })
             const data = (await response.json()) as { result?: string; error?: string }
-            if (!response.ok || !data.result) throw new Error(data.error ?? 'AI beautify failed')
+            if (!response.ok || !data.result) throw new Error(data.error ?? "Couldn't beautify the text — please try again.")
             setCustomerRequirements(data.result)
-        } catch {
-            setBeautifyError(true)
+        } catch (err) {
+            setBeautifyError(err instanceof Error ? err.message : "Couldn't beautify the text — please try again.")
         } finally {
             setBeautifying(false)
+        }
+    }
+
+    async function handleGenerateDocs() {
+        if (!customerRequirements.trim()) return
+        setGeneratingDocs(true)
+        setDocsError(null)
+        try {
+            const response = await fetch('/api/requirementsDocAi', {
+                method: 'POST',
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify({
+                    notes: customerRequirements,
+                    context: { techStack, userRoles, externalIntegrations, dataEntities },
+                }),
+            })
+            const data = (await response.json()) as {
+                brd?: string
+                srs?: string
+                architectureDiagram?: string
+                workflowDiagram?: string
+                dfdDiagram?: string
+                error?: string
+            }
+            if (!response.ok || !data.brd || !data.srs) throw new Error(data.error ?? "Couldn't generate the documents — please try again.")
+            setBrdContent(data.brd)
+            setSrsContent(data.srs)
+            setArchitectureDiagram(data.architectureDiagram ?? '')
+            setWorkflowDiagram(data.workflowDiagram ?? '')
+            setDfdDiagram(data.dfdDiagram ?? '')
+        } catch (err) {
+            setDocsError(err instanceof Error ? err.message : "Couldn't generate the documents — please try again.")
+        } finally {
+            setGeneratingDocs(false)
+        }
+    }
+
+    async function handleExportBrd() {
+        if (!brdContent.trim()) return
+        setExportingBrd(true)
+        try {
+            const { exportBrdPdf } = await import('../../lib/requirementsDocPdf')
+            await exportBrdPdf({
+                id: quote?.id ?? 'draft',
+                clientName,
+                clientEmail,
+                lineItems,
+                status,
+                currency,
+                bufferPercent,
+                profitPercent,
+                brdContent,
+                createdAt: quote?.createdAt ?? new Date().toISOString(),
+            })
+        } finally {
+            setExportingBrd(false)
+        }
+    }
+
+    async function handleExportSrs() {
+        if (!srsContent.trim()) return
+        setExportingSrs(true)
+        try {
+            const { exportSrsPdf } = await import('../../lib/requirementsDocPdf')
+            const { renderMermaidToSvg, svgToPngDataUrl } = await import('../../lib/mermaidRender')
+
+            const diagramSources: [keyof SrsDiagramImages, string][] = [
+                ['architecture', architectureDiagram],
+                ['workflow', workflowDiagram],
+                ['dfd', dfdDiagram],
+            ]
+            const rendered = await Promise.all(
+                diagramSources.map(async ([key, definition]) => {
+                    if (!definition.trim()) return [key, undefined] as const
+                    try {
+                        const svg = await renderMermaidToSvg(definition)
+                        return [key, await svgToPngDataUrl(svg)] as const
+                    } catch (err) {
+                        console.error(`Failed to rasterize ${key} diagram for PDF export`, err)
+                        return [key, undefined] as const
+                    }
+                }),
+            )
+            const diagramImages: SrsDiagramImages = Object.fromEntries(rendered)
+
+            await exportSrsPdf(
+                {
+                    id: quote?.id ?? 'draft',
+                    clientName,
+                    clientEmail,
+                    lineItems,
+                    status,
+                    currency,
+                    bufferPercent,
+                    profitPercent,
+                    srsContent,
+                    createdAt: quote?.createdAt ?? new Date().toISOString(),
+                },
+                diagramImages,
+            )
+        } finally {
+            setExportingSrs(false)
         }
     }
 
@@ -191,6 +338,15 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
             bufferPercent,
             profitPercent,
             customerRequirements: customerRequirements.trim(),
+            brdContent: brdContent.trim(),
+            srsContent: srsContent.trim(),
+            techStack: techStack.trim(),
+            userRoles: userRoles.trim(),
+            externalIntegrations: externalIntegrations.trim(),
+            dataEntities: dataEntities.trim(),
+            architectureDiagram: architectureDiagram.trim(),
+            workflowDiagram: workflowDiagram.trim(),
+            dfdDiagram: dfdDiagram.trim(),
         }
 
         try {
@@ -292,8 +448,154 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
                     placeholder="Paste the raw notes you collected from the customer, then click Beautify with AI to turn them into a clean summary."
                     className={inputClass}
                 />
-                {beautifyError && <p className="mt-1.5 text-sm text-red-600">Couldn't beautify the text — please try again.</p>}
+                {beautifyError && <p className="mt-1.5 text-sm text-red-600">{beautifyError}</p>}
             </div>
+
+            {status === 'accepted' && (
+                <div className="space-y-4 rounded-lg border border-slate-200 p-4">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-sm font-semibold text-slate-600">Project Documents</h3>
+                        <button
+                            type="button"
+                            onClick={handleGenerateDocs}
+                            disabled={generatingDocs || !customerRequirements.trim()}
+                            className="text-sm font-medium text-blue-600 hover:text-blue-500 disabled:cursor-not-allowed disabled:text-slate-400"
+                        >
+                            {generatingDocs ? 'Generating…' : 'Generate BRD & SRS with AI'}
+                        </button>
+                    </div>
+                    {docsError && <p className="text-sm text-red-600">{docsError}</p>}
+                    {!customerRequirements.trim() && (
+                        <p className="text-sm text-slate-500">Add Customer Requirements above before generating BRD/SRS.</p>
+                    )}
+
+                    <div>
+                        <p className="mb-1.5 text-sm font-medium text-slate-600">
+                            SRS Diagram Context{' '}
+                            <span className="font-normal text-slate-500">
+                                (optional — improves the architecture/workflow/DFD diagrams below)
+                            </span>
+                        </p>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label htmlFor="techStack" className="mb-1.5 block text-xs text-slate-500">
+                                    Tech Stack
+                                </label>
+                                <textarea
+                                    id="techStack"
+                                    rows={2}
+                                    value={techStack}
+                                    onChange={(event) => setTechStack(event.target.value)}
+                                    placeholder="e.g. React frontend, Node/Express API, PostgreSQL"
+                                    className={inputClass}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="userRoles" className="mb-1.5 block text-xs text-slate-500">
+                                    User Roles
+                                </label>
+                                <textarea
+                                    id="userRoles"
+                                    rows={2}
+                                    value={userRoles}
+                                    onChange={(event) => setUserRoles(event.target.value)}
+                                    placeholder="e.g. Admin, Customer, Staff"
+                                    className={inputClass}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="externalIntegrations" className="mb-1.5 block text-xs text-slate-500">
+                                    External Integrations
+                                </label>
+                                <textarea
+                                    id="externalIntegrations"
+                                    rows={2}
+                                    value={externalIntegrations}
+                                    onChange={(event) => setExternalIntegrations(event.target.value)}
+                                    placeholder="e.g. Payment gateway, email service"
+                                    className={inputClass}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="dataEntities" className="mb-1.5 block text-xs text-slate-500">
+                                    Key Data Entities
+                                </label>
+                                <textarea
+                                    id="dataEntities"
+                                    rows={2}
+                                    value={dataEntities}
+                                    onChange={(event) => setDataEntities(event.target.value)}
+                                    placeholder="e.g. Users, Orders, Products"
+                                    className={inputClass}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {(brdContent || srsContent) && (
+                        <>
+                            <div>
+                                <div className="mb-1.5 flex items-center justify-between">
+                                    <label htmlFor="brdContent" className="text-sm font-medium text-slate-600">
+                                        Business Requirements Document (BRD)
+                                    </label>
+                                    <button
+                                        type="button"
+                                        onClick={handleExportBrd}
+                                        disabled={exportingBrd || !brdContent.trim()}
+                                        className="text-sm font-medium text-blue-600 hover:text-blue-500 disabled:cursor-not-allowed disabled:text-slate-400"
+                                    >
+                                        {exportingBrd ? 'Exporting…' : 'Export BRD PDF'}
+                                    </button>
+                                </div>
+                                <textarea
+                                    id="brdContent"
+                                    rows={8}
+                                    value={brdContent}
+                                    onChange={(event) => setBrdContent(event.target.value)}
+                                    className={inputClass}
+                                />
+                            </div>
+                            <div>
+                                <div className="mb-1.5 flex items-center justify-between">
+                                    <label htmlFor="srsContent" className="text-sm font-medium text-slate-600">
+                                        Software Requirements Specification (SRS)
+                                    </label>
+                                    <button
+                                        type="button"
+                                        onClick={handleExportSrs}
+                                        disabled={exportingSrs || !srsContent.trim()}
+                                        className="text-sm font-medium text-blue-600 hover:text-blue-500 disabled:cursor-not-allowed disabled:text-slate-400"
+                                    >
+                                        {exportingSrs ? 'Exporting…' : 'Export SRS PDF'}
+                                    </button>
+                                </div>
+                                <textarea
+                                    id="srsContent"
+                                    rows={8}
+                                    value={srsContent}
+                                    onChange={(event) => setSrsContent(event.target.value)}
+                                    className={inputClass}
+                                />
+                            </div>
+
+                            <DiagramEditor
+                                id="architectureDiagram"
+                                label="High-Level System Architecture"
+                                value={architectureDiagram}
+                                onChange={setArchitectureDiagram}
+                            />
+                            <DiagramEditor
+                                id="workflowDiagram"
+                                label="Process / Workflow Flow Chart"
+                                value={workflowDiagram}
+                                onChange={setWorkflowDiagram}
+                            />
+                            <DiagramEditor id="dfdDiagram" label="Data Flow Diagram (DFD)" value={dfdDiagram} onChange={setDfdDiagram} />
+                        </>
+                    )}
+                </div>
+            )}
 
             <LineItemsEditor items={lineItems} currency={currency} onChange={setLineItems} />
 

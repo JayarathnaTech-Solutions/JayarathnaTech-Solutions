@@ -3,7 +3,7 @@
 // have one, even though Vite's native config loader warns about it.
 import { SITE_NAME, SITE_URL, siteContact } from '../src/lib/siteInfo'
 
-const GEMINI_MODEL = 'gemini-2.5-flash'
+const GEMINI_MODEL = 'gemini-3.1-flash-lite'
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`
 
 const MAX_HISTORY_MESSAGES = 20
@@ -95,12 +95,15 @@ export async function handleChatRequest(apiKey: string | undefined, rawMessages:
     body: JSON.stringify({
       contents,
       systemInstruction: { role: 'system', parts: [{ text: SYSTEM_INSTRUCTION }] },
-      generationConfig: { temperature: 0.4, maxOutputTokens: 512 },
+      generationConfig: { temperature: 0.4, maxOutputTokens: 2048 },
     }),
   })
 
   if (!geminiResponse.ok) {
     console.error('Gemini API error', geminiResponse.status, await geminiResponse.text())
+    if (geminiResponse.status === 429) {
+      return { status: 429, body: { error: "We've hit today's AI usage limit. Please try again later." } }
+    }
     return { status: 502, body: { error: 'The assistant is temporarily unavailable. Please try again shortly.' } }
   }
 

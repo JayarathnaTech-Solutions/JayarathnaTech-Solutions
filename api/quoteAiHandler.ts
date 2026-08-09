@@ -3,7 +3,7 @@
 // have one, even though Vite's native config loader warns about it.
 import { SITE_NAME } from '../src/lib/siteInfo'
 
-const GEMINI_MODEL = 'gemini-2.5-flash'
+const GEMINI_MODEL = 'gemini-3.1-flash-lite'
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`
 
 const MAX_INPUT_LENGTH = 4000
@@ -36,12 +36,15 @@ export async function handleQuoteAiRequest(apiKey: string | undefined, rawNotes:
     body: JSON.stringify({
       contents: [{ role: 'user', parts: [{ text: rawNotes }] }],
       systemInstruction: { role: 'system', parts: [{ text: SYSTEM_INSTRUCTION }] },
-      generationConfig: { temperature: 0.4, maxOutputTokens: 1024 },
+      generationConfig: { temperature: 0.4, maxOutputTokens: 3072 },
     }),
   })
 
   if (!geminiResponse.ok) {
     console.error('Gemini API error', geminiResponse.status, await geminiResponse.text())
+    if (geminiResponse.status === 429) {
+      return { status: 429, body: { error: "We've hit today's AI usage limit. Please try again later." } }
+    }
     return { status: 502, body: { error: 'AI beautify is temporarily unavailable. Please try again shortly.' } }
   }
 

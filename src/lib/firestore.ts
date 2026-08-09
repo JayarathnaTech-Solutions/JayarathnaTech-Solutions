@@ -265,6 +265,15 @@ export function quoteFromDoc(
         bufferPercent: data.bufferPercent ?? 0,
         profitPercent: data.profitPercent ?? 0,
         customerRequirements: data.customerRequirements ?? undefined,
+        brdContent: data.brdContent ?? undefined,
+        srsContent: data.srsContent ?? undefined,
+        techStack: data.techStack ?? undefined,
+        userRoles: data.userRoles ?? undefined,
+        externalIntegrations: data.externalIntegrations ?? undefined,
+        dataEntities: data.dataEntities ?? undefined,
+        architectureDiagram: data.architectureDiagram ?? undefined,
+        workflowDiagram: data.workflowDiagram ?? undefined,
+        dfdDiagram: data.dfdDiagram ?? undefined,
         createdAt: toIsoString(data.createdAt),
     }
 }
