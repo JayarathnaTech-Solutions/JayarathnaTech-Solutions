@@ -26,6 +26,7 @@ export const siteSocial = {
     github: 'https://github.com/JayarathnaTech-Solutions',
     facebook: 'https://web.facebook.com/JayarathnaTechSolutions/',
     linkedin: 'https://www.linkedin.com/company/jayarathnatech-solutions',
+    instagram: 'https://www.instagram.com/jayarathnatech_solutions/',
 }
 
 export const navLinks = [
@@ -54,7 +55,7 @@ export function buildOrganizationSchema() {
             addressCountry: 'LK',
         },
         areaServed: ['Sri Lanka', 'Worldwide'],
-        sameAs: [siteSocial.github, siteSocial.facebook, siteSocial.linkedin],
+        sameAs: [siteSocial.github, siteSocial.facebook, siteSocial.linkedin, siteSocial.instagram],
         description:
             'JayarathnaTech Solutions is a software company based in Negombo, Sri Lanka, building web applications, e-commerce platforms, and custom software for clients in Sri Lanka and internationally.',
     }

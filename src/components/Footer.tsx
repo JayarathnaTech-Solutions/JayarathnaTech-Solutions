@@ -70,6 +70,16 @@ function LinkedInIcon() {
     )
 }
 
+function InstagramIcon() {
+    return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+            <rect x="3" y="3" width="18" height="18" rx="5" />
+            <circle cx="12" cy="12" r="4" />
+            <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+        </svg>
+    )
+}
+
 export function Footer() {
     return (
         <footer className="border-t border-slate-200 bg-white">
@@ -99,6 +109,15 @@ export function Footer() {
                                 className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 text-slate-500 transition-colors hover:border-slate-400 hover:text-slate-900"
                             >
                                 <LinkedInIcon />
+                            </a>
+                            <a
+                                href={siteSocial.instagram}
+                                target="_blank"
+                                rel="noreferrer"
+                                aria-label="Instagram"
+                                className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 text-slate-500 transition-colors hover:border-slate-400 hover:text-slate-900"
+                            >
+                                <InstagramIcon />
                             </a>
                             <a
                                 href={siteSocial.github}
