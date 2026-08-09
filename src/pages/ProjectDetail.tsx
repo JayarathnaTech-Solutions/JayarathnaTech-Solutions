@@ -151,7 +151,7 @@ function ProjectBody({ project }: { project: Project }) {
 function ProjectView({ project }: { project: Project }) {
     return (
         <motion.section
-            className="mx-auto max-w-7xl px-6 py-12"
+            className="mx-auto max-w-7xl px-6 pt-24 pb-12"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4 }}
