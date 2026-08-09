@@ -372,9 +372,9 @@ function AssignedDevelopers({ engagement, onSaved }: { engagement: Engagement; o
 
     return (
         <div className="rounded-xl border border-slate-200 bg-white p-6">
-            <h2 className="text-sm font-semibold text-slate-600">Assigned Developers</h2>
+            <h2 className="text-sm font-semibold text-slate-600">Assigned Team</h2>
             {developers.length === 0 ? (
-                <p className="mt-2 text-sm text-slate-500">No developer accounts yet — add one in Staff.</p>
+                <p className="mt-2 text-sm text-slate-500">No developer, QA, or intern accounts yet — add one in Staff.</p>
             ) : (
                 <div className="mt-3 space-y-2">
                     {developers.map((dev) => (
@@ -386,6 +386,7 @@ function AssignedDevelopers({ engagement, onSaved }: { engagement: Engagement; o
                                 className="h-4 w-4 rounded border-slate-300 bg-slate-50"
                             />
                             {dev.name || dev.email}
+                            <StatusBadge status={dev.role} />
                         </label>
                     ))}
                 </div>
@@ -603,7 +604,10 @@ export function AdminEngagementDetail() {
                     senderId={user.uid}
                     senderEmail={staff.email}
                     senderName={staff.name || staff.email}
-                    senderRole={staff.role === 'developer' ? 'developer' : 'admin'}
+                    // Only true admins post as 'admin' — developer/qa/intern
+                    // all post as 'developer', matching firestore.rules'
+                    // isEngagementAssignee() + senderRole=='developer' branch.
+                    senderRole={isAdmin ? 'admin' : 'developer'}
                 />
             </div>
         </div>

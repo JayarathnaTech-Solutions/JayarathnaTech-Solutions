@@ -1,11 +1,14 @@
 import { readFileSync } from 'node:fs'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, it } from 'vitest'
 import { assertFails, assertSucceeds, initializeTestEnvironment, type RulesTestEnvironment } from '@firebase/rules-unit-testing'
-import { collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore'
 
 const ADMIN_EMAIL = 'admin@example.com'
 const EDITOR_EMAIL = 'editor@example.com'
 const HR_EMAIL = 'hr@example.com'
+const QA_EMAIL = 'qa@example.com'
+const INTERN_EMAIL = 'intern@example.com'
+const UIUX_EMAIL = 'uiux@example.com'
 const OUTSIDER_EMAIL = 'outsider@example.com'
 
 let testEnv: RulesTestEnvironment
@@ -53,6 +56,27 @@ async function seedStaff() {
             invitedBy: ADMIN_EMAIL,
             createdAt: new Date(),
         })
+        await setDoc(doc(db, 'staff', QA_EMAIL), {
+            email: QA_EMAIL,
+            name: 'QA',
+            role: 'qa',
+            invitedBy: ADMIN_EMAIL,
+            createdAt: new Date(),
+        })
+        await setDoc(doc(db, 'staff', INTERN_EMAIL), {
+            email: INTERN_EMAIL,
+            name: 'Intern',
+            role: 'intern',
+            invitedBy: ADMIN_EMAIL,
+            createdAt: new Date(),
+        })
+        await setDoc(doc(db, 'staff', UIUX_EMAIL), {
+            email: UIUX_EMAIL,
+            name: 'UIUX',
+            role: 'uiux',
+            invitedBy: ADMIN_EMAIL,
+            createdAt: new Date(),
+        })
     })
 }
 
@@ -66,6 +90,15 @@ function editorDb() {
 }
 function hrDb() {
     return testEnv.authenticatedContext('hr-uid', { email: HR_EMAIL }).firestore()
+}
+function qaDb() {
+    return testEnv.authenticatedContext('qa-uid', { email: QA_EMAIL }).firestore()
+}
+function internDb() {
+    return testEnv.authenticatedContext('intern-uid', { email: INTERN_EMAIL }).firestore()
+}
+function uiuxDb() {
+    return testEnv.authenticatedContext('uiux-uid', { email: UIUX_EMAIL }).firestore()
 }
 // Signed in with Google, but never invited — not present in `staff`.
 function outsiderDb() {
@@ -187,8 +220,50 @@ describe('staff', () => {
         await assertFails(updateDoc(doc(hrDb(), 'staff', EDITOR_EMAIL), { role: 'admin' }))
     })
 
-    it('still lets admin fully manage admin accounts', async () => {
-        await assertSucceeds(updateDoc(doc(adminDb(), 'staff', ADMIN_EMAIL), { role: 'admin' }))
+    it('still lets admin manage a different admin account', async () => {
+        const ADMIN2_EMAIL = 'admin2@example.com'
+        await testEnv.withSecurityRulesDisabled(async (context) => {
+            await setDoc(doc(context.firestore(), 'staff', ADMIN2_EMAIL), {
+                email: ADMIN2_EMAIL, name: 'Admin Two', role: 'admin', invitedBy: ADMIN_EMAIL, createdAt: new Date(),
+            })
+        })
+        await assertSucceeds(updateDoc(doc(adminDb(), 'staff', ADMIN2_EMAIL), { role: 'editor' }))
+    })
+
+    it('blocks admin and hr from changing their own role', async () => {
+        await assertFails(updateDoc(doc(adminDb(), 'staff', ADMIN_EMAIL), { role: 'editor' }))
+        await assertFails(updateDoc(doc(hrDb(), 'staff', HR_EMAIL), { role: 'editor' }))
+    })
+
+    it('still lets admin and hr rename themselves', async () => {
+        await assertSucceeds(updateDoc(doc(adminDb(), 'staff', ADMIN_EMAIL), { name: 'New Admin Name' }))
+        await assertSucceeds(updateDoc(doc(hrDb(), 'staff', HR_EMAIL), { name: 'New HR Name' }))
+    })
+
+    it('lets admin and hr create qa and intern staff', async () => {
+        await assertSucceeds(
+            setDoc(doc(adminDb(), 'staff', 'newqa@example.com'), {
+                email: 'newqa@example.com', name: '', role: 'qa', invitedBy: ADMIN_EMAIL, createdAt: new Date(),
+            }),
+        )
+        await assertSucceeds(
+            setDoc(doc(hrDb(), 'staff', 'newintern@example.com'), {
+                email: 'newintern@example.com', name: '', role: 'intern', invitedBy: HR_EMAIL, createdAt: new Date(),
+            }),
+        )
+    })
+
+    it('lets admin and hr create uiux staff', async () => {
+        await assertSucceeds(
+            setDoc(doc(adminDb(), 'staff', 'newuiux@example.com'), {
+                email: 'newuiux@example.com', name: '', role: 'uiux', invitedBy: ADMIN_EMAIL, createdAt: new Date(),
+            }),
+        )
+        await assertSucceeds(
+            setDoc(doc(hrDb(), 'staff', 'newuiux2@example.com'), {
+                email: 'newuiux2@example.com', name: '', role: 'uiux', invitedBy: HR_EMAIL, createdAt: new Date(),
+            }),
+        )
     })
 })
 
@@ -285,6 +360,134 @@ describe('staffRecords', () => {
             updateDoc(doc(hrDb(), 'staffRecords', ADMIN_EMAIL), { nic: 'hijacked' }),
         )
         await assertSucceeds(getDoc(doc(adminDb(), 'staffRecords', ADMIN_EMAIL)))
+    })
+})
+
+describe('engagements', () => {
+    async function seedEngagement(assignedDeveloperEmails: string[]) {
+        let id = ''
+        await testEnv.withSecurityRulesDisabled(async (context) => {
+            const ref = await addDoc(collection(context.firestore(), 'engagements'), {
+                customerId: 'customer-uid',
+                status: 'in_progress',
+                advanceInvoiceId: '',
+                finalInvoiceId: '',
+                assignedDeveloperEmails,
+                createdAt: new Date(),
+            })
+            id = ref.id
+        })
+        return id
+    }
+
+    it('lets admin get/list/update/delete any engagement', async () => {
+        const id = await seedEngagement([])
+        await assertSucceeds(getDoc(doc(adminDb(), 'engagements', id)))
+        await assertSucceeds(getDocs(collection(adminDb(), 'engagements')))
+        await assertSucceeds(updateDoc(doc(adminDb(), 'engagements', id), { status: 'in_progress' }))
+        await assertSucceeds(deleteDoc(doc(adminDb(), 'engagements', id)))
+    })
+
+    it('lets an assigned qa/intern get/list, but denies unassigned qa/intern', async () => {
+        const id = await seedEngagement([QA_EMAIL])
+        await assertSucceeds(getDoc(doc(qaDb(), 'engagements', id)))
+        await assertSucceeds(
+            getDocs(query(collection(qaDb(), 'engagements'), where('assignedDeveloperEmails', 'array-contains', QA_EMAIL))),
+        )
+        await assertFails(getDoc(doc(internDb(), 'engagements', id)))
+        await assertFails(getDoc(doc(outsiderDb(), 'engagements', id)))
+    })
+
+    it('blocks qa/intern from writing to an engagement even when assigned', async () => {
+        const id = await seedEngagement([QA_EMAIL, INTERN_EMAIL])
+        await assertFails(updateDoc(doc(qaDb(), 'engagements', id), { status: 'delivered' }))
+        await assertFails(updateDoc(doc(internDb(), 'engagements', id), { status: 'delivered' }))
+        await assertFails(deleteDoc(doc(qaDb(), 'engagements', id)))
+    })
+
+    it('only admin can create an engagement', async () => {
+        await assertFails(
+            addDoc(collection(qaDb(), 'engagements'), {
+                customerId: 'customer-uid', status: 'pending_advance', advanceInvoiceId: '', finalInvoiceId: '',
+                assignedDeveloperEmails: [], createdAt: new Date(),
+            }),
+        )
+        await assertSucceeds(
+            addDoc(collection(adminDb(), 'engagements'), {
+                customerId: 'customer-uid', status: 'pending_advance', advanceInvoiceId: '', finalInvoiceId: '',
+                assignedDeveloperEmails: [], createdAt: new Date(),
+            }),
+        )
+    })
+
+    it('lets an assigned uiux get/list, but denies unassigned uiux', async () => {
+        const id = await seedEngagement([UIUX_EMAIL])
+        await assertSucceeds(getDoc(doc(uiuxDb(), 'engagements', id)))
+        await assertSucceeds(
+            getDocs(query(collection(uiuxDb(), 'engagements'), where('assignedDeveloperEmails', 'array-contains', UIUX_EMAIL))),
+        )
+        const unassignedId = await seedEngagement([])
+        await assertFails(getDoc(doc(uiuxDb(), 'engagements', unassignedId)))
+    })
+
+    it('blocks uiux from writing to an engagement even when assigned', async () => {
+        const id = await seedEngagement([UIUX_EMAIL])
+        await assertFails(updateDoc(doc(uiuxDb(), 'engagements', id), { status: 'delivered' }))
+        await assertFails(deleteDoc(doc(uiuxDb(), 'engagements', id)))
+    })
+})
+
+describe('engagement messages', () => {
+    async function seedEngagement(assignedDeveloperEmails: string[]) {
+        let id = ''
+        await testEnv.withSecurityRulesDisabled(async (context) => {
+            const ref = await addDoc(collection(context.firestore(), 'engagements'), {
+                customerId: 'customer-uid',
+                status: 'in_progress',
+                advanceInvoiceId: '',
+                finalInvoiceId: '',
+                assignedDeveloperEmails,
+                createdAt: new Date(),
+            })
+            id = ref.id
+        })
+        return id
+    }
+
+    it('lets an assigned qa post a message tagged senderRole developer', async () => {
+        const id = await seedEngagement([QA_EMAIL])
+        await assertSucceeds(
+            addDoc(collection(qaDb(), 'engagements', id, 'messages'), {
+                senderRole: 'developer', senderId: 'qa-uid', senderEmail: QA_EMAIL, text: 'hello', createdAt: new Date(),
+            }),
+        )
+    })
+
+    it('blocks an unassigned intern from posting a message', async () => {
+        const id = await seedEngagement([])
+        await assertFails(
+            addDoc(collection(internDb(), 'engagements', id, 'messages'), {
+                senderRole: 'developer', senderId: 'intern-uid', senderEmail: INTERN_EMAIL, text: 'hello', createdAt: new Date(),
+            }),
+        )
+    })
+
+    it('blocks an assigned qa from claiming senderRole admin', async () => {
+        const id = await seedEngagement([QA_EMAIL])
+        await assertFails(
+            addDoc(collection(qaDb(), 'engagements', id, 'messages'), {
+                senderRole: 'admin', senderId: 'qa-uid', senderEmail: QA_EMAIL, text: 'hello', createdAt: new Date(),
+            }),
+        )
+    })
+
+    it('lets an assigned uiux post a message tagged senderRole developer', async () => {
+        const id = await seedEngagement([UIUX_EMAIL])
+        await assertSucceeds(
+            addDoc(collection(uiuxDb(), 'engagements', id, 'messages'), {
+                senderRole: 'developer', senderId: 'uiux-uid', senderEmail: UIUX_EMAIL, text: 'hello', createdAt: new Date(),
+            }),
+        )
     })
 })
 

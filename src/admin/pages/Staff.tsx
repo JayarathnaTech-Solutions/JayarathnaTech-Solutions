@@ -104,6 +104,9 @@ function InviteForm({
                     {showAdminOption && <option value="admin">Admin</option>}
                     <option value="editor">Editor</option>
                     <option value="developer">Developer</option>
+                    <option value="qa">QA</option>
+                    <option value="intern">Intern</option>
+                    <option value="uiux">UI/UX Designer</option>
                     <option value="hr">HR Manager</option>
                 </select>
             </div>
@@ -335,6 +338,9 @@ export function AdminStaff() {
                                 // HR has full parity with admin except it can never touch an
                                 // admin account — matches the firestore.rules boundary exactly.
                                 const blockedForHr = currentStaff.role === 'hr' && member.role === 'admin'
+                                // Neither admin nor hr can change their own role — a self-demotion
+                                // could lock the account out with no one else around to undo it.
+                                const isSelf = member.id === currentStaff.id
                                 return (
                                 <tr key={member.id}>
                                     <td className="px-6 py-3">
@@ -362,7 +368,7 @@ export function AdminStaff() {
                                             <button
                                                 type="button"
                                                 onClick={() => openEdit(member)}
-                                                disabled={blockedForHr}
+                                                disabled={blockedForHr || isSelf}
                                                 aria-label={`Edit ${member.email}`}
                                                 className="rounded-lg p-2 text-slate-500 hover:bg-slate-200 hover:text-slate-900 disabled:opacity-30"
                                             >
@@ -371,7 +377,7 @@ export function AdminStaff() {
                                             <button
                                                 type="button"
                                                 onClick={() => setRemoving(member)}
-                                                disabled={member.id === currentStaff.id || blockedForHr}
+                                                disabled={isSelf || blockedForHr}
                                                 aria-label={`Remove ${member.email}`}
                                                 className="rounded-lg p-2 text-slate-500 hover:bg-red-500/10 hover:text-red-600 disabled:opacity-30"
                                             >

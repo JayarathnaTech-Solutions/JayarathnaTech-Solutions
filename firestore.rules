@@ -21,11 +21,26 @@ service cloud.firestore {
     }
 
     // Same one-function-per-role shape as isAdmin()/isDeveloper() above —
-    // see the comment near isEngagementDeveloper() for why this file avoids
+    // see the comment near isEngagementAssignee() for why this file avoids
     // a single generic "resolved role" helper.
     function isHr() {
       return request.auth != null
         && get(/databases/$(database)/documents/staff/$(request.auth.token.email)).data.role == 'hr';
+    }
+
+    function isQa() {
+      return request.auth != null
+        && get(/databases/$(database)/documents/staff/$(request.auth.token.email)).data.role == 'qa';
+    }
+
+    function isIntern() {
+      return request.auth != null
+        && get(/databases/$(database)/documents/staff/$(request.auth.token.email)).data.role == 'intern';
+    }
+
+    function isUiux() {
+      return request.auth != null
+        && get(/databases/$(database)/documents/staff/$(request.auth.token.email)).data.role == 'uiux';
     }
 
     // A customer can authenticate before verifying their email (Firebase's
@@ -71,16 +86,24 @@ service cloud.firestore {
     // nested ternary returning 'admin'/'developer'/'customer'/null tripped a
     // "Null value error" in the rules evaluator; this boolean-per-branch
     // form is the same shape as the rest of this file and is proven to work.
-    function isEngagementDeveloper(engagementId) {
+    // developer/qa/intern are all "assigned to the engagement" roles — same
+    // assignedDeveloperEmails list, same access, just three different job
+    // titles — so this composes the three booleans rather than adding a
+    // third near-identical isEngagement*() function per new role.
+    function isAssignedToEngagement(assignedEmails) {
+      return (isDeveloper() || isQa() || isIntern() || isUiux())
+        && request.auth.token.email in assignedEmails;
+    }
+    function isEngagementAssignee(engagementId) {
       let eng = get(/databases/$(database)/documents/engagements/$(engagementId)).data;
-      return isDeveloper() && request.auth.token.email in eng.assignedDeveloperEmails;
+      return isAssignedToEngagement(eng.assignedDeveloperEmails);
     }
     function isEngagementCustomer(engagementId) {
       let eng = get(/databases/$(database)/documents/engagements/$(engagementId)).data;
       return isVerifiedCustomer() && request.auth.uid == eng.customerId;
     }
     function engagementParticipant(engagementId) {
-      return isAdmin() || isEngagementDeveloper(engagementId) || isEngagementCustomer(engagementId);
+      return isAdmin() || isEngagementAssignee(engagementId) || isEngagementCustomer(engagementId);
     }
 
     // Blocks `javascript:`/`data:`/etc. URIs from being stored in fields the
@@ -105,11 +128,17 @@ service cloud.firestore {
       // delete powers, EXCEPT it can never touch an admin account: not the
       // existing doc (resource.data.role), not the incoming one (promoting
       // someone to admin), so HR can't edit/delete admins or self-promote.
+      // Neither role can change their OWN role — otherwise a self-demotion
+      // (accidental or not) can lock an admin/hr account out with no other
+      // staff member around to undo it; self can still rename via the
+      // dedicated name-only rule below.
       allow create, update: if isAdmin()
-        && request.resource.data.role in ['admin', 'editor', 'developer', 'hr'];
+        && request.resource.data.role in ['admin', 'editor', 'developer', 'hr', 'qa', 'intern', 'uiux']
+        && request.auth.token.email != staffId;
       allow create, update: if isHr()
         && (resource == null || resource.data.role != 'admin')
-        && request.resource.data.role in ['editor', 'developer', 'hr'];
+        && request.resource.data.role in ['editor', 'developer', 'hr', 'qa', 'intern', 'uiux']
+        && request.auth.token.email != staffId;
       allow update: if request.auth.token.email == staffId
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name']);
       allow delete: if isAdmin();
@@ -170,13 +199,13 @@ service cloud.firestore {
     // status change funnels through the payment gates above.
     match /engagements/{engagementId} {
       allow get: if isAdmin()
-        || (isDeveloper() && request.auth.token.email in resource.data.assignedDeveloperEmails)
+        || isAssignedToEngagement(resource.data.assignedDeveloperEmails)
         || (request.auth != null && request.auth.uid == resource.data.customerId);
 
       // Split per role so each branch is provable against its own query
       // filter (an unfiltered `list` only ever succeeds for admin).
       allow list: if isAdmin();
-      allow list: if isDeveloper() && request.auth.token.email in resource.data.assignedDeveloperEmails;
+      allow list: if isAssignedToEngagement(resource.data.assignedDeveloperEmails);
       allow list: if request.auth != null && request.auth.uid == resource.data.customerId;
 
       allow create: if isAdmin()
@@ -228,7 +257,10 @@ service cloud.firestore {
       // actually have (e.g. a customer posting as senderRole: 'admin').
       allow create: if (
           (isAdmin() && request.resource.data.senderRole == 'admin')
-          || (isEngagementDeveloper(engagementId) && request.resource.data.senderRole == 'developer')
+          // qa/intern are assignees too, and post under the same
+          // 'developer' senderRole tag — see EngagementDetail.tsx's
+          // senderRole mapping for the client-side half of this.
+          || (isEngagementAssignee(engagementId) && request.resource.data.senderRole == 'developer')
           || (isEngagementCustomer(engagementId) && request.resource.data.senderRole == 'customer')
         )
         && request.resource.data.senderId == request.auth.uid

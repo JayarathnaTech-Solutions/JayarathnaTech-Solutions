@@ -126,9 +126,9 @@ function NewEngagementForm({
                 <textarea id="description" name="description" rows={3} className={inputClass} />
             </div>
             <div>
-                <p className="mb-1.5 block text-sm font-medium text-slate-600">Assign Developers</p>
+                <p className="mb-1.5 block text-sm font-medium text-slate-600">Assign Team</p>
                 {developers.length === 0 ? (
-                    <p className="text-sm text-slate-500">No developer accounts yet — add one in Staff first.</p>
+                    <p className="text-sm text-slate-500">No developer, QA, or intern accounts yet — add one in Staff first.</p>
                 ) : (
                     <div className="space-y-2">
                         {developers.map((dev) => (
@@ -140,6 +140,7 @@ function NewEngagementForm({
                                     className="h-4 w-4 rounded border-slate-300 bg-slate-50"
                                 />
                                 {dev.name || dev.email}
+                                <StatusBadge status={dev.role} />
                             </label>
                         ))}
                     </div>

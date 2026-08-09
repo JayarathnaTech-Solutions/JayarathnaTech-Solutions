@@ -101,7 +101,7 @@ const navItems: NavItemConfig[] = [
     {
         to: '/admin/engagements',
         label: 'Engagements',
-        visibleTo: ['admin', 'developer'],
+        visibleTo: ['admin', 'developer', 'qa', 'intern', 'uiux'],
         icon: (
             <path
                 strokeLinecap="round"
@@ -294,10 +294,11 @@ export function AdminLayout() {
     const { pathname } = useLocation()
     const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
-    // Developers only have Engagements in the nav — bounce them out of any
-    // other admin route (e.g. the `/admin` dashboard index) instead of
-    // rendering a page they otherwise can't get to via the sidebar.
-    if (staff.role === 'developer' && !pathname.startsWith('/admin/engagements')) {
+    // Developer/QA/Intern only have Engagements in the nav — bounce them out
+    // of any other admin route (e.g. the `/admin` dashboard index) instead
+    // of rendering a page they otherwise can't get to via the sidebar.
+    const engagementOnlyRoles: StaffRole[] = ['developer', 'qa', 'intern', 'uiux']
+    if (engagementOnlyRoles.includes(staff.role) && !pathname.startsWith('/admin/engagements')) {
         return <Navigate to="/admin/engagements" replace />
     }
 

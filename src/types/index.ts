@@ -1,4 +1,4 @@
-export type StaffRole = 'admin' | 'editor' | 'developer' | 'hr'
+export type StaffRole = 'admin' | 'editor' | 'developer' | 'hr' | 'qa' | 'intern' | 'uiux'
 
 export interface StaffMember {
   id: string
