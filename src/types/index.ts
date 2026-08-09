@@ -87,6 +87,8 @@ export interface Quote {
   /** Internal buffer/contingency % and profit margin %, both rolled silently into the client-facing total — never shown to the client. */
   bufferPercent: number
   profitPercent: number
+  /** Customer-facing requirements summary, optionally polished with AI from raw notes collected from the client. */
+  customerRequirements?: string
   createdAt: string
 }
 

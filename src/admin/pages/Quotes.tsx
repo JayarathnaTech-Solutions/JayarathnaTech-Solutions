@@ -125,9 +125,32 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
     const [lineItems, setLineItems] = useState<QuoteLineItem[]>(
         quote?.lineItems && quote.lineItems.length > 0 ? quote.lineItems : [{ description: '', quantity: 1, unitPrice: 0 }],
     )
+    const [customerRequirements, setCustomerRequirements] = useState(quote?.customerRequirements ?? '')
+    const [beautifying, setBeautifying] = useState(false)
+    const [beautifyError, setBeautifyError] = useState(false)
     const [saving, setSaving] = useState(false)
     const [exporting, setExporting] = useState(false)
     const [error, setError] = useState(false)
+
+    async function handleBeautify() {
+        if (!customerRequirements.trim()) return
+        setBeautifying(true)
+        setBeautifyError(false)
+        try {
+            const response = await fetch('/api/quoteAi', {
+                method: 'POST',
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify({ notes: customerRequirements }),
+            })
+            const data = (await response.json()) as { result?: string; error?: string }
+            if (!response.ok || !data.result) throw new Error(data.error ?? 'AI beautify failed')
+            setCustomerRequirements(data.result)
+        } catch {
+            setBeautifyError(true)
+        } finally {
+            setBeautifying(false)
+        }
+    }
 
     const subtotal = calcQuoteTotal(lineItems)
     const bufferAmount = calcBufferAmount(subtotal, bufferPercent)
@@ -147,6 +170,7 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
                 currency,
                 bufferPercent,
                 profitPercent,
+                customerRequirements: customerRequirements.trim() || undefined,
                 createdAt: quote?.createdAt ?? new Date().toISOString(),
             })
         } finally {
@@ -166,6 +190,7 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
             currency,
             bufferPercent,
             profitPercent,
+            customerRequirements: customerRequirements.trim(),
         }
 
         try {
@@ -243,6 +268,31 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
                         </select>
                     </div>
                 </div>
+            </div>
+
+            <div>
+                <div className="mb-1.5 flex items-center justify-between">
+                    <label htmlFor="customerRequirements" className="text-sm font-medium text-slate-600">
+                        Customer Requirements
+                    </label>
+                    <button
+                        type="button"
+                        onClick={handleBeautify}
+                        disabled={beautifying || !customerRequirements.trim()}
+                        className="text-sm font-medium text-blue-600 hover:text-blue-500 disabled:cursor-not-allowed disabled:text-slate-400"
+                    >
+                        {beautifying ? 'Beautifying…' : 'Beautify with AI'}
+                    </button>
+                </div>
+                <textarea
+                    id="customerRequirements"
+                    rows={5}
+                    value={customerRequirements}
+                    onChange={(event) => setCustomerRequirements(event.target.value)}
+                    placeholder="Paste the raw notes you collected from the customer, then click Beautify with AI to turn them into a clean summary."
+                    className={inputClass}
+                />
+                {beautifyError && <p className="mt-1.5 text-sm text-red-600">Couldn't beautify the text — please try again.</p>}
             </div>
 
             <LineItemsEditor items={lineItems} currency={currency} onChange={setLineItems} />

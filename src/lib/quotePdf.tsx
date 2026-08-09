@@ -34,6 +34,8 @@ const styles = StyleSheet.create({
     totalRow: { flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginTop: 8, gap: 12, borderTop: '1 solid #e2e8f0', paddingTop: 10 },
     totalLabel: { fontSize: 13, fontFamily: 'Helvetica-Bold' },
     totalValue: { fontSize: 16, fontFamily: 'Helvetica-Bold', color: '#2563eb', width: 70, textAlign: 'right' },
+    requirementsText: { fontSize: 10, lineHeight: 1.5, color: '#334155' },
+    requirementsNote: { fontSize: 8, fontFamily: 'Helvetica-Oblique', color: '#94a3b8', marginTop: 6 },
     footer: { position: 'absolute', bottom: 40, left: 40, right: 40, fontSize: 9, color: '#94a3b8', textAlign: 'center' },
 })
 
@@ -80,6 +82,16 @@ function QuoteDocument({ quote }: { quote: Quote }) {
                         {new Date(quote.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                     </Text>
                 </View>
+
+                {quote.customerRequirements && (
+                    <View style={styles.section}>
+                        <Text style={styles.label}>PROJECT REQUIREMENTS</Text>
+                        <Text style={styles.requirementsText}>{quote.customerRequirements}</Text>
+                        <Text style={styles.requirementsNote}>
+                            Note: Any requirements beyond those listed above may increase the cost and will be quoted separately.
+                        </Text>
+                    </View>
+                )}
 
                 <View style={styles.table}>
                     <View style={styles.tableHeader}>
