@@ -13,6 +13,8 @@ import {
 import { db } from '../firebase/config'
 import { projectFromDoc } from '../lib/firestore'
 import { Seo } from '../components/Seo'
+import { JsonLd } from '../components/JsonLd'
+import { buildBreadcrumbSchema } from '../lib/siteInfo'
 import { CtaBanner } from '../components/CtaBanner'
 import { EmptyState } from '../components/EmptyState'
 import { Reveal, StaggerGroup } from '../components/motion'
@@ -222,6 +224,13 @@ export function Projects() {
             <Seo
                 title="Our Projects — Software Company in Sri Lanka | JayarathnaTech Solutions"
                 description="Explore web applications, e-commerce platforms, and digital products delivered by JayarathnaTech Solutions for clients in Sri Lanka and internationally."
+            />
+            <JsonLd
+                id="breadcrumb"
+                data={buildBreadcrumbSchema([
+                    { name: 'Home', url: '/' },
+                    { name: 'Projects', url: '/projects' },
+                ])}
             />
 
             <Hero />
