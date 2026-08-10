@@ -6,6 +6,8 @@ import { About } from './pages/About'
 import { Services } from './pages/Services'
 import { Projects } from './pages/Projects'
 import { ProjectDetail } from './pages/ProjectDetail'
+import { Blog } from './pages/Blog'
+import { BlogPost } from './pages/BlogPost'
 import { Contact } from './pages/Contact'
 import { TestimonialSubmission } from './pages/TestimonialSubmission'
 import { NotFound } from './pages/NotFound'
@@ -39,6 +41,8 @@ function App() {
           <Route path="services" element={<Services />} />
           <Route path="projects" element={<Projects />} />
           <Route path="projects/:projectId" element={<ProjectDetail />} />
+          <Route path="blog" element={<Blog />} />
+          <Route path="blog/:slug" element={<BlogPost />} />
           <Route path="contact" element={<Contact />} />
           <Route path="testimonial/:token" element={<TestimonialSubmission />} />
           <Route path="*" element={<NotFound />} />

@@ -20,6 +20,7 @@ import { EmptyState } from '../components/EmptyState'
 import { Reveal, StaggerGroup } from '../components/motion'
 import { MotionLink } from '../components/MotionLink'
 import { staggerItem, itemTransition } from '../lib/motion'
+import { chunk } from '../lib/chunk'
 import type { Project } from '../types'
 
 const PAGE_SIZE = 6
@@ -195,9 +196,19 @@ function ProjectsGrid() {
                     message="Try a different category, or check back soon as we publish more work."
                 />
             ) : (
-                <StaggerGroup className="mt-8 grid gap-6 md:grid-cols-3">
-                    {visibleProjects?.map((project) => <ProjectCard key={project.id} project={project} />)}
-                </StaggerGroup>
+                <div className="mt-8 space-y-6">
+                    {chunk(visibleProjects ?? [], PAGE_SIZE).map((projectsPage, pageIndex) => (
+                        <StaggerGroup
+                            key={pageIndex}
+                            immediate={pageIndex > 0}
+                            className="grid gap-6 md:grid-cols-3"
+                        >
+                            {projectsPage.map((project) => (
+                                <ProjectCard key={project.id} project={project} />
+                            ))}
+                        </StaggerGroup>
+                    ))}
+                </div>
             )}
 
             {projects !== null && projects.length > 0 && activeCategory === 'All' && hasMore && (

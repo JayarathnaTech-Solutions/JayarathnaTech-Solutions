@@ -8,6 +8,7 @@
     "build": "node scripts/generate-sitemap.mjs && tsc -b && VITE_CONFIG_NATIVE_IGNORE_WARNING=true vite build",
     "generate-sitemap": "node scripts/generate-sitemap.mjs",
     "generate-og-image": "node scripts/generate-og-image.mjs",
+    "generate-blog-posts": "node scripts/generate-blog-posts.mjs",
     "optimize-images": "node scripts/optimize-hero-images.mjs",
     "lint": "eslint .",
     "preview": "VITE_CONFIG_NATIVE_IGNORE_WARNING=true vite preview",
@@ -24,12 +25,15 @@
     "motion": "^12.43.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "react-markdown": "^10.1.0",
     "react-router": "^8.3.0",
+    "remark-gfm": "^4.0.1",
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@firebase/rules-unit-testing": "^5.0.1",
+    "@tailwindcss/typography": "^0.5.20",
     "@testing-library/jest-dom": "^7.0.0",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",

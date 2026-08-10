@@ -10,7 +10,7 @@ export function Navbar() {
 
   return (
       <header className="fixed inset-x-0 top-0 z-50 bg-transparent px-4 pt-4">
-        <div className="mx-auto flex max-w-3xl items-center justify-between rounded-full bg-white/90 px-6 py-2.5 shadow-lg backdrop-blur">
+        <div className="mx-auto flex max-w-4xl items-center justify-between rounded-full bg-white/90 px-6 py-2.5 shadow-lg backdrop-blur">
           <Link to="/" onClick={() => setOpen(false)}>
             <Logo />
           </Link>

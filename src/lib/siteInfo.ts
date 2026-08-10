@@ -34,11 +34,23 @@ export const siteSocial = {
     instagram: 'https://www.instagram.com/jayarathnatech_solutions/',
 }
 
+const TITLE_TAG_MAX = 60
+
+// Google truncates title tags around ~60 characters. Blog post headlines are
+// already written as full, keyword-rich SEO titles on their own, so only
+// append the brand suffix when there's room — otherwise the suffix pushes
+// the whole tag past the truncation point and buries the actual keywords.
+export function buildPageTitle(rawTitle: string) {
+    const withBrand = `${rawTitle} — ${SITE_NAME}`
+    return withBrand.length <= TITLE_TAG_MAX ? withBrand : rawTitle
+}
+
 export const navLinks = [
     { to: '/', label: 'Home', end: true },
     { to: '/about', label: 'About' },
     { to: '/services', label: 'Services' },
     { to: '/projects', label: 'Projects' },
+    { to: '/blog', label: 'Blog' },
     { to: '/contact', label: 'Contact' },
 ]
 
@@ -95,5 +107,25 @@ export function buildBreadcrumbSchema(items: { name: string; url: string }[]) {
             name: item.name,
             item: `${SITE_URL}${item.url}`,
         })),
+    }
+}
+
+// BlogPosting structured data for an individual blog post — rich-result
+// eligible article markup, linked back to the sitewide Organization entity.
+export function buildBlogPostingSchema(post: { slug: string; title: string; description: string; publishedAt: string; tags: string[] }) {
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: post.title,
+        description: post.description,
+        url: `${SITE_URL}/blog/${post.slug}`,
+        mainEntityOfPage: `${SITE_URL}/blog/${post.slug}`,
+        datePublished: post.publishedAt,
+        keywords: post.tags.join(', '),
+        articleSection: post.tags[0],
+        inLanguage: 'en',
+        image: DEFAULT_OG_IMAGE,
+        author: { '@id': `${SITE_URL}/#organization` },
+        publisher: { '@id': `${SITE_URL}/#organization` },
     }
 }

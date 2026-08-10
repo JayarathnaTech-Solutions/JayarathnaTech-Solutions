@@ -53,6 +53,7 @@ export function Seo({ title, description, image, noindex }: SeoProps) {
     setMetaTag('property', 'og:url', url)
     setMetaTag('property', 'og:site_name', SITE_NAME)
     setMetaTag('property', 'og:image', resolvedImage)
+    setMetaTag('property', 'og:locale', 'en_US')
 
     setMetaTag('name', 'twitter:card', 'summary_large_image')
     setMetaTag('name', 'twitter:title', title)

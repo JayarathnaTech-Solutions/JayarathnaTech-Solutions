@@ -1,4 +1,4 @@
-import { writeFileSync } from 'node:fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 import { initializeApp } from 'firebase/app'
 import { collection, getDocs, getFirestore } from 'firebase/firestore'
 
@@ -50,9 +50,29 @@ try {
     console.warn('generate-sitemap: could not fetch projects, falling back to static routes only.', error)
 }
 
+// Blog metadata is authored as static JSON (src/content/blog/posts.json is a
+// plain-data mirror of posts.ts, kept in sync by scripts/generate-blog-posts.mjs)
+// rather than fetched from Firestore, since blog content lives in git, not the DB.
+let blogRoutes = []
+try {
+    const posts = JSON.parse(readFileSync(new URL('../src/content/blog/posts.json', import.meta.url), 'utf-8'))
+    blogRoutes = [
+        { path: '/blog', changefreq: 'weekly', priority: '0.8', lastmod: BUILD_DATE },
+        ...posts.map((post) => ({
+            path: `/blog/${post.slug}`,
+            changefreq: 'monthly',
+            priority: '0.6',
+            lastmod: post.publishedAt,
+        })),
+    ]
+} catch (error) {
+    console.warn('generate-sitemap: could not read blog posts, skipping blog routes.', error)
+}
+
 const routes = [
     ...STATIC_ROUTES.map((route) => ({ ...route, lastmod: BUILD_DATE })),
     ...projectRoutes,
+    ...blogRoutes,
 ]
 
 const xml = `<?xml version="1.0" encoding="UTF-8"?>
