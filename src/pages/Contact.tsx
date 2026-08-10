@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import { motion } from 'motion/react'
 import { Seo } from '../components/Seo'
-import { siteContact } from '../lib/siteInfo'
+import { JsonLd } from '../components/JsonLd'
+import { buildBreadcrumbSchema, siteContact } from '../lib/siteInfo'
 import { staggerItem, staggerContainer, itemTransition } from '../lib/motion'
 import { publicInputClass } from '../lib/ui'
 import { createContactMessage } from '../lib/firestore'
@@ -242,6 +243,13 @@ export function Contact() {
             <Seo
                 title="Contact Us — Software Company in Sri Lanka | JayarathnaTech Solutions"
                 description="Get in touch with JayarathnaTech Solutions, a software company in Negombo, Sri Lanka, working with clients across Sri Lanka and around the world."
+            />
+            <JsonLd
+                id="breadcrumb"
+                data={buildBreadcrumbSchema([
+                    { name: 'Home', url: '/' },
+                    { name: 'Contact', url: '/contact' },
+                ])}
             />
 
             <section className="mx-auto max-w-7xl px-6 py-24">

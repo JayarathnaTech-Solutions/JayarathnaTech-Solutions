@@ -1,9 +1,11 @@
 import { Link } from 'react-router'
 import { motion } from 'motion/react'
 import { Seo } from '../components/Seo'
+import { JsonLd } from '../components/JsonLd'
 import { CtaBanner } from '../components/CtaBanner'
 import { Reveal, StaggerGroup } from '../components/motion'
 import { staggerItem, staggerContainer, itemTransition } from '../lib/motion'
+import { buildBreadcrumbSchema, SITE_URL } from '../lib/siteInfo'
 import heroBackground from '../assets/services-background-image.png'
 import {HeroBackdrop} from "../components/HeroBackdrop.tsx";
 
@@ -251,6 +253,35 @@ function Faq() {
     )
 }
 
+// FAQPage structured data from the `faqs` list above — qualifies the section
+// for a rich-result FAQ snippet in search results.
+function buildFaqSchema() {
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqs.map((faq) => ({
+            '@type': 'Question',
+            name: faq.question,
+            acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+        })),
+    }
+}
+
+// One Service entry per offering in `services` above, linked back to the
+// sitewide Organization/LocalBusiness entity via its @id.
+function buildServicesSchema() {
+    return {
+        '@context': 'https://schema.org',
+        '@graph': services.map((service) => ({
+            '@type': 'Service',
+            name: service.title,
+            description: service.description,
+            provider: { '@id': `${SITE_URL}/#organization` },
+            areaServed: ['Sri Lanka', 'Worldwide'],
+        })),
+    }
+}
+
 export function Services() {
     return (
         <>
@@ -258,6 +289,15 @@ export function Services() {
                 title="Software Development Services in Sri Lanka | JayarathnaTech Solutions"
                 description="End-to-end software development services from a Sri Lanka-based company — web, e-commerce, mobile, UI/UX, SaaS, and ongoing support for clients in Sri Lanka and internationally."
             />
+            <JsonLd
+                id="breadcrumb"
+                data={buildBreadcrumbSchema([
+                    { name: 'Home', url: '/' },
+                    { name: 'Services', url: '/services' },
+                ])}
+            />
+            <JsonLd id="services" data={buildServicesSchema()} />
+            <JsonLd id="faq" data={buildFaqSchema()} />
 
             <Hero />
             <ServicesGrid />

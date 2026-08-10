@@ -5,8 +5,10 @@ import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../firebase/config'
 import { projectFromDoc } from '../lib/firestore'
 import { Seo } from '../components/Seo'
+import { JsonLd } from '../components/JsonLd'
 import { Reveal } from '../components/motion'
 import { MotionLink } from '../components/MotionLink'
+import { buildBreadcrumbSchema } from '../lib/siteInfo'
 import type { Project } from '../types'
 
 function useProject(projectId: string | undefined) {
@@ -231,7 +233,19 @@ export function ProjectDetail() {
             <Seo
                 title={project ? `${project.title} — JayarathnaTech Solutions` : 'Project — JayarathnaTech Solutions'}
                 description={project?.description ?? 'A project delivered by JayarathnaTech Solutions.'}
+                image={project?.coverImageUrl}
+                noindex={project === null}
             />
+            {project && (
+                <JsonLd
+                    id="breadcrumb"
+                    data={buildBreadcrumbSchema([
+                        { name: 'Home', url: '/' },
+                        { name: 'Projects', url: '/projects' },
+                        { name: project.title, url: `/projects/${project.id}` },
+                    ])}
+                />
+            )}
 
             {project === undefined ? <Loading /> : project === null ? <NotFound /> : <ProjectView project={project} />}
         </>

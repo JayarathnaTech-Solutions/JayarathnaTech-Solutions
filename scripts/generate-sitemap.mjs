@@ -9,7 +9,18 @@ try {
 }
 
 const SITE_URL = 'https://www.jayarathnatechsolutions.com'
-const STATIC_ROUTES = ['/', '/about', '/services', '/projects', '/contact']
+const BUILD_DATE = new Date().toISOString().split('T')[0]
+
+// changefreq/priority reflect how often each page's content actually changes
+// and how central it is to the site, so crawlers spend their budget on the
+// pages that matter most (home/services first, static legal-style pages last).
+const STATIC_ROUTES = [
+    { path: '/', changefreq: 'weekly', priority: '1.0' },
+    { path: '/services', changefreq: 'monthly', priority: '0.9' },
+    { path: '/projects', changefreq: 'weekly', priority: '0.8' },
+    { path: '/about', changefreq: 'monthly', priority: '0.7' },
+    { path: '/contact', changefreq: 'monthly', priority: '0.7' },
+]
 
 const app = initializeApp({
     apiKey: process.env.VITE_FIREBASE_API_KEY,
@@ -23,16 +34,35 @@ const db = getFirestore(app)
 let projectRoutes = []
 try {
     const snapshot = await getDocs(collection(db, 'projects'))
-    projectRoutes = snapshot.docs.map((doc) => `/projects/${doc.id}`)
+    projectRoutes = snapshot.docs.map((doc) => {
+        const createdAt = doc.data().createdAt
+        return {
+            path: `/projects/${doc.id}`,
+            changefreq: 'monthly',
+            priority: '0.6',
+            // Firestore Timestamp -> YYYY-MM-DD; falls back to the build date
+            // for docs written before createdAt was backfilled, or if the
+            // field is missing/malformed.
+            lastmod: typeof createdAt?.toDate === 'function' ? createdAt.toDate().toISOString().split('T')[0] : BUILD_DATE,
+        }
+    })
 } catch (error) {
     console.warn('generate-sitemap: could not fetch projects, falling back to static routes only.', error)
 }
 
-const routes = [...STATIC_ROUTES, ...projectRoutes]
+const routes = [
+    ...STATIC_ROUTES.map((route) => ({ ...route, lastmod: BUILD_DATE })),
+    ...projectRoutes,
+]
 
 const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${routes.map((path) => `  <url><loc>${SITE_URL}${path}</loc></url>`).join('\n')}
+${routes
+    .map(
+        (route) =>
+            `  <url><loc>${SITE_URL}${route.path}</loc><lastmod>${route.lastmod}</lastmod><changefreq>${route.changefreq}</changefreq><priority>${route.priority}</priority></url>`,
+    )
+    .join('\n')}
 </urlset>
 `
 

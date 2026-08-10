@@ -9,6 +9,7 @@ export function NotFound() {
             <Seo
                 title="Page Not Found — JayarathnaTech Solutions"
                 description="The page you're looking for doesn't exist or has been moved."
+                noindex
             />
 
             <section className="relative overflow-hidden text-white">
