@@ -1,4 +1,4 @@
-const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID
+const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || 'G-E8R3K6DBC2'
 
 declare global {
     interface Window {
@@ -7,10 +7,9 @@ declare global {
     }
 }
 
-// Loads gtag.js and configures GA4, but skips entirely in dev/preview builds
-// so local testing doesn't pollute production analytics data.
+// Ensure gtag script is loaded (loads from index.html, fallback injects if missing)
 export function initAnalytics() {
-    if (!GA_MEASUREMENT_ID || !import.meta.env.PROD) return
+    if (!GA_MEASUREMENT_ID) return
     if (document.querySelector(`script[src*="googletagmanager.com/gtag/js"]`)) return
 
     const script = document.createElement('script')
@@ -23,16 +22,15 @@ export function initAnalytics() {
         window.dataLayer.push(args)
     }
     window.gtag('js', new Date())
-    // send_page_view is disabled here because this is an SPA — page views are
-    // reported manually per route change via trackPageview() instead.
-    window.gtag('config', GA_MEASUREMENT_ID, { send_page_view: false })
+    window.gtag('config', GA_MEASUREMENT_ID)
 }
 
 export function trackPageview(path: string) {
-    if (!GA_MEASUREMENT_ID || !import.meta.env.PROD || !window.gtag) return
-    window.gtag('event', 'page_view', {
+    if (!GA_MEASUREMENT_ID || !window.gtag) return
+    window.gtag('config', GA_MEASUREMENT_ID, {
         page_path: path,
         page_location: window.location.href,
         page_title: document.title,
     })
 }
+
