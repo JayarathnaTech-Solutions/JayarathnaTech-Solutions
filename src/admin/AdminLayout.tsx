@@ -75,6 +75,18 @@ const navItems: NavItemConfig[] = [
         ),
     },
     {
+        to: '/admin/agreements',
+        label: 'Agreements',
+        visibleTo: ['admin', 'editor'],
+        icon: (
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 12h6M9 16h6M9 8h1M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm9 15 1.5 1.5L21 16"
+            />
+        ),
+    },
+    {
         to: '/admin/inbox',
         label: 'Messages',
         visibleTo: ['admin', 'editor'],

@@ -19,6 +19,7 @@ import { AdminProjects } from './admin/pages/Projects'
 import { AdminCompanies } from './admin/pages/Companies'
 import { AdminTestimonials } from './admin/pages/Testimonials'
 import { AdminQuotes } from './admin/pages/Quotes'
+import { AdminAgreements } from './admin/pages/Agreements'
 import { AdminInbox } from './admin/pages/Inbox'
 import { AdminStaff } from './admin/pages/Staff'
 import { AdminCustomers } from './admin/pages/Customers'
@@ -62,6 +63,7 @@ function App() {
           <Route path="companies" element={<AdminCompanies />} />
           <Route path="testimonials" element={<AdminTestimonials />} />
           <Route path="quotes" element={<AdminQuotes />} />
+          <Route path="agreements" element={<AdminAgreements />} />
           <Route path="inbox" element={<AdminInbox />} />
           <Route path="staff" element={<AdminStaff />} />
           <Route path="customers" element={<AdminCustomers />} />
