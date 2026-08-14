@@ -4,7 +4,8 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Document, Image, Page, StyleSheet, Text, View, pdf } from '@react-pdf/renderer'
 import { calcBalance, calcDeposit, calcQuoteTotal, formatCurrency, lineItemTotal } from './quote'
-import { signatureImageUrl, siteContact, siteLetterhead } from './siteInfo'
+import { siteContact, siteLetterhead } from './siteInfo'
+import { signatureImageUrl } from './signature'
 import logo from '../assets/logo.png'
 import type { Quote, QuoteLineItem } from '../types'
 

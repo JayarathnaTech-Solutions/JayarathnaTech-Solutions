@@ -3,7 +3,8 @@
 // component-only-exports shape Fast Refresh expects.
 /* eslint-disable react-refresh/only-export-components */
 import { Document, Image, Page, StyleSheet, Text, View, pdf } from '@react-pdf/renderer'
-import { signatureImageUrl, siteContact, siteLetterhead } from './siteInfo'
+import { siteContact, siteLetterhead } from './siteInfo'
+import { signatureImageUrl } from './signature'
 import logo from '../assets/logo.png'
 import type { Quote } from '../types'
 
