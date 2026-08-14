@@ -3,9 +3,8 @@
 // component-only-exports shape Fast Refresh expects.
 /* eslint-disable react-refresh/only-export-components */
 import { Document, Image, Page, StyleSheet, Text, View, pdf } from '@react-pdf/renderer'
-import { siteContact, siteLetterhead } from './siteInfo'
+import { signatureImageUrl, siteContact, siteLetterhead } from './siteInfo'
 import logo from '../assets/logo.png'
-import signature from '../assets/signature.png'
 import type { Quote } from '../types'
 
 const styles = StyleSheet.create({
@@ -94,7 +93,7 @@ function SignatureBlock() {
         <View style={styles.signatureSection}>
             <View style={styles.signatureColumn}>
                 <Text style={styles.signatureHeading}>JAYARATHNATECH SOLUTIONS{'\n'}(PVT) LTD</Text>
-                <Image src={signature} style={styles.signatureImage} />
+                <Image src={signatureImageUrl} style={styles.signatureImage} />
                 <View style={styles.signatureLine} />
                 <Text style={styles.signatureLabel}>Managing Director</Text>
             </View>

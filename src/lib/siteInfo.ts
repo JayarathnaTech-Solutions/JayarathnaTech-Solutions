@@ -15,6 +15,12 @@ export const siteContact = {
     location: 'Negombo, Sri Lanka',
 }
 
+// Managing Director's signature image, hosted on Cloudinary rather than
+// bundled as a local asset (see PDF generators in src/lib/*Pdf.tsx). Read
+// from an env var instead of hardcoded so the URL isn't committed to the
+// public repo — set VITE_SIGNATURE_IMAGE_URL locally and in Vercel.
+export const signatureImageUrl = import.meta.env.VITE_SIGNATURE_IMAGE_URL as string
+
 // Registered business details used on formal documents (quotes, invoices,
 // agreements) — matches the company letterhead.
 export const siteLetterhead = {
