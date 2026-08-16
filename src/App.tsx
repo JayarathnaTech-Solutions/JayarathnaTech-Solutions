@@ -1,5 +1,4 @@
-import { useEffect } from 'react'
-import { Navigate, Route, Routes, useLocation } from 'react-router'
+import { Navigate, Route, Routes } from 'react-router'
 import { Analytics } from './components/Analytics'
 import { ADMIN_URL } from './lib/siteInfo'
 import { PublicLayout } from './components/PublicLayout'
@@ -36,18 +35,6 @@ import { PortalEngagementDetail } from './portal/pages/EngagementDetail'
 
 const ADMIN_HOSTNAME = new URL(ADMIN_URL).hostname
 const isAdminHost = typeof window !== 'undefined' && window.location.hostname === ADMIN_HOSTNAME
-
-// Old /admin/* links on the public domain now live on the admin subdomain —
-// bounce them there instead of 404ing, preserving the path and query string.
-// This is a cross-origin hop so it has to go through window.location, not
-// react-router's <Navigate>.
-function RedirectToAdminHost() {
-  const location = useLocation()
-  useEffect(() => {
-    window.location.replace(`${ADMIN_URL}${location.pathname}${location.search}`)
-  }, [location])
-  return null
-}
 
 const adminRoutes = (
   <>
@@ -100,8 +87,6 @@ function App() {
               <Route path="testimonial/:token" element={<TestimonialSubmission />} />
               <Route path="*" element={<NotFound />} />
             </Route>
-
-            <Route path="admin/*" element={<RedirectToAdminHost />} />
 
             <Route path="portal/login" element={<PortalLogin />} />
             <Route
