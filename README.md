@@ -50,7 +50,7 @@ payment-gating design and PayPal's deferred status.
 - **Cloudinary** — unsigned client-side image uploads (no Firebase Storage, which requires
   the paid Blaze plan)
 - **Web3Forms** — contact form delivery
-- **Vitest + React Testing Library + `@firebase/rules-unit-testing`** for tests
+- **Jest + React Testing Library + `@firebase/rules-unit-testing`** for tests
 - **Vercel** for hosting
 
 ## Getting started
@@ -85,7 +85,7 @@ src/
   lib/          Cross-cutting helpers shared by public, admin, and portal code
   firebase/     Firebase SDK init/config
   types/        Shared TypeScript types
-  test/         Vitest setup and test suites
+  test/         Jest setup and test suites
 ```
 
 See `AGENTS.md` for conventions and `PLAN.md` for the feature/architecture history.

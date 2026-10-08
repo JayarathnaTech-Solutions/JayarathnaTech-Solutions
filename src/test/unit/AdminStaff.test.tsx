@@ -1,21 +1,21 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, jest } from '@jest/globals'
 import { render, screen } from '@testing-library/react'
 import type { User } from 'firebase/auth'
 import { AdminStaff } from '../../admin/pages/Staff'
 import { useAuth } from '../../admin/AuthContext'
 import type { StaffMember } from '../../types'
 
-vi.mock('../../admin/AuthContext', async (importOriginal) => {
-    const actual = await importOriginal<typeof import('../../admin/AuthContext')>()
-    return { ...actual, useAuth: vi.fn() }
-})
+jest.mock('../../admin/AuthContext', () => ({
+    ...jest.requireActual<typeof import('../../admin/AuthContext')>('../../admin/AuthContext'),
+    useAuth: jest.fn(),
+}))
 
-vi.mock('firebase/firestore', async (importOriginal) => {
-    const actual = await importOriginal<typeof import('firebase/firestore')>()
-    return { ...actual, getDocs: vi.fn().mockResolvedValue({ docs: [] }) }
-})
+jest.mock('firebase/firestore', () => ({
+    ...jest.requireActual<typeof import('firebase/firestore')>('firebase/firestore'),
+    getDocs: jest.fn(async () => ({ docs: [] })),
+}))
 
-const mockedUseAuth = vi.mocked(useAuth)
+const mockedUseAuth = jest.mocked(useAuth)
 
 function staffMember(overrides: Partial<StaffMember>): StaffMember {
     return {

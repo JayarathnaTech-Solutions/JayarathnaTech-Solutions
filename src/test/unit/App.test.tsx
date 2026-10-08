@@ -1,12 +1,12 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, jest } from '@jest/globals'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import App from '../../App.tsx'
 
-vi.mock('firebase/firestore', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('firebase/firestore')>()
-  return { ...actual, getDocs: vi.fn().mockResolvedValue({ docs: [] }) }
-})
+jest.mock('firebase/firestore', () => ({
+  ...jest.requireActual<typeof import('firebase/firestore')>('firebase/firestore'),
+  getDocs: jest.fn(async () => ({ docs: [] })),
+}))
 
 describe('App', () => {
   it('renders the home page at /', () => {
