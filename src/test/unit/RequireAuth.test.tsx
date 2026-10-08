@@ -1,13 +1,13 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, jest } from '@jest/globals'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import type { User } from 'firebase/auth'
 import { RequireAuth } from '../../admin/RequireAuth'
 import { useAuthStatus, type AuthStatus } from '../../admin/useAuthStatus'
 
-vi.mock('../../admin/useAuthStatus')
+jest.mock('../../admin/useAuthStatus')
 
-const mockedUseAuthStatus = vi.mocked(useAuthStatus)
+const mockedUseAuthStatus = jest.mocked(useAuthStatus)
 
 function renderWithStatus(status: AuthStatus) {
     mockedUseAuthStatus.mockReturnValue(status)

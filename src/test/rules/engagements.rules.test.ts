@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import { afterAll, afterEach, beforeAll, beforeEach, describe, it } from 'vitest'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, it } from '@jest/globals'
 import { assertFails, assertSucceeds, initializeTestEnvironment, type RulesTestEnvironment } from '@firebase/rules-unit-testing'
 import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore'
 

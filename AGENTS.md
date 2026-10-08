@@ -52,7 +52,7 @@ substantial.
   (`src/lib/*Pdf.tsx`); **mermaid** renders diagrams inside generated BRD/SRS docs
 - **react-markdown** + `remark-gfm` — blog posts and chat replies
 - **Web3Forms** — contact form email delivery; **GA4** analytics
-- **Vitest + React Testing Library + `@firebase/rules-unit-testing`**
+- **Jest 30** (babel-jest) + **React Testing Library** + `@firebase/rules-unit-testing`
 
 ## Commands
 
@@ -62,11 +62,11 @@ substantial.
   `src/content/blog/posts.json`, writes `public/sitemap.xml`), then `tsc -b && vite build`
 - `npm run lint` — ESLint
 - `npm run preview` — preview a production build
-- `npm test` — app unit tests once (Vitest, jsdom, Firebase SDK mocked, no emulator).
-  Excludes `src/test/rules/**`
+- `npm test` — app unit tests once (Jest, `jest.config.js`, jsdom, Firebase SDK mocked,
+  no emulator). Only `src/test/unit/**`
 - `npm run test:watch` — same suite, watch mode
 - `npm run test:rules` — Firestore security-rules tests (`src/test/rules/*.rules.test.ts`,
-  `vitest.rules.config.ts`, files run serially) via `firebase emulators:exec`; starts and
+  `jest.rules.config.js`, `--runInBand`) via `firebase emulators:exec`; starts and
   stops the emulator itself. Needs a JRE; first run downloads the emulator jar (~150MB)
 - `npm run emulators` — Firebase emulators standalone (Auth :9099, Firestore :8080,
   UI :4000)
@@ -77,7 +77,7 @@ substantial.
   (`public/og-image.jpg`, hero `.webp` images in `src/assets/`)
 - `npm run generate-sitemap` — sitemap only
 
-Run a single unit test file: `npx vitest run src/test/unit/quote.test.ts`.
+Run a single unit test file: `npx jest src/test/unit/quote.test.ts`.
 
 ## Layout
 
@@ -103,6 +103,7 @@ src/content/blog/ Blog metadata (`posts.ts` + plain-data mirror `posts.json`) an
 src/firebase/     `config.ts` (primary app) and `secondaryApp.ts` (see below)
 src/types/        Shared TS types (single `index.ts`)
 src/test/         `setup.ts`, `unit/` (jsdom), `rules/` (emulator)
+jest/             Jest-only support files (see Testing below)
 ```
 
 ## Roles and access
@@ -156,6 +157,26 @@ a role or page, update both, plus the rules tests.
   can't import TS modules (hence `posts.json` mirroring `posts.ts`).
 - Chat system prompt in `api/chatHandler.ts` is hand-written site knowledge. Update it
   when services, contact info, or pages change.
+
+## Testing
+
+- Import test APIs explicitly from `@jest/globals` (`describe`, `it`, `expect`, `jest`);
+  jest-dom matchers come from `@testing-library/jest-dom/jest-globals` in `setup.ts`
+- `jest.mock()` factories are hoisted, so any outer variable they reference must be named
+  `mock*` (e.g. `mockAddDoc`). Use `jest.requireActual()` to spread the real module
+- Jest runs CommonJS, so `jest/` bridges Vite-only behaviour:
+  - `babel-plugin-vite-meta.cjs` rewrites `import.meta.env` to `process.env`,
+    `import.meta.glob` to `vite-glob.cjs` (eager `?raw` only), and any other
+    `import.meta` to a plain object
+  - `env.cjs` seeds dummy `VITE_*` values. Tests never read `.env` or hit the live project
+  - `jsdom-environment.cjs` adds Node's `fetch`/`Request`/`Response`/etc. to jsdom
+  - `file-stub.cjs` stands in for image/CSS imports
+- ESM-only packages in `node_modules` are transformed by Babel; `transformIgnorePatterns`
+  in `jest.config.js` lists the CommonJS ones to skip. If a new dependency fails with
+  "Must use import to load ES Module", it's missing from that list or still has
+  `import.meta` in it
+- After editing anything in `jest/`, run `npx jest --clearCache`: Jest's transform cache
+  doesn't track plugin source changes
 
 ## Code style
 

@@ -12,9 +12,9 @@
     "optimize-images": "node scripts/optimize-hero-images.mjs",
     "lint": "eslint .",
     "preview": "VITE_CONFIG_NATIVE_IGNORE_WARNING=true vite preview",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:rules": "firebase emulators:exec --only firestore \"vitest run --config vitest.rules.config.ts\"",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:rules": "firebase emulators:exec --only firestore \"jest --config jest.rules.config.js --runInBand\"",
     "emulators": "firebase emulators:start"
   },
   "dependencies": {
@@ -31,8 +31,13 @@
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
+    "@babel/core": "^8.0.7",
+    "@babel/preset-env": "^8.0.7",
+    "@babel/preset-react": "^8.0.1",
+    "@babel/preset-typescript": "^8.0.7",
     "@eslint/js": "^10.0.1",
     "@firebase/rules-unit-testing": "^5.0.1",
+    "@jest/globals": "^30.5.2",
     "@tailwindcss/typography": "^0.5.20",
     "@testing-library/jest-dom": "^7.0.0",
     "@testing-library/react": "^16.3.2",
@@ -41,16 +46,18 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.4",
+    "babel-jest": "^30.5.2",
     "eslint": "^10.8.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",
     "firebase-tools": "^15.25.1",
     "globals": "^17.7.0",
+    "jest": "^30.5.2",
+    "jest-environment-jsdom": "^30.5.2",
     "jsdom": "^30.0.1",
     "sharp": "^0.35.3",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.65.0",
-    "vite": "^8.2.0",
-    "vitest": "^4.1.10"
+    "vite": "^8.2.0"
   }
 }

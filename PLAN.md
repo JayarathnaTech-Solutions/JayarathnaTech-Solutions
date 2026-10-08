@@ -89,10 +89,10 @@ this file only tracks scope and progress.
   connects directly to the live project (`VITE_USE_FIREBASE_EMULATORS=false`) — the
   Local Emulator Suite is only used for the rules test suite (see below), not for
   everyday dev.
-- Test stack: Vitest + React Testing Library for app code (`npm test`, no emulator
+- Test stack: Jest (babel-jest; migrated from Vitest) + React Testing Library for app code (`npm test`, no emulator
   needed — Firebase SDK calls are mocked), plus `@firebase/rules-unit-testing` for
   security-rule tests (`npm run test:rules`), which specifically requires the Local
-  Emulator Suite and is kept in a separate Vitest config/npm script so `npm test`
+  Emulator Suite and is kept in a separate Jest config/npm script so `npm test`
   doesn't depend on it. The Firestore emulator jar (~150MB) is a slow first-time
   download on some networks — `npm run test:rules` triggers it automatically via
   `firebase emulators:exec` if not already cached.
@@ -193,7 +193,7 @@ this file only tracks scope and progress.
       locked-in decisions)
 - [x] Install Firebase SDK and initialize config (env vars for Firebase config)
 - [x] Set up Firebase Local Emulator Suite for local dev (Auth, Firestore)
-- [x] Install test stack: Vitest, React Testing Library, `@firebase/rules-unit-testing`
+- [x] Install test stack: Jest (originally Vitest), React Testing Library, `@firebase/rules-unit-testing`
 - [ ] Connect Vercel project for deployment
 - [x] Set up folder structure (public routes, admin routes, shared components, firebase lib, types)
 - [x] Set up Cloudinary account (free tier) + unsigned upload preset for project cover images
