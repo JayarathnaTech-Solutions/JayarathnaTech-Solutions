@@ -2,87 +2,172 @@
 
 ## Project
 
-JayarathnaTech Solutions agency website: a public marketing site (Home, About, Services,
-Projects, Contact, Testimonials) plus a guarded admin dashboard (project/testimonial/quote/
-staff management). This is **one single-page app**, not a monorepo — "client side" and
-"admin side" are route segments (`/` vs guarded `/admin/*`) within the same React app, not
-separate deployable projects.
+JayarathnaTech Solutions agency website. **One React SPA, not a monorepo**, with three
+route trees in `src/App.tsx`:
 
-`PLAN.md` is the single source of truth for scope and progress — it holds the locked-in
-architecture decisions, assumptions, open risks, and a numbered, checkbox-tracked feature
-list. Read it before starting work, and check off boxes there as features land instead of
-tracking progress elsewhere.
+- **Public site** (`/`): Home, About, Services, Projects + detail, Blog + post, Contact,
+  tokenized testimonial submission (`/testimonial/:token`), 404. Floating Gemini chat
+  widget on every public page.
+- **Admin dashboard** (`/admin/*`, Google sign-in, invite-only staff): Dashboard,
+  Projects, Companies, Testimonials, Quotes (with AI requirement refinement + BRD/SRS
+  generation), Agreements, Inbox, Staff, Customers, Engagements (+ detail), Settings.
+- **Customer portal** (`/portal/*`, email/password, admin-created accounts): dashboard
+  of the customer's engagements, engagement detail with sprint progress, invoices,
+  bank-transfer receipt upload, and team chat.
+
+**Admin is served only on the admin subdomain.** `App.tsx` compares
+`window.location.hostname` against `ADMIN_URL` (`src/lib/siteInfo.ts`,
+`admin.jayarathnatechsolutions.com`). On that host it renders *only* admin routes; on
+every other host (including `localhost`) it renders *only* public + portal routes, so
+`/admin` hits the 404 page during plain `npm run dev`. Same Vercel deployment serves
+both hosts.
+
+`PLAN.md` holds the locked-in architecture decisions, assumptions, open risks, and a
+checkbox-tracked feature list (sections 0–19). Read it before starting work and check
+off boxes there as features land. It does **not** yet cover features added after
+section 19 (blog, agreements, companies, AI quote/BRD tools, HR/QA/Intern/UI-UX roles
+and `staffRecords`, admin subdomain) and a few lines are stale (domain, Gemini model),
+so verify against code when they disagree; add a new section when building something
+substantial.
 
 ## Tech stack
 
-- **React 19** + **TypeScript**, built with **Vite 8**
-- **Tailwind CSS 4** via the `@tailwindcss/vite` plugin — mobile-first
-- **React Router 8** — public routes open, `/admin/*` guarded by `RequireAuth`
-- **Firebase** — Auth (Google sign-in only, admin-invited, no self-signup) + Firestore
-  only. **Spark (free) tier — no Cloud Functions**; all logic lives in the client +
-  Firestore security rules. Project: `jayarathnatech-solutions`
-- **No Firebase Storage** — Google requires the Blaze (paid) plan to enable Cloud
-  Storage on projects created after Oct 2024, and we're staying on Spark. File
-  uploads (project cover images) go through **Cloudinary**'s free tier instead
-  (unsigned client-side uploads — no backend needed). See PLAN.md step 10.
-- **Hosting**: Vercel for the app; not yet connected
-- **Vitest + React Testing Library + `@firebase/rules-unit-testing`** for tests, run
-  against the Firebase Local Emulator Suite
+- **React 19** + **TypeScript ~6**, built with **Vite 8**
+- **Tailwind CSS 4** via `@tailwindcss/vite` (+ `@tailwindcss/typography` for blog
+  prose) — mobile-first, light mode only (dark mode was removed)
+- **React Router 8** (import from `react-router`, not `react-router-dom`)
+- **Motion** (`motion` package) for animations — shared primitives in
+  `src/components/motion.tsx` / `src/lib/motion.ts`
+- **Firebase** — Auth + Firestore only, **Spark (free) tier: no Cloud Functions, no
+  Firebase Storage**. Project: `jayarathnatech-solutions`
+  - Staff: Google sign-in, `staff` collection keyed by **email**
+  - Customers: email/password, `customers` collection keyed by **uid**
+- **Cloudinary** — unsigned client-side uploads (`src/lib/cloudinary.ts`), with
+  separate presets for public images, receipts/chat attachments, and staff NIC images
+- **Vercel** — hosting (live at `www.jayarathnatechsolutions.com` +
+  `admin.` subdomain) and **Edge Functions** in `api/` for Gemini calls
+- **Gemini** (`gemini-3.1-flash-lite`) — site chat, quote requirement refinement,
+  BRD/SRS generation, and the offline blog generator script
+- **@react-pdf/renderer** — quote, invoice, agreement, and requirements-doc PDFs
+  (`src/lib/*Pdf.tsx`); **mermaid** renders diagrams inside generated BRD/SRS docs
+- **react-markdown** + `remark-gfm` — blog posts and chat replies
+- **Web3Forms** — contact form email delivery; **GA4** analytics
+- **Vitest + React Testing Library + `@firebase/rules-unit-testing`**
 
 ## Commands
 
-- `npm run dev` — start Vite dev server
-- `npm run build` — generates `public/sitemap.xml` from live Firestore project data,
-  then `tsc -b && vite build`
+- `npm run dev` — Vite dev server (also serves `/api/*` locally via plugins in
+  `vite.config.ts`)
+- `npm run build` — `scripts/generate-sitemap.mjs` (reads live Firestore `projects` +
+  `src/content/blog/posts.json`, writes `public/sitemap.xml`), then `tsc -b && vite build`
 - `npm run lint` — ESLint
 - `npm run preview` — preview a production build
-- `npm test` — run the app test suite once (Vitest, jsdom, Firebase SDK mocked —
-  no emulator needed)
-- `npm run test:watch` — Vitest in watch mode (same suite as `npm test`)
-- `npm run test:rules` — Firestore security-rules test suite
-  (`src/test/rules/firestore.rules.test.ts`, `@firebase/rules-unit-testing`,
-  separate Vitest config). Runs via `firebase emulators:exec`, which starts the
-  Firestore emulator, runs the tests, then shuts it down — no manual emulator
-  step needed. First run downloads the emulator jar (~150MB), which can be slow
-  on some networks.
-- `npm run emulators` — start the Firebase Local Emulator Suite standalone (Auth
-  :9099, Firestore :8080, Emulator UI :4000), e.g. for manual/interactive testing.
-  Requires a JRE on PATH for the Firestore emulator.
+- `npm test` — app unit tests once (Vitest, jsdom, Firebase SDK mocked, no emulator).
+  Excludes `src/test/rules/**`
+- `npm run test:watch` — same suite, watch mode
+- `npm run test:rules` — Firestore security-rules tests (`src/test/rules/*.rules.test.ts`,
+  `vitest.rules.config.ts`, files run serially) via `firebase emulators:exec`; starts and
+  stops the emulator itself. Needs a JRE; first run downloads the emulator jar (~150MB)
+- `npm run emulators` — Firebase emulators standalone (Auth :9099, Firestore :8080,
+  UI :4000)
+- `npm run generate-blog-posts` — one-off: calls Gemini per topic, writes
+  `src/content/blog/posts/<slug>.md`, `posts.ts`, and `posts.json`. Idempotent (skips
+  existing slugs). Needs `GEMINI_API_KEY`
+- `npm run generate-og-image` / `npm run optimize-images` — `sharp`-based asset scripts
+  (`public/og-image.jpg`, hero `.webp` images in `src/assets/`)
+- `npm run generate-sitemap` — sitemap only
+
+Run a single unit test file: `npx vitest run src/test/unit/quote.test.ts`.
+
+## Layout
+
+```
+api/              Vercel Edge Functions (chat, quoteAi, requirementsDocAi). Each
+                  `<name>.ts` is a thin Request/Response wrapper around a shared
+                  `<name>Handler.ts`; own tsconfig (referenced from tsconfig.json)
+scripts/          Node build/content scripts (sitemap, blog generation, images)
+src/pages/        Public routes
+src/components/   Shared/public UI (Navbar, Footer, Seo, JsonLd, ChatWidget,
+                  ChatThread, SlidePanel, ConfirmDialog, motion primitives, ...)
+src/admin/        Admin layout, RequireAuth + useAuthStatus/AuthContext,
+                  pages/, components/ (MermaidPreview, NicImageUpload)
+src/portal/       Portal layout, RequireCustomerAuth + customer auth hooks,
+                  pages/, components/ (email-verification gate, forced password change,
+                  bank details)
+src/lib/          Cross-cutting logic: Firestore mappers (`firestore.ts`), data hooks
+                  (`useFirestoreCollection`, `useEngagementDetail`, ...), quote math
+                  (`quote.ts`), engagement helpers, PDF generators, Cloudinary upload,
+                  site constants (`siteInfo.ts`), blog loader
+src/content/blog/ Blog metadata (`posts.ts` + plain-data mirror `posts.json`) and
+                  markdown bodies (`posts/*.md`, loaded via `import.meta.glob`)
+src/firebase/     `config.ts` (primary app) and `secondaryApp.ts` (see below)
+src/types/        Shared TS types (single `index.ts`)
+src/test/         `setup.ts`, `unit/` (jsdom), `rules/` (emulator)
+```
+
+## Roles and access
+
+`StaffRole` = `admin | editor | developer | hr | qa | intern | uiux`.
+
+- `admin` — everything, including Staff, Customers, Settings, invoice verification
+- `editor` — Dashboard, Projects, Companies, Testimonials, Quotes, Agreements, Messages;
+  no Staff, Customers, Engagements, or Settings
+- `developer` / `qa` / `intern` / `uiux` — Engagements only, scoped to engagements whose
+  `assignedDeveloperEmails` include them
+- `hr` — Staff page only, plus `staffRecords` (personal info/NIC images), never for
+  admin targets
+
+UI enforcement is in `src/admin/AdminLayout.tsx` (nav `visibleTo` + redirects for
+engagement-only roles and HR). **The real enforcement is `firestore.rules`**; when adding
+a role or page, update both, plus the rules tests.
+
+## Firebase / security notes
+
+- `.env` (gitignored) holds real config; `.env.example` documents every var.
+  `VITE_USE_FIREBASE_EMULATORS` is currently `false`, so **local dev reads and writes
+  the live Firestore project**. Be careful with destructive actions while testing.
+- No backend besides Firestore rules and the stateless Gemini proxies, so
+  `firestore.rules` is the only data-access safeguard. Treat rules changes as
+  security-sensitive and cover them in `src/test/rules/`. Key invariants:
+  - Engagement status moves `pending_advance → in_progress → delivered` only when the
+    advance/final invoice is `verified`; invoice pointer ids lock once set
+  - Customers can submit payment proof but never set `status: 'verified'`
+  - Customers must have a verified email before customer-scoped writes
+  - Chat messages are immutable; URL fields must be `https://`
+  - Catch-all `match /{document=**}` denies everything not listed
+- Rules/index changes are **not live** until deployed:
+  `firebase deploy --only firestore --project jayarathnatech-solutions`
+- Customer accounts are created from the admin panel via `src/firebase/secondaryApp.ts`
+  (a second named Firebase app) so `createUserWithEmailAndPassword` doesn't replace the
+  admin's session. See `src/lib/customerProvisioning.ts`.
+- Auth providers and Firestore DB setup are done in the Firebase console/CLI, not code.
+
+## API / env gotchas
+
+- `GEMINI_API_KEY` has **no** `VITE_` prefix and must never be read from client code.
+- Edge Function imports must be extensionless (`'./chatHandler'`, not
+  `'./chatHandler.ts'`); Vercel's edge bundler fails to resolve them otherwise.
+- When adding an `api/` endpoint, also add a matching dev middleware plugin in
+  `vite.config.ts` that calls the same shared handler, or it 404s under `npm run dev`.
+- `vite.config.ts` imports `api/*Handler.ts`, which import `src/lib/siteInfo.ts`. Don't
+  put `import.meta.env` reads in any module reachable from those handlers (that's why
+  `src/lib/signature.ts` is separate); it crashes `vite build` at config load.
+- Node scripts load `.env` with `process.loadEnvFile()`; they run outside Vite, so they
+  can't import TS modules (hence `posts.json` mirroring `posts.ts`).
+- Chat system prompt in `api/chatHandler.ts` is hand-written site knowledge. Update it
+  when services, contact info, or pages change.
 
 ## Code style
 
-- ESLint flat config (`eslint.config.js`): `js.configs.recommended`,
-  `typescript-eslint` recommended, `react-hooks`, `react-refresh` — not type-aware/strict
-- No Prettier configured — don't assume auto-formatting is enforced
-- TypeScript targets ES2023 (`tsconfig.app.json` / `tsconfig.node.json`) with
-  `noUnusedLocals`, `noUnusedParameters`, `noFallthroughCasesInSwitch` enabled
-
-## Firebase notes
-
-- Real project config lives in `.env` (gitignored); `.env.example` documents the
-  `VITE_FIREBASE_*` / `VITE_CLOUDINARY_*` / `VITE_WEB3FORMS_ACCESS_KEY` vars
-- `VITE_USE_FIREBASE_EMULATORS` in `.env` controls whether the app talks to the local
-  emulators or the live project. Currently `false` — day-to-day dev writes directly to
-  the live project. The emulator is only used for `npm run test:rules` (see Commands)
-- No Cloud Functions on Spark plan — Firestore security rules (`firestore.rules`) are
-  the *only* backend safeguard, so treat rules changes as security-sensitive: they're
-  covered by `npm run test:rules`, but changes still need careful review since a
-  mistake there is a direct data-leak or privilege-escalation risk
-- `firestore.rules` implements full per-collection rules (staff/projects/testimonials/
-  testimonialInvites/quotes/contactMessages — see PLAN.md step 8) and is deployed to
-  the live project. Changes to `firestore.rules` or `firestore.indexes.json` are
-  **not live** until explicitly deployed (`firebase deploy --only firestore --project
-  jayarathnatech-solutions`) — editing the file locally has no effect on the live app
-  until that runs
-- `staff` collection doc id is the person's **email**, not uid (see PLAN.md
-  Assumptions) — invites are created by email before the invitee has ever signed in
-- Auth providers (Google sign-in) and Firestore database creation are managed via
-  `firebase` CLI / console, not in application code
-
-## Other conventions
-
-- `design/` holds UI mockups (PNG) for both public and admin pages — check there before
-  building a screen to match the intended design
-- Folder structure: `src/pages` (public routes), `src/admin` (admin routes + layout +
-  `RequireAuth` guard), `src/components` (shared UI), `src/firebase` (SDK init/config),
-  `src/types` (shared TS types), `src/test` (Vitest setup)
+- ESLint flat config (`eslint.config.js`): `js` recommended, `typescript-eslint`
+  recommended, `react-hooks`, `react-refresh`. Not type-aware
+- No Prettier, and formatting varies by file (2 vs 4-space indent, semicolons in some
+  public components, none elsewhere). Match the file you're editing
+- TS targets ES2023 with `noUnusedLocals`, `noUnusedParameters`,
+  `noFallthroughCasesInSwitch`, `verbatimModuleSyntax` (use `import type`)
+- Comments explain *why* (constraints, past bugs, platform quirks); keep that style
+- Firestore reads go through mapper functions in `src/lib/firestore.ts` and hooks in
+  `src/lib/`; reuse `useFirestoreCollection` rather than hand-rolling fetch state
+- Public pages set metadata with `Seo` (and `JsonLd` where relevant); use
+  `buildPageTitle` from `siteInfo.ts` for titles
+- Shared form classes live in `src/lib/ui.ts`
