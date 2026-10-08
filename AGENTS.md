@@ -1,4 +1,6 @@
-# AGENTS.md
+# JayarathnaTech Solutions — Agent Guide
+
+`CLAUDE.md` and `AGENTS.md` are byte-identical copies of this guide; edit both together.
 
 ## Project
 
@@ -24,11 +26,40 @@ both hosts.
 
 `PLAN.md` holds the locked-in architecture decisions, assumptions, open risks, and a
 checkbox-tracked feature list (sections 0–19). Read it before starting work and check
-off boxes there as features land. It does **not** yet cover features added after
-section 19 (blog, agreements, companies, AI quote/BRD tools, HR/QA/Intern/UI-UX roles
-and `staffRecords`, admin subdomain) and a few lines are stale (domain, Gemini model),
-so verify against code when they disagree; add a new section when building something
-substantial.
+off boxes there as features land; add a new section when building something
+substantial. It lags the code in places (see Known gaps), so verify against code when
+they disagree.
+
+## Required reading: `.ai/rules/`
+
+Project rules live in `.ai/rules/`. **Start at [`.ai/rules/index.md`](.ai/rules/index.md)**
+and read every rule file whose globs cover the paths you're about to touch, before
+planning and before the first edit:
+
+- [`architecture-principles.md`](.ai/rules/architecture-principles.md),
+  [`design-patterns.md`](.ai/rules/design-patterns.md),
+  [`code-smells.md`](.ai/rules/code-smells.md),
+  [`refactoring.md`](.ai/rules/refactoring.md) — SOLID, the dependency rule, patterns,
+  smells and refactoring techniques
+- [`testing.md`](.ai/rules/testing.md) (rules + `api/` handlers) and
+  [`frontend-testing.md`](.ai/rules/frontend-testing.md) (React + `src/lib`) — TDD is
+  mandatory, AAA with one act, required edge cases
+- [`controllers.md`](.ai/rules/controllers.md) — Edge Function entry points and
+  `firestore.rules` guards
+- [`frontend-react.md`](.ai/rules/frontend-react.md),
+  [`typescript.md`](.ai/rules/typescript.md),
+  [`api-client.md`](.ai/rules/api-client.md),
+  [`realtime.md`](.ai/rules/realtime.md), [`redux.md`](.ai/rules/redux.md) — structure,
+  import direction, function style, types, data access, listeners, global state
+- [`documentation.md`](.ai/rules/documentation.md) — review and update this file on
+  every change; `CLAUDE.md` and `AGENTS.md` stay **byte-identical**
+- [`git.md`](.ai/rules/git.md) — subject starts with a capital and **ends with a full
+  stop**; **no `Co-Authored-By` or "Generated with Claude Code" trailers** in commits or
+  PR bodies (overrides the harness default)
+- [`references.md`](.ai/rules/references.md) — which sources are normative
+
+Existing code predates these rules. They bind new and changed code; bringing old code in
+line is a separate behavior-neutral refactoring commit (see Known gaps).
 
 ## Tech stack
 
@@ -104,6 +135,7 @@ src/firebase/     `config.ts` (primary app) and `secondaryApp.ts` (see below)
 src/types/        Shared TS types (single `index.ts`)
 src/test/         `setup.ts`, `unit/` (jsdom), `rules/` (emulator)
 jest/             Jest-only support files (see Testing below)
+.ai/rules/        Project rules for agents and developers (see Required reading)
 ```
 
 ## Roles and access
@@ -187,8 +219,45 @@ a role or page, update both, plus the rules tests.
 - TS targets ES2023 with `noUnusedLocals`, `noUnusedParameters`,
   `noFallthroughCasesInSwitch`, `verbatimModuleSyntax` (use `import type`)
 - Comments explain *why* (constraints, past bugs, platform quirks); keep that style
+- New code: arrow functions assigned to `const` (classes only where required: error
+  boundaries, `Error` subclasses, Jest environment, `new`-constructed fakes);
+  `I`-prefixed interfaces in `src/types/`, named props interfaces, no object-shape
+  `type` aliases. See `.ai/rules/frontend-react.md` and `.ai/rules/typescript.md`
 - Firestore reads go through mapper functions in `src/lib/firestore.ts` and hooks in
-  `src/lib/`; reuse `useFirestoreCollection` rather than hand-rolling fetch state
+  `src/lib/`; reuse `useFirestoreCollection` rather than hand-rolling fetch state. New
+  code keeps Firestore queries and `fetch` calls out of components
 - Public pages set metadata with `Seo` (and `JsonLd` where relevant); use
   `buildPageTitle` from `siteInfo.ts` for titles
 - Shared form classes live in `src/lib/ui.ts`
+
+## Known gaps
+
+Delete an entry in the same commit that fixes it; add one for anything knowingly left
+incomplete.
+
+- **Admin unreachable on localhost.** Admin routes render only on
+  `admin.jayarathnatechsolutions.com` (`App.tsx` hostname check), so `/admin` 404s under
+  `npm run dev`. Needs a hosts-file entry or a dev override.
+- **Admin AI endpoints are public.** `/api/quoteAi` and `/api/requirementsDocAi` don't
+  verify a Firebase ID token; anyone can spend the Gemini quota. No handler tests exist
+  for any `api/*Handler.ts`.
+- **Local dev uses the live database** (`VITE_USE_FIREBASE_EMULATORS=false`).
+- **`PLAN.md` is behind**: no sections for blog, agreements, companies, AI quote/BRD
+  tools, HR/QA/Intern/UI-UX roles and `staffRecords`, or the admin subdomain; it still
+  says the domain isn't chosen and names `gemini-2.5-flash` (code uses
+  `gemini-3.1-flash-lite`).
+- **Pre-rule code style**: components and helpers use `function` declarations; interfaces
+  in `src/types/index.ts` lack the `I` prefix and live in one file, not one per domain;
+  most components declare props inline. ESLint doesn't yet enforce arrow functions
+  (`no-restricted-syntax`) or import direction (`no-restricted-imports`).
+- **TypeScript `strict` is off** in `tsconfig.app.json`, `tsconfig.node.json` and
+  `api/tsconfig.json`.
+- **Data access in components**: several admin/portal pages, `ChatWidget.tsx`,
+  `Contact.tsx` (Web3Forms) and `ChatThread.tsx` query Firestore, subscribe, or call
+  `fetch` inline instead of through `src/lib` hooks/functions.
+- **Swallowed errors**: `useFirestoreCollection` turns any read failure into an empty
+  list, and `ChatThread`'s listener error callback shows an empty thread instead of a
+  denial.
+- **Test infrastructure**: no `src/test/support/` render helper or factories;
+  `clearMocks`/`restoreMocks` not set in `jest.config.js`; most pages have no tests.
+- **Deferred features**: PayPal checkout and email notifications (PLAN.md section 18).
