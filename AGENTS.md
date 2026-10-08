@@ -132,7 +132,7 @@ src/lib/          Cross-cutting logic: Firestore mappers (`firestore.ts`), data 
 src/content/blog/ Blog metadata (`posts.ts` + plain-data mirror `posts.json`) and
                   markdown bodies (`posts/*.md`, loaded via `import.meta.glob`)
 src/firebase/     `config.ts` (primary app) and `secondaryApp.ts` (see below)
-src/types/        Shared TS types (single `index.ts`)
+src/types/        Shared TS types, one file per domain, re-exported by `index.ts`
 src/test/         `setup.ts`, `unit/` (jsdom), `rules/` (emulator)
 jest/             Jest-only support files (see Testing below)
 .ai/rules/        Project rules for agents and developers (see Required reading)
@@ -247,8 +247,7 @@ incomplete.
   says the domain isn't chosen and names `gemini-2.5-flash` (code uses
   `gemini-3.1-flash-lite`).
 - **Pre-rule code style**: components and helpers use `function` declarations; interfaces
-  in `src/types/index.ts` lack the `I` prefix and live in one file, not one per domain;
-  most components declare props inline. ESLint doesn't yet enforce arrow functions
+  in `src/types/` lack the `I` prefix; most components declare props inline. ESLint doesn't yet enforce arrow functions
   (`no-restricted-syntax`) or import direction (`no-restricted-imports`).
 - **TypeScript `strict` is off** in `tsconfig.app.json`, `tsconfig.node.json` and
   `api/tsconfig.json`.

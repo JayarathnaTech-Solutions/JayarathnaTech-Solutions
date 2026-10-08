@@ -8,17 +8,19 @@ Applies to **all TypeScript in JayarathnaTech Solutions**: `src/`, `api/`, `vite
 
 ```
 src/types/
-├── engagement.ts   # IEngagement, ISprint, IPhase, IInvoice
-├── staff.ts        # IStaffMember, IStaffPersonalInfo
-├── props.ts        # shared component prop interfaces
-└── index.ts        # barrel re-export
+├── engagement.ts   # Engagement, Sprint, Phase, EngagementStatus, PhaseStatus
+├── invoice.ts      # Invoice, InvoiceFeeLineItem, InvoiceType, InvoiceStatus, PaymentMethod
+├── staff.ts        # StaffMember, StaffPersonalInfo, StaffRole
+├── currency.ts     # Currency — shared by quote, engagement and invoice
+├── …               # blog, chat, company, contact, customer, project, quote, settings, testimonial
+└── index.ts        # barrel: `export type * from './<domain>'` per file
 ```
 
 - Group interfaces by domain, one file per domain, named after it in camelCase.
-- Re-export everything from `index.ts` so consumers import from one place: `import type { IEngagement } from '../types'`.
+- Re-export everything from `index.ts` with `export type * from './<domain>'`, so consumers import from one place: `import type { Engagement } from '../types'`. Never import a domain file directly.
+- A new domain gets its own file and a line in `index.ts`; a domain file imports another domain's types with `import type` (as `quote.ts` imports `Currency`).
+- Shared component prop interfaces, when a second component needs one, go in `props.ts`.
 - Import interfaces with `import type`, always. They are erased at build time and a value import can create a cycle. (`verbatimModuleSyntax` is on, so the compiler enforces this.)
-
-**Today `src/types/index.ts` is a single file** holding every shared type. Splitting it by domain is a behavior-neutral refactoring commit of its own; until then, new interfaces go into `index.ts` under the right domain heading, or start the domain file if you are doing that split.
 
 **`api/` is the exception to the location rule**: Edge Function handlers are also loaded by `vite.config.ts`, so they import only `src/` modules that never read `import.meta.env` (today just `src/lib/siteInfo.ts`). Their request/response interfaces (`ChatMessage`, `QuoteAiResult`) stay in the handler file that owns the contract.
 
