@@ -1,8 +1,8 @@
 import { describe, expect, it, jest, beforeEach } from '@jest/globals'
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter, Route, Routes } from 'react-router'
 import { TestimonialSubmission } from '../../pages/TestimonialSubmission'
+import { renderAtRoute } from '../support/render'
 
 // `mock` prefix lets babel-jest's hoisted jest.mock() factory reference these.
 const mockAddDoc = jest.fn<(...args: unknown[]) => Promise<{ id: string }>>(async () => ({ id: 'testimonial1' }))
@@ -22,15 +22,7 @@ jest.mock('firebase/firestore', () => ({
     serverTimestamp: jest.fn(),
 }))
 
-function renderPage() {
-    return render(
-        <MemoryRouter initialEntries={['/testimonial/invite1']}>
-            <Routes>
-                <Route path="/testimonial/:token" element={<TestimonialSubmission />} />
-            </Routes>
-        </MemoryRouter>,
-    )
-}
+const renderPage = () => renderAtRoute(<TestimonialSubmission />, '/testimonial/invite1', '/testimonial/:token')
 
 describe('Testimonial submission form validation', () => {
     beforeEach(() => {

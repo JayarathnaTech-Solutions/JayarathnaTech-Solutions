@@ -1,31 +1,32 @@
 import { describe, expect, it, jest } from '@jest/globals'
-import { render, screen } from '@testing-library/react'
-import { MemoryRouter, Route, Routes } from 'react-router'
+import { screen } from '@testing-library/react'
+import { Route, Routes } from 'react-router'
 import type { User } from 'firebase/auth'
 import { RequireAuth } from '../../admin/RequireAuth'
 import { useAuthStatus, type AuthStatus } from '../../admin/useAuthStatus'
+import { renderAtRoute } from '../support/render'
+import { buildStaffMember } from '../support/factories'
 
 jest.mock('../../admin/useAuthStatus')
 
 const mockedUseAuthStatus = jest.mocked(useAuthStatus)
 
-function renderWithStatus(status: AuthStatus) {
+const renderWithStatus = (status: AuthStatus) => {
     mockedUseAuthStatus.mockReturnValue(status)
 
-    return render(
-        <MemoryRouter initialEntries={['/admin']}>
-            <Routes>
-                <Route path="/admin/login" element={<div>Login Page</div>} />
-                <Route
-                    path="/admin"
-                    element={
-                        <RequireAuth>
-                            <div>Protected Content</div>
-                        </RequireAuth>
-                    }
-                />
-            </Routes>
-        </MemoryRouter>,
+    return renderAtRoute(
+        <Routes>
+            <Route path="/admin/login" element={<div>Login Page</div>} />
+            <Route
+                path="/admin"
+                element={
+                    <RequireAuth>
+                        <div>Protected Content</div>
+                    </RequireAuth>
+                }
+            />
+        </Routes>,
+        '/admin',
     )
 }
 
@@ -50,14 +51,7 @@ describe('RequireAuth', () => {
         renderWithStatus({
             status: 'authorized',
             user: { email: 'admin@example.com' } as unknown as User,
-            staff: {
-                id: 'admin@example.com',
-                email: 'admin@example.com',
-                name: 'Admin',
-                role: 'admin',
-                invitedBy: 'bootstrap',
-                createdAt: new Date().toISOString(),
-            },
+            staff: buildStaffMember({ role: 'admin' }),
         })
         expect(screen.getByText('Protected Content')).toBeInTheDocument()
     })

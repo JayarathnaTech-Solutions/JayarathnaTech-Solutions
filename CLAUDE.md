@@ -133,7 +133,8 @@ src/content/blog/ Blog metadata (`posts.ts` + plain-data mirror `posts.json`) an
                   markdown bodies (`posts/*.md`, loaded via `import.meta.glob`)
 src/firebase/     `config.ts` (primary app) and `secondaryApp.ts` (see below)
 src/types/        Shared TS types, one file per domain, re-exported by `index.ts`
-src/test/         `setup.ts`, `unit/` (jsdom), `rules/` (emulator)
+src/test/         `setup.ts`, `unit/` (jsdom), `rules/` (emulator), `support/` (render
+                  helper `renderAtRoute`, factories like `buildStaffMember`)
 jest/             Jest-only support files (see Testing below)
 .ai/rules/        Project rules for agents and developers (see Required reading)
 ```
@@ -257,6 +258,6 @@ incomplete.
 - **Swallowed errors**: `useFirestoreCollection` turns any read failure into an empty
   list, and `ChatThread`'s listener error callback shows an empty thread instead of a
   denial.
-- **Test infrastructure**: no `src/test/support/` render helper or factories;
-  `clearMocks`/`restoreMocks` not set in `jest.config.js`; most pages have no tests.
+- **Test infrastructure**: `clearMocks`/`restoreMocks` not set in `jest.config.js`; the
+  render helper doesn't provide auth contexts yet; most pages have no tests.
 - **Deferred features**: PayPal checkout and email notifications (PLAN.md section 18).

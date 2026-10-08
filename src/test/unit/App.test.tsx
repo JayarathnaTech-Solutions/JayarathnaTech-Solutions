@@ -1,7 +1,7 @@
 import { describe, expect, it, jest } from '@jest/globals'
-import { render, screen } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { screen } from '@testing-library/react'
 import App from '../../App.tsx'
+import { renderAtRoute } from '../support/render'
 
 jest.mock('firebase/firestore', () => ({
   ...jest.requireActual<typeof import('firebase/firestore')>('firebase/firestore'),
@@ -10,11 +10,7 @@ jest.mock('firebase/firestore', () => ({
 
 describe('App', () => {
   it('renders the home page at /', () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <App />
-      </MemoryRouter>,
-    )
+    renderAtRoute(<App />, '/')
 
     expect(
       screen.getByRole('heading', { name: /We Build Digital Solutions That Drive/ }),
@@ -22,11 +18,7 @@ describe('App', () => {
   })
 
   it('renders the 404 page for unknown routes', () => {
-    render(
-      <MemoryRouter initialEntries={['/nope']}>
-        <App />
-      </MemoryRouter>,
-    )
+    renderAtRoute(<App />, '/nope')
 
     expect(screen.getByText(/404/)).toBeInTheDocument()
   })
