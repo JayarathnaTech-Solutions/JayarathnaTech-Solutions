@@ -22,7 +22,7 @@ export const transform = {
 }
 
 // Many deps are ESM-only (react-router, react-markdown + the unified/remark
-// tree, mermaid + d3, @react-pdf, ...) and Jest runs CommonJS, so node_modules
+// tree, @react-pdf, ...) and Jest runs CommonJS, so node_modules
 // get transformed by default. Only packages known to ship working CommonJS are
 // skipped, which keeps the (cached) first run from being slower than it needs
 // to be.

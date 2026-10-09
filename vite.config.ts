@@ -3,7 +3,6 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from "@tailwindcss/vite";
 import { handleChatRequest } from './api/chatHandler.ts'
 import { handleQuoteAiRequest } from './api/quoteAiHandler.ts'
-import { handleRequirementsDocAiRequest } from './api/requirementsDocAiHandler.ts'
 
 // Vite only loads VITE_-prefixed vars into import.meta.env for client code —
 // it does not populate process.env from .env for us, so pull GEMINI_API_KEY
@@ -86,46 +85,7 @@ function devQuoteAiApi(): Plugin {
   }
 }
 
-// Serves api/requirementsDocAi.ts's logic under `vite dev` too — same
-// reasoning as devChatApi() above.
-function devRequirementsDocAiApi(): Plugin {
-  return {
-    name: 'dev-requirements-doc-ai-api',
-    configureServer(server) {
-      server.middlewares.use('/api/requirementsDocAi', async (req, res) => {
-        if (req.method !== 'POST') {
-          res.statusCode = 405
-          res.end(JSON.stringify({ error: 'Method not allowed' }))
-          return
-        }
-
-        const chunks: Buffer[] = []
-        for await (const chunk of req) chunks.push(chunk as Buffer)
-
-        let parsedBody: unknown
-        try {
-          parsedBody = JSON.parse(Buffer.concat(chunks).toString('utf-8') || '{}')
-        } catch {
-          res.statusCode = 400
-          res.setHeader('content-type', 'application/json')
-          res.end(JSON.stringify({ error: 'Invalid JSON body' }))
-          return
-        }
-
-        const result = await handleRequirementsDocAiRequest(
-          process.env.GEMINI_API_KEY,
-          (parsedBody as { notes?: unknown }).notes,
-          (parsedBody as { context?: unknown }).context,
-        )
-        res.statusCode = result.status
-        res.setHeader('content-type', 'application/json')
-        res.end(JSON.stringify(result.body))
-      })
-    },
-  }
-}
-
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss(), devChatApi(), devQuoteAiApi(), devRequirementsDocAiApi()],
+  plugins: [react(), tailwindcss(), devChatApi(), devQuoteAiApi()],
 })

@@ -1,6 +1,6 @@
 // One-off content generation script — reads GEMINI_API_KEY from .env (same
-// key already used in production for BRD/SRS generation, see
-// api/requirementsDocAiHandler.ts) and calls Gemini once per topic below to
+// key already used in production by the chat and quote AI endpoints in api/)
+// and calls Gemini once per topic below to
 // produce a full blog article. Writes markdown bodies to
 // src/content/blog/posts/<slug>.md and metadata to src/content/blog/posts.ts
 // (consumed by the app) and src/content/blog/posts.json (a plain-data mirror
