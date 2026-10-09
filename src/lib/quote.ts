@@ -1,4 +1,4 @@
-import type { QuoteCurrency, QuoteLineItem } from '../types'
+import type { IPaymentInstallment, QuoteCurrency, QuoteLineItem } from '../types'
 
 export function lineItemTotal(item: QuoteLineItem): number {
     return item.quantity * item.unitPrice
@@ -34,6 +34,21 @@ export function calcDeposit(total: number): number {
 export function calcBalance(total: number): number {
     return Math.round((total - calcDeposit(total)) * 100) / 100
 }
+
+// Quotes are split by default, and every quote saved before the option
+// existed was split, so a missing field means split too.
+export const defaultSplitPayment = true
+
+// The labels live here, not in the form or the PDF, so the admin preview and
+// the printed quote can never disagree on the payment terms. A full (unsplit)
+// payment has no installments: the Grand Total is the only amount due.
+export const calcPaymentInstallments = (total: number, splitPayment: boolean): IPaymentInstallment[] =>
+    splitPayment
+        ? [
+              { label: 'Deposit (50%) — Due at Project Start', amount: calcDeposit(total) },
+              { label: 'Balance (50%) — Due on Completion', amount: calcBalance(total) },
+          ]
+        : []
 
 const currencyPrefixes: Record<QuoteCurrency, string> = {
     USD: '$',

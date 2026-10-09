@@ -8,6 +8,7 @@ import {
     type DocumentSnapshot,
 } from 'firebase/firestore'
 import { db } from '../firebase/config'
+import { defaultSplitPayment } from './quote'
 import type {
     BankDetails,
     ChatMessage,
@@ -264,6 +265,7 @@ export function quoteFromDoc(
         currency: (data.currency as QuoteCurrency | undefined) ?? 'USD',
         bufferPercent: data.bufferPercent ?? 0,
         profitPercent: data.profitPercent ?? 0,
+        splitPayment: data.splitPayment ?? defaultSplitPayment,
         customerRequirements: data.customerRequirements ?? undefined,
         createdAt: toIsoString(data.createdAt),
     }

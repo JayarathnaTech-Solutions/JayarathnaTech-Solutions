@@ -11,7 +11,8 @@ route trees in `src/App.tsx`:
   tokenized testimonial submission (`/testimonial/:token`), 404. Floating Gemini chat
   widget on every public page.
 - **Admin dashboard** (`/admin/*`, Google sign-in, invite-only staff): Dashboard,
-  Projects, Companies, Testimonials, Quotes (with AI requirement refinement), Agreements, Inbox, Staff, Customers, Engagements (+ detail), Settings.
+  Projects, Companies, Testimonials, Quotes (AI requirement refinement, optional 50/50
+  deposit/balance split), Agreements, Inbox, Staff, Customers, Engagements (+ detail), Settings.
 - **Customer portal** (`/portal/*`, email/password, admin-created accounts): dashboard
   of the customer's engagements, engagement detail with sprint progress, invoices,
   bank-transfer receipt upload, and team chat.
@@ -255,6 +256,6 @@ incomplete.
 - **Swallowed errors**: `useFirestoreCollection` turns any read failure into an empty
   list, and `ChatThread`'s listener error callback shows an empty thread instead of a
   denial.
-- **Test infrastructure**: `clearMocks`/`restoreMocks` not set in `jest.config.js`; the
+- **Test infrastructure**: `restoreMocks` not set in `jest.config.js` (`clearMocks` is); the
   render helper doesn't provide auth contexts yet; most pages have no tests.
 - **Deferred features**: PayPal checkout and email notifications (PLAN.md section 18).

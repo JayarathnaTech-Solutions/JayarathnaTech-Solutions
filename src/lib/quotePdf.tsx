@@ -3,7 +3,7 @@
 // component-only-exports shape Fast Refresh expects.
 /* eslint-disable react-refresh/only-export-components */
 import { Document, Image, Page, StyleSheet, Text, View, pdf } from '@react-pdf/renderer'
-import { calcBalance, calcDeposit, calcQuoteTotal, formatCurrency, lineItemTotal } from './quote'
+import { calcPaymentInstallments, calcQuoteTotal, formatCurrency, lineItemTotal } from './quote'
 import { siteContact, siteLetterhead } from './siteInfo'
 import { signatureImageUrl } from './signature'
 import logo from '../assets/logo.png'
@@ -71,8 +71,7 @@ function applyMarkup(lineItems: QuoteLineItem[], bufferPercent: number, profitPe
 function QuoteDocument({ quote }: { quote: Quote }) {
     const lineItems = applyMarkup(quote.lineItems, quote.bufferPercent, quote.profitPercent)
     const total = calcQuoteTotal(lineItems)
-    const deposit = calcDeposit(total)
-    const balance = calcBalance(total)
+    const paymentInstallments = calcPaymentInstallments(total, quote.splitPayment)
 
     return (
         <Document>
@@ -129,14 +128,12 @@ function QuoteDocument({ quote }: { quote: Quote }) {
                     ))}
                 </View>
 
-                <View style={styles.summaryRow}>
-                    <Text style={styles.summaryLabel}>Deposit (50%) — Due at Project Start</Text>
-                    <Text style={styles.summaryValue}>{formatCurrency(deposit, quote.currency)}</Text>
-                </View>
-                <View style={{ ...styles.summaryRow, marginTop: 4 }}>
-                    <Text style={styles.summaryLabel}>Balance (50%) — Due on Completion</Text>
-                    <Text style={styles.summaryValue}>{formatCurrency(balance, quote.currency)}</Text>
-                </View>
+                {paymentInstallments.map((installment, index) => (
+                    <View key={installment.label} style={index === 0 ? styles.summaryRow : { ...styles.summaryRow, marginTop: 4 }}>
+                        <Text style={styles.summaryLabel}>{installment.label}</Text>
+                        <Text style={styles.summaryValue}>{formatCurrency(installment.amount, quote.currency)}</Text>
+                    </View>
+                ))}
                 <View style={styles.totalRow}>
                     <Text style={styles.totalLabel}>Grand Total  </Text>
                     <Text style={styles.totalValue}>{formatCurrency(total, quote.currency)}</Text>

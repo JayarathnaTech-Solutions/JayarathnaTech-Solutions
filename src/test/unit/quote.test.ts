@@ -4,6 +4,7 @@ import {
     calcBufferAmount,
     calcDeposit,
     calcGrandTotal,
+    calcPaymentInstallments,
     calcProfitAmount,
     calcQuoteTotal,
     formatCurrency,
@@ -84,6 +85,31 @@ describe('calcDeposit / calcBalance', () => {
     it('returns 0/0 for a zero total', () => {
         expect(calcDeposit(0)).toBe(0)
         expect(calcBalance(0)).toBe(0)
+    })
+})
+
+describe('calcPaymentInstallments', () => {
+    it('splits the total into a 50% deposit and a 50% balance when the payment is split', () => {
+        expect(calcPaymentInstallments(2300, true)).toEqual([
+            { label: 'Deposit (50%) — Due at Project Start', amount: 1150 },
+            { label: 'Balance (50%) — Due on Completion', amount: 1150 },
+        ])
+    })
+
+    it('has no installments when the client pays the full amount at once', () => {
+        expect(calcPaymentInstallments(2300, false)).toEqual([])
+    })
+
+    it('installments add back up to the total, even with odd cents', () => {
+        const total = 100.01
+
+        const installments = calcPaymentInstallments(total, true)
+
+        expect(installments.reduce((sum, installment) => sum + installment.amount, 0)).toBeCloseTo(total, 2)
+    })
+
+    it('returns zero-amount installments for a zero total', () => {
+        expect(calcPaymentInstallments(0, true).map((installment) => installment.amount)).toEqual([0, 0])
     })
 })
 
