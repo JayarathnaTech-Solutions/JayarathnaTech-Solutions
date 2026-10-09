@@ -1,22 +1,9 @@
-import { useEffect, useState, type FormEvent } from 'react'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { useState, type FormEvent } from 'react'
+import { doc, setDoc } from 'firebase/firestore'
 import { db } from '../../firebase/config'
-import { bankDetailsFromDoc } from '../../lib/firestore'
+import { useBankDetails } from '../../lib/useBankDetails'
 import { Field } from '../../components/FormField'
 import { Skeleton } from '../../components/Skeleton'
-import type { BankDetails } from '../../types'
-
-function useBankDetails() {
-    const [bankDetails, setBankDetails] = useState<BankDetails | null | undefined>(undefined)
-
-    useEffect(() => {
-        getDoc(doc(db, 'settings', 'bankDetails'))
-            .then((snap) => setBankDetails(snap.exists() ? bankDetailsFromDoc(snap) : null))
-            .catch(() => setBankDetails(null))
-    }, [])
-
-    return bankDetails
-}
 
 export function AdminSettings() {
     const bankDetails = useBankDetails()

@@ -1,21 +1,9 @@
-import { useEffect, useState, type ChangeEvent } from 'react'
-import { doc, getDoc, updateDoc } from 'firebase/firestore'
+import { useState, type ChangeEvent } from 'react'
+import { doc, updateDoc } from 'firebase/firestore'
 import { db } from '../../firebase/config'
-import { bankDetailsFromDoc } from '../../lib/firestore'
+import { useBankDetails } from '../../lib/useBankDetails'
 import { uploadImage, RECEIPTS_UPLOAD_PRESET } from '../../lib/cloudinary'
-import type { BankDetails, Invoice } from '../../types'
-
-function useBankDetails() {
-    const [bankDetails, setBankDetails] = useState<BankDetails | null | undefined>(undefined)
-
-    useEffect(() => {
-        getDoc(doc(db, 'settings', 'bankDetails'))
-            .then((snap) => setBankDetails(snap.exists() ? bankDetailsFromDoc(snap) : null))
-            .catch(() => setBankDetails(null))
-    }, [])
-
-    return bankDetails
-}
+import type { Invoice } from '../../types'
 
 export function BankTransferDetails({ invoice, onSubmitted }: { invoice: Invoice; onSubmitted: () => void }) {
     const bankDetails = useBankDetails()
