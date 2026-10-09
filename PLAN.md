@@ -280,6 +280,9 @@ this file only tracks scope and progress.
 - [x] Status transitions
 - [x] Client-side PDF export with branded template
 - [x] Unit tests for total calculation logic
+- [x] Removed AI BRD/SRS generation (form section, `api/requirementsDocAi`,
+      `requirementsDocPdf`, mermaid). Old quote docs may still hold the unused
+      `brdContent`/`srsContent`/diagram fields; the mapper ignores them
 
 ## 13. Admin — Contact Messages Inbox
 - [x] List of submitted messages, newest first

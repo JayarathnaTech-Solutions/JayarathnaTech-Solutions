@@ -100,7 +100,7 @@ Validation errors per field go in `IApiError.errors`; leave it `null` for every 
 ## Authentication
 
 - **Firestore requests are authenticated by the SDK** from the signed-in user — staff via Google sign-in, customers via email/password. Rules read `request.auth.token.email`, `uid` and `email_verified`.
-- **A `/api/*` endpoint that must be restricted** receives `Authorization: Bearer <Firebase ID token>` from `auth.currentUser.getIdToken()`, and the Edge Function verifies it before calling the handler. None do yet — `quoteAi` and `requirementsDocAi` are admin-only in the UI but open to any caller (known gap).
+- **A `/api/*` endpoint that must be restricted** receives `Authorization: Bearer <Firebase ID token>` from `auth.currentUser.getIdToken()`, and the Edge Function verifies it before calling the handler. None do yet — `quoteAi` is admin-only in the UI but open to any caller (known gap).
 - After a customer verifies their email, the ID token still says `email_verified: false` until it is refreshed (`getIdToken(true)`); rules will keep refusing writes until then.
 
 ## React Native

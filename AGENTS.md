@@ -11,8 +11,7 @@ route trees in `src/App.tsx`:
   tokenized testimonial submission (`/testimonial/:token`), 404. Floating Gemini chat
   widget on every public page.
 - **Admin dashboard** (`/admin/*`, Google sign-in, invite-only staff): Dashboard,
-  Projects, Companies, Testimonials, Quotes (with AI requirement refinement + BRD/SRS
-  generation), Agreements, Inbox, Staff, Customers, Engagements (+ detail), Settings.
+  Projects, Companies, Testimonials, Quotes (with AI requirement refinement), Agreements, Inbox, Staff, Customers, Engagements (+ detail), Settings.
 - **Customer portal** (`/portal/*`, email/password, admin-created accounts): dashboard
   of the customer's engagements, engagement detail with sprint progress, invoices,
   bank-transfer receipt upload, and team chat.
@@ -77,10 +76,9 @@ line is a separate behavior-neutral refactoring commit (see Known gaps).
   separate presets for public images, receipts/chat attachments, and staff NIC images
 - **Vercel** — hosting (live at `www.jayarathnatechsolutions.com` +
   `admin.` subdomain) and **Edge Functions** in `api/` for Gemini calls
-- **Gemini** (`gemini-3.1-flash-lite`) — site chat, quote requirement refinement,
-  BRD/SRS generation, and the offline blog generator script
-- **@react-pdf/renderer** — quote, invoice, agreement, and requirements-doc PDFs
-  (`src/lib/*Pdf.tsx`); **mermaid** renders diagrams inside generated BRD/SRS docs
+- **Gemini** (`gemini-3.1-flash-lite`) — site chat, quote requirement refinement, and
+  the offline blog generator script
+- **@react-pdf/renderer** — quote, invoice, and agreement PDFs (`src/lib/*Pdf.tsx`)
 - **react-markdown** + `remark-gfm` — blog posts and chat replies
 - **Web3Forms** — contact form email delivery; **GA4** analytics
 - **Jest 30** (babel-jest) + **React Testing Library** + `@firebase/rules-unit-testing`
@@ -113,7 +111,7 @@ Run a single unit test file: `npx jest src/test/unit/quote.test.ts`.
 ## Layout
 
 ```
-api/              Vercel Edge Functions (chat, quoteAi, requirementsDocAi). Each
+api/              Vercel Edge Functions (chat, quoteAi). Each
                   `<name>.ts` is a thin Request/Response wrapper around a shared
                   `<name>Handler.ts`; own tsconfig (referenced from tsconfig.json)
 scripts/          Node build/content scripts (sitemap, blog generation, images)
@@ -121,7 +119,7 @@ src/pages/        Public routes
 src/components/   Shared/public UI (Navbar, Footer, Seo, JsonLd, ChatWidget,
                   ChatThread, SlidePanel, ConfirmDialog, motion primitives, ...)
 src/admin/        Admin layout, RequireAuth + useAuthStatus/AuthContext,
-                  pages/, components/ (MermaidPreview, NicImageUpload)
+                  pages/, components/ (NicImageUpload)
 src/portal/       Portal layout, RequireCustomerAuth + customer auth hooks,
                   pages/, components/ (email-verification gate, forced password change,
                   bank details)
@@ -239,12 +237,11 @@ incomplete.
 - **Admin unreachable on localhost.** Admin routes render only on
   `admin.jayarathnatechsolutions.com` (`App.tsx` hostname check), so `/admin` 404s under
   `npm run dev`. Needs a hosts-file entry or a dev override.
-- **Admin AI endpoints are public.** `/api/quoteAi` and `/api/requirementsDocAi` don't
-  verify a Firebase ID token; anyone can spend the Gemini quota. No handler tests exist
-  for any `api/*Handler.ts`.
+- **Admin AI endpoint is public.** `/api/quoteAi` doesn't verify a Firebase ID token;
+  anyone can spend the Gemini quota. No handler tests exist for any `api/*Handler.ts`.
 - **Local dev uses the live database** (`VITE_USE_FIREBASE_EMULATORS=false`).
-- **`PLAN.md` is behind**: no sections for blog, agreements, companies, AI quote/BRD
-  tools, HR/QA/Intern/UI-UX roles and `staffRecords`, or the admin subdomain; it still
+- **`PLAN.md` is behind**: no sections for blog, agreements, companies, the AI quote
+  tool, HR/QA/Intern/UI-UX roles and `staffRecords`, or the admin subdomain; it still
   says the domain isn't chosen and names `gemini-2.5-flash` (code uses
   `gemini-3.1-flash-lite`).
 - **Pre-rule code style**: components and helpers use `function` declarations; interfaces

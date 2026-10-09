@@ -4,7 +4,7 @@ Applies to `api/**`, `firestore.rules`, and the dev-server API plugins in `vite.
 
 JayarathnaTech Solutions has no controller layer and no middleware stack. Its two server-side entry points are:
 
-- **Vercel Edge Functions** in `api/` — currently `chat`, `quoteAi` and `requirementsDocAi`, each proxying Gemini so `GEMINI_API_KEY` stays server-side.
+- **Vercel Edge Functions** in `api/` — currently `chat` and `quoteAi`, each proxying Gemini so `GEMINI_API_KEY` stays server-side.
 - **Firestore security rules** in `firestore.rules` — the only enforcement for every read and write the browser makes.
 
 What follows is this project's equivalent of "what guards an endpoint is declared next to the code it guards."
@@ -31,7 +31,7 @@ What follows is this project's equivalent of "what guards an endpoint is declare
 ## The Exceptions
 
 - **A public endpoint stays public on purpose.** `api/chat.ts` serves anonymous site visitors; it is guarded by input limits, not authentication. Record that decision in the handler's comments.
-- **Admin-only AI endpoints must not stay public.** `api/quoteAi.ts` and `api/requirementsDocAi.ts` are only called from the admin panel but currently accept any caller — listed under `Known gaps` in `AGENTS.md`. The fix is to send the signed-in staff member's Firebase ID token and verify it in the wrapper before calling the handler.
+- **Admin-only AI endpoints must not stay public.** `api/quoteAi.ts` is only called from the admin panel but currently accepts any caller — listed under `Known gaps` in `AGENTS.md`. The fix is to send the signed-in staff member's Firebase ID token and verify it in the wrapper before calling the handler.
 
 ## The Safety Net
 
