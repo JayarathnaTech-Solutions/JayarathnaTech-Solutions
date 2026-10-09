@@ -40,7 +40,7 @@ export function AdminSettings() {
             <div className="mt-6 max-w-lg rounded-xl border border-slate-200 bg-white p-6">
                 <h2 className="text-sm font-semibold text-slate-600">Bank Transfer Details</h2>
                 <p className="mt-1 text-sm text-slate-500">
-                    Shown to every customer paying an invoice by bank transfer.
+                    Shown to customers paying an invoice by bank transfer, and printed on quote PDFs.
                 </p>
 
                 {bankDetails === undefined ? (

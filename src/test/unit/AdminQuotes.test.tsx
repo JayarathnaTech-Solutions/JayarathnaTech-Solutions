@@ -1,12 +1,15 @@
-import { describe, expect, it, jest } from '@jest/globals'
+import { beforeEach, describe, expect, it, jest } from '@jest/globals'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { addDoc, getDocs, updateDoc, type DocumentData, type QuerySnapshot } from 'firebase/firestore'
+import { addDoc, getDoc, getDocs, updateDoc, type DocumentData, type QuerySnapshot } from 'firebase/firestore'
 import { AdminQuotes } from '../../admin/pages/Quotes'
 import { exportQuotePdf } from '../../lib/quotePdf'
+import { buildBankDetails } from '../support/factories'
+import { bankDetailsSnapshot } from '../support/firestoreFakes'
 
 jest.mock('firebase/firestore', () => ({
     ...jest.requireActual<typeof import('firebase/firestore')>('firebase/firestore'),
+    getDoc: jest.fn(),
     getDocs: jest.fn(async () => ({ docs: [] })),
     addDoc: jest.fn(async () => ({ id: 'new-quote' })),
     updateDoc: jest.fn(async () => undefined),
@@ -18,6 +21,7 @@ jest.mock('../../lib/quotePdf', () => ({
     exportQuotePdf: jest.fn(async () => undefined),
 }))
 
+const mockedGetDoc = jest.mocked(getDoc)
 const mockedGetDocs = jest.mocked(getDocs)
 const mockedAddDoc = jest.mocked(addDoc)
 const mockedUpdateDoc = jest.mocked(updateDoc)
@@ -44,7 +48,17 @@ const openStoredQuote = async (user: ReturnType<typeof userEvent.setup>) => {
     await user.click(await screen.findByText('FinCorp'))
 }
 
+// The bank account set up in Settings (settings/bankDetails, read with getDoc).
+const companyBankAccount = buildBankDetails({ bankName: 'Sampath Bank', accountNumber: '0011223344' })
+const setUpBankAccount = (bankDetails = companyBankAccount) => mockedGetDoc.mockResolvedValue(bankDetailsSnapshot(bankDetails))
+
+const bankDetailsTick = () => screen.getByRole('checkbox', { name: /include bank transfer details in pdf/i })
+
 describe('AdminQuotes', () => {
+    beforeEach(() => {
+        mockedGetDoc.mockResolvedValue(bankDetailsSnapshot(null))
+    })
+
     it('does not offer AI BRD & SRS generation on an accepted quote', async () => {
         listQuotes(storedQuote({ status: 'accepted', customerRequirements: 'A booking app' }))
         const user = userEvent.setup()
@@ -134,6 +148,112 @@ describe('AdminQuotes', () => {
 
         await user.click(screen.getByRole('button', { name: /export pdf/i }))
 
-        await waitFor(() => expect(mockedExportQuotePdf).toHaveBeenCalledWith(expect.objectContaining({ splitPayment: false })))
+        await waitFor(() => expect(mockedExportQuotePdf).toHaveBeenCalledWith(expect.objectContaining({ splitPayment: false }), null))
+    })
+
+    it('ticks bank details by default and previews the account that will print', async () => {
+        setUpBankAccount()
+        const user = userEvent.setup()
+        render(<AdminQuotes />)
+
+        await user.click(screen.getByRole('button', { name: /new quote/i }))
+
+        expect(await screen.findByText(/sampath bank/i)).toBeInTheDocument()
+        expect(screen.getByText(/0011223344/)).toBeInTheDocument()
+        expect(bankDetailsTick()).toBeChecked()
+    })
+
+    it('disables the bank details tick until a bank account is set up in Settings', async () => {
+        const user = userEvent.setup()
+        render(<AdminQuotes />)
+
+        await user.click(screen.getByRole('button', { name: /new quote/i }))
+
+        expect(await screen.findByText(/no bank account set up yet/i)).toBeInTheDocument()
+        expect(bankDetailsTick()).toBeDisabled()
+        expect(bankDetailsTick()).not.toBeChecked()
+    })
+
+    it('holds the bank details tick while the bank account is loading', async () => {
+        mockedGetDoc.mockReturnValue(new Promise(() => {}))
+        const user = userEvent.setup()
+        render(<AdminQuotes />)
+
+        await user.click(screen.getByRole('button', { name: /new quote/i }))
+
+        expect(screen.getByText(/loading the bank account/i)).toBeInTheDocument()
+        expect(bankDetailsTick()).toBeDisabled()
+    })
+
+    it('exports the PDF with the bank account currently saved in Settings', async () => {
+        listQuotes(storedQuote())
+        setUpBankAccount(buildBankDetails({ bankName: 'Hatton National Bank', accountNumber: '5566778899' }))
+        const user = userEvent.setup()
+        render(<AdminQuotes />)
+        await openStoredQuote(user)
+        await screen.findByText(/hatton national bank/i)
+
+        await user.click(screen.getByRole('button', { name: /export pdf/i }))
+
+        await waitFor(() =>
+            expect(mockedExportQuotePdf).toHaveBeenCalledWith(
+                expect.anything(),
+                expect.objectContaining({ bankName: 'Hatton National Bank', accountNumber: '5566778899' }),
+            ),
+        )
+    })
+
+    it('leaves the bank account off the PDF when the tick is cleared', async () => {
+        setUpBankAccount()
+        const user = userEvent.setup()
+        render(<AdminQuotes />)
+        await user.click(screen.getByRole('button', { name: /new quote/i }))
+        await screen.findByText(/sampath bank/i)
+        await user.click(bankDetailsTick())
+
+        await user.click(screen.getByRole('button', { name: /export pdf/i }))
+
+        await waitFor(() => expect(mockedExportQuotePdf).toHaveBeenCalledWith(expect.anything(), null))
+    })
+
+    it('saves the bank details choice without copying the bank account onto the quote', async () => {
+        setUpBankAccount()
+        const user = userEvent.setup()
+        render(<AdminQuotes />)
+        await user.click(screen.getByRole('button', { name: /new quote/i }))
+        await screen.findByText(/sampath bank/i)
+        await user.type(screen.getByLabelText(/client name/i), 'FinCorp')
+        await user.click(bankDetailsTick())
+
+        await user.click(screen.getByRole('button', { name: /save quote/i }))
+
+        const savedQuote = mockedAddDoc.mock.calls[0][1]
+        expect(savedQuote).toEqual(expect.objectContaining({ includeBankDetails: false }))
+        expect(savedQuote).not.toHaveProperty('accountNumber')
+        expect(savedQuote).not.toHaveProperty('bankDetails')
+    })
+
+    it('reopens a quote with the bank details tick cleared when it was saved that way', async () => {
+        listQuotes(storedQuote({ includeBankDetails: false }))
+        setUpBankAccount()
+        const user = userEvent.setup()
+        render(<AdminQuotes />)
+
+        await openStoredQuote(user)
+
+        await waitFor(() => expect(bankDetailsTick()).toBeEnabled())
+        expect(bankDetailsTick()).not.toBeChecked()
+        expect(screen.queryByText(/0011223344/)).not.toBeInTheDocument()
+    })
+
+    it('ticks bank details on a quote saved before the option existed', async () => {
+        listQuotes(storedQuote())
+        setUpBankAccount()
+        const user = userEvent.setup()
+        render(<AdminQuotes />)
+
+        await openStoredQuote(user)
+
+        await waitFor(() => expect(bankDetailsTick()).toBeChecked())
     })
 })

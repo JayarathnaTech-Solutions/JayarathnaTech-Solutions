@@ -12,7 +12,8 @@ route trees in `src/App.tsx`:
   widget on every public page.
 - **Admin dashboard** (`/admin/*`, Google sign-in, invite-only staff): Dashboard,
   Projects, Companies, Testimonials, Quotes (AI requirement refinement, optional 50/50
-  deposit/balance split), Agreements, Inbox, Staff, Customers, Engagements (+ detail), Settings.
+  deposit/balance split, optional bank details on the PDF), Agreements, Inbox, Staff,
+  Customers, Engagements (+ detail), Settings (the one company bank account).
 - **Customer portal** (`/portal/*`, email/password, admin-created accounts): dashboard
   of the customer's engagements, engagement detail with sprint progress, invoices,
   bank-transfer receipt upload, and team chat.
@@ -172,6 +173,10 @@ a role or page, update both, plus the rules tests.
   - Catch-all `match /{document=**}` denies everything not listed
 - Rules/index changes are **not live** until deployed:
   `firebase deploy --only firestore --project jayarathnatech-solutions`
+- The company bank account is one doc, `settings/bankDetails` (admin-write, readable by
+  any signed-in user), read through `useBankDetails`. Quotes store only the
+  `includeBankDetails` tick, never the account: the quote PDF prints whatever account
+  Settings holds at export time, so changing it in Settings updates later PDFs.
 - Customer accounts are created from the admin panel via `src/firebase/secondaryApp.ts`
   (a second named Firebase app) so `createUserWithEmailAndPassword` doesn't replace the
   admin's session. See `src/lib/customerProvisioning.ts`.
