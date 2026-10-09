@@ -125,7 +125,8 @@ src/portal/       Portal layout, RequireCustomerAuth + customer auth hooks,
                   pages/, components/ (email-verification gate, forced password change,
                   bank details)
 src/lib/          Cross-cutting logic: Firestore mappers (`firestore.ts`), data hooks
-                  (`useFirestoreCollection`, `useEngagementDetail`, ...), quote math
+                  (`useFirestoreCollection`, `useEngagementDetail`, `useBankDetails`,
+                  ...), quote math
                   (`quote.ts`), engagement helpers, PDF generators, Cloudinary upload,
                   site constants (`siteInfo.ts`), blog loader
 src/content/blog/ Blog metadata (`posts.ts` + plain-data mirror `posts.json`) and
@@ -133,7 +134,8 @@ src/content/blog/ Blog metadata (`posts.ts` + plain-data mirror `posts.json`) an
 src/firebase/     `config.ts` (primary app) and `secondaryApp.ts` (see below)
 src/types/        Shared TS types, one file per domain, re-exported by `index.ts`
 src/test/         `setup.ts`, `unit/` (jsdom), `rules/` (emulator), `support/` (render
-                  helper `renderAtRoute`, factories like `buildStaffMember`)
+                  helper `renderAtRoute`, factories like `buildStaffMember`, Firestore
+                  fakes like `bankDetailsSnapshot`)
 jest/             Jest-only support files (see Testing below)
 .ai/rules/        Project rules for agents and developers (see Required reading)
 ```
