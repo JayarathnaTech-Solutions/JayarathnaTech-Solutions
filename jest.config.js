@@ -36,6 +36,9 @@ export default {
     testMatch: ['<rootDir>/src/test/unit/**/*.test.{ts,tsx}'],
     setupFiles: ['<rootDir>/jest/env.cjs'],
     setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],
+    // Call history must not leak between tests, or a toHaveBeenCalledWith can
+    // pass on a call an earlier test made.
+    clearMocks: true,
     transform,
     transformIgnorePatterns,
     moduleNameMapper: {

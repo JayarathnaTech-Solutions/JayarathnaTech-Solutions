@@ -5,12 +5,12 @@ import { quoteFromDoc } from '../../lib/firestore'
 import { useFirestoreCollection } from '../../lib/useFirestoreCollection'
 import { formatDate } from '../../lib/format'
 import {
-    calcBalance,
     calcBufferAmount,
-    calcDeposit,
     calcGrandTotal,
+    calcPaymentInstallments,
     calcProfitAmount,
     calcQuoteTotal,
+    defaultSplitPayment,
     formatCurrency,
     lineItemTotal,
 } from '../../lib/quote'
@@ -122,6 +122,7 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
     const [currency, setCurrency] = useState<QuoteCurrency>(quote?.currency ?? 'USD')
     const [bufferPercent, setBufferPercent] = useState(quote?.bufferPercent ?? 0)
     const [profitPercent, setProfitPercent] = useState(quote?.profitPercent ?? 0)
+    const [splitPayment, setSplitPayment] = useState(quote?.splitPayment ?? defaultSplitPayment)
     const [lineItems, setLineItems] = useState<QuoteLineItem[]>(
         quote?.lineItems && quote.lineItems.length > 0 ? quote.lineItems : [{ description: '', quantity: 1, unitPrice: 0 }],
     )
@@ -156,6 +157,7 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
     const bufferAmount = calcBufferAmount(subtotal, bufferPercent)
     const profitAmount = calcProfitAmount(subtotal, profitPercent)
     const total = calcGrandTotal(subtotal, bufferPercent, profitPercent)
+    const paymentInstallments = calcPaymentInstallments(total, splitPayment)
 
     async function handleExport() {
         setExporting(true)
@@ -170,6 +172,7 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
                 currency,
                 bufferPercent,
                 profitPercent,
+                splitPayment,
                 customerRequirements: customerRequirements.trim() || undefined,
                 createdAt: quote?.createdAt ?? new Date().toISOString(),
             })
@@ -190,6 +193,7 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
             currency,
             bufferPercent,
             profitPercent,
+            splitPayment,
             customerRequirements: customerRequirements.trim(),
         }
 
@@ -334,6 +338,44 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
                 </div>
             </div>
 
+            {/* The whole card is the label so the switch has a large tap target;
+                aria-labelledby keeps its accessible name to the short title. */}
+            <label
+                htmlFor="splitPayment"
+                className="flex cursor-pointer items-start justify-between gap-4 rounded-lg border border-slate-200 p-4 transition-colors hover:border-slate-300"
+            >
+                <span>
+                    <span id="splitPaymentLabel" className="block text-sm font-medium text-slate-600">
+                        Split payment 50/50
+                    </span>
+                    <span id="splitPaymentHint" className="mt-0.5 block text-xs text-slate-500">
+                        {splitPayment
+                            ? 'Deposit due at project start, balance on completion.'
+                            : 'The client pays the grand total in a single payment.'}
+                    </span>
+                </span>
+                <span className="relative mt-0.5 inline-flex shrink-0">
+                    <input
+                        id="splitPayment"
+                        type="checkbox"
+                        role="switch"
+                        checked={splitPayment}
+                        onChange={(event) => setSplitPayment(event.target.checked)}
+                        aria-labelledby="splitPaymentLabel"
+                        aria-describedby="splitPaymentHint"
+                        className="peer sr-only"
+                    />
+                    <span
+                        aria-hidden="true"
+                        className="h-6 w-11 rounded-full bg-slate-300 transition-colors peer-checked:bg-blue-600 peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500 peer-focus-visible:ring-offset-2"
+                    />
+                    <span
+                        aria-hidden="true"
+                        className="pointer-events-none absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5"
+                    />
+                </span>
+            </label>
+
             <div className="space-y-2 border-t border-slate-200 pt-4">
                 <div className="flex items-center justify-between text-sm text-slate-500">
                     <span>Subtotal</span>
@@ -351,14 +393,12 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
                         <span>{formatCurrency(profitAmount, currency)}</span>
                     </div>
                 )}
-                <div className="flex items-center justify-between text-sm text-slate-500">
-                    <span>Deposit (50%) — Due at Project Start</span>
-                    <span>{formatCurrency(calcDeposit(total), currency)}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm text-slate-500">
-                    <span>Balance (50%) — Due on Completion</span>
-                    <span>{formatCurrency(calcBalance(total), currency)}</span>
-                </div>
+                {paymentInstallments.map((installment) => (
+                    <div key={installment.label} className="flex items-center justify-between text-sm text-slate-500">
+                        <span>{installment.label}</span>
+                        <span>{formatCurrency(installment.amount, currency)}</span>
+                    </div>
+                ))}
                 <div className="flex items-center justify-end gap-3 border-t border-slate-200 pt-3">
                     <span className="text-sm font-semibold text-slate-600">Grand Total</span>
                     <span className="text-xl font-bold text-blue-600">{formatCurrency(total, currency)}</span>

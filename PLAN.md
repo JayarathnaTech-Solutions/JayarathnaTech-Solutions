@@ -280,6 +280,10 @@ this file only tracks scope and progress.
 - [x] Status transitions
 - [x] Client-side PDF export with branded template
 - [x] Unit tests for total calculation logic
+- [x] Per-quote payment terms: "Split payment 50/50" switch (on by default; quotes
+      saved before the option are treated as split). Split prints the 50% deposit +
+      50% balance rows on the form and PDF; full payment prints only the Grand Total.
+      Labels and amounts come from `calcPaymentInstallments` in `src/lib/quote.ts`
 - [x] Removed AI BRD/SRS generation (form section, `api/requirementsDocAi`,
       `requirementsDocPdf`, mermaid). Old quote docs may still hold the unused
       `brdContent`/`srsContent`/diagram fields; the mapper ignores them
