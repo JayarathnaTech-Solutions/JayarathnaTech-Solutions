@@ -39,6 +39,10 @@ export function calcBalance(total: number): number {
 // existed was split, so a missing field means split too.
 export const defaultSplitPayment = true
 
+// Quotes print the company bank account unless the admin clears the tick;
+// quotes saved before the option existed print it too.
+export const defaultIncludeBankDetails = true
+
 // The labels live here, not in the form or the PDF, so the admin preview and
 // the printed quote can never disagree on the payment terms. A full (unsplit)
 // payment has no installments: the Grand Total is the only amount due.

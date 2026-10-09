@@ -8,7 +8,7 @@ import {
     type DocumentSnapshot,
 } from 'firebase/firestore'
 import { db } from '../firebase/config'
-import { defaultSplitPayment } from './quote'
+import { defaultIncludeBankDetails, defaultSplitPayment } from './quote'
 import type {
     BankDetails,
     ChatMessage,
@@ -266,6 +266,7 @@ export function quoteFromDoc(
         bufferPercent: data.bufferPercent ?? 0,
         profitPercent: data.profitPercent ?? 0,
         splitPayment: data.splitPayment ?? defaultSplitPayment,
+        includeBankDetails: data.includeBankDetails ?? defaultIncludeBankDetails,
         customerRequirements: data.customerRequirements ?? undefined,
         createdAt: toIsoString(data.createdAt),
     }

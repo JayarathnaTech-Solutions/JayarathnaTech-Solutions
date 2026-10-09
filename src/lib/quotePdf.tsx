@@ -4,10 +4,11 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Document, Image, Page, StyleSheet, Text, View, pdf } from '@react-pdf/renderer'
 import { calcPaymentInstallments, calcQuoteTotal, formatCurrency, lineItemTotal } from './quote'
+import { listBankDetails } from './bankDetails'
 import { siteContact, siteLetterhead } from './siteInfo'
 import { signatureImageUrl } from './signature'
 import logo from '../assets/logo.png'
-import type { Quote, QuoteLineItem } from '../types'
+import type { BankDetails, IPaymentDetailsProps, IQuoteDocumentProps, Quote, QuoteLineItem } from '../types'
 
 const styles = StyleSheet.create({
     page: { padding: 36, fontSize: 11, fontFamily: 'Helvetica', color: '#0f172a' },
@@ -38,6 +39,12 @@ const styles = StyleSheet.create({
     requirementsText: { fontSize: 10, lineHeight: 1.4, color: '#334155' },
     requirementsNote: { fontSize: 8, fontFamily: 'Helvetica-Oblique', color: '#94a3b8', marginTop: 6 },
     footer: { position: 'absolute', bottom: 24, left: 36, right: 36, fontSize: 9, color: '#94a3b8', textAlign: 'center' },
+    paymentDetails: { marginTop: 18, padding: 12, backgroundColor: '#f8fafc', border: '1 solid #e2e8f0', borderLeft: '3 solid #2563eb', borderRadius: 4 },
+    paymentDetailsHeading: { fontSize: 9, fontFamily: 'Helvetica-Bold', color: '#2563eb', letterSpacing: 1, marginBottom: 4 },
+    paymentDetailsIntro: { fontSize: 9, color: '#475569', lineHeight: 1.4, marginBottom: 8 },
+    paymentDetailsRow: { flexDirection: 'row', paddingVertical: 4, borderTop: '1 solid #e2e8f0' },
+    paymentDetailsLabel: { width: 110, fontSize: 9, color: '#64748b' },
+    paymentDetailsValue: { flex: 1, fontSize: 10, fontFamily: 'Helvetica-Bold', color: '#0f172a' },
     signatureSection: { marginTop: 20, alignItems: 'flex-end' },
     signatureColumn: { width: '45%', alignItems: 'center' },
     signatureHeading: { fontSize: 10, fontFamily: 'Helvetica-Bold', textAlign: 'center' },
@@ -68,7 +75,30 @@ function applyMarkup(lineItems: QuoteLineItem[], bufferPercent: number, profitPe
     return lineItems.map((item) => ({ ...item, unitPrice: item.unitPrice * multiplier }))
 }
 
-function QuoteDocument({ quote }: { quote: Quote }) {
+// Kept on one page (wrap={false}) so the account number never splits across a
+// page break. The client name doubles as the payment reference so the
+// transfer can be matched to this quote.
+function PaymentDetails({ bankDetails, clientName }: IPaymentDetailsProps) {
+    const paymentReference = clientName.trim()
+
+    return (
+        <View style={styles.paymentDetails} wrap={false}>
+            <Text style={styles.paymentDetailsHeading}>PAYMENT DETAILS</Text>
+            <Text style={styles.paymentDetailsIntro}>
+                Please pay by bank transfer to the account below.
+                {paymentReference ? ` Use "${paymentReference}" as the payment reference.` : ''}
+            </Text>
+            {listBankDetails(bankDetails).map((row) => (
+                <View key={row.label} style={styles.paymentDetailsRow}>
+                    <Text style={styles.paymentDetailsLabel}>{row.label}</Text>
+                    <Text style={styles.paymentDetailsValue}>{row.value}</Text>
+                </View>
+            ))}
+        </View>
+    )
+}
+
+function QuoteDocument({ quote, bankDetails }: IQuoteDocumentProps) {
     const lineItems = applyMarkup(quote.lineItems, quote.bufferPercent, quote.profitPercent)
     const total = calcQuoteTotal(lineItems)
     const paymentInstallments = calcPaymentInstallments(total, quote.splitPayment)
@@ -139,6 +169,8 @@ function QuoteDocument({ quote }: { quote: Quote }) {
                     <Text style={styles.totalValue}>{formatCurrency(total, quote.currency)}</Text>
                 </View>
 
+                {bankDetails && <PaymentDetails bankDetails={bankDetails} clientName={quote.clientName} />}
+
                 <SignatureBlock />
 
                 <Text style={styles.footer}>JayarathnaTech Solutions — {siteContact.email}</Text>
@@ -147,8 +179,8 @@ function QuoteDocument({ quote }: { quote: Quote }) {
     )
 }
 
-export async function exportQuotePdf(quote: Quote) {
-    const blob = await pdf(<QuoteDocument quote={quote} />).toBlob()
+export async function exportQuotePdf(quote: Quote, bankDetails: BankDetails | null) {
+    const blob = await pdf(<QuoteDocument quote={quote} bankDetails={bankDetails} />).toBlob()
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url

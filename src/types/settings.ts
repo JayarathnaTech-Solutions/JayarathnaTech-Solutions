@@ -6,3 +6,9 @@ export interface BankDetails {
   accountNumber: string
   branchSwift: string
 }
+
+/** One labelled line of a bank account, as printed on the quote PDF and previewed in the quote form. */
+export interface IBankDetailsRow {
+  label: string
+  value: string
+}

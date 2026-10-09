@@ -284,6 +284,12 @@ this file only tracks scope and progress.
       saved before the option are treated as split). Split prints the 50% deposit +
       50% balance rows on the form and PDF; full payment prints only the Grand Total.
       Labels and amounts come from `calcPaymentInstallments` in `src/lib/quote.ts`
+- [x] "Include bank transfer details in PDF" tick (on by default; older quotes
+      print it too). Prints a Payment Details block with the account from
+      `settings/bankDetails`, read live when the form opens and never copied onto
+      the quote, so a changed account shows on the next export. Disabled with a
+      hint while loading or when no account is set up. Rows from `listBankDetails`
+      in `src/lib/bankDetails.ts`, shared by the form preview and the PDF
 - [x] Removed AI BRD/SRS generation (form section, `api/requirementsDocAi`,
       `requirementsDocPdf`, mermaid). Old quote docs may still hold the unused
       `brdContent`/`srsContent`/diagram fields; the mapper ignores them

@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { addDoc, collection, doc, orderBy, query, serverTimestamp, updateDoc, where } from 'firebase/firestore'
 import { db } from '../../firebase/config'
 import { quoteFromDoc } from '../../lib/firestore'
 import { useFirestoreCollection } from '../../lib/useFirestoreCollection'
+import { useBankDetails } from '../../lib/useBankDetails'
+import { listBankDetails } from '../../lib/bankDetails'
 import { formatDate } from '../../lib/format'
 import {
     calcBufferAmount,
@@ -10,6 +12,7 @@ import {
     calcPaymentInstallments,
     calcProfitAmount,
     calcQuoteTotal,
+    defaultIncludeBankDetails,
     defaultSplitPayment,
     formatCurrency,
     lineItemTotal,
@@ -18,7 +21,7 @@ import { SlidePanel } from '../../components/SlidePanel'
 import { StatusBadge } from '../../components/StatusBadge'
 import { inputClass } from '../../lib/ui'
 import { Skeleton } from '../../components/Skeleton'
-import type { Quote, QuoteCurrency, QuoteLineItem, QuoteStatus } from '../../types'
+import type { BankDetails, Quote, QuoteCurrency, QuoteLineItem, QuoteStatus } from '../../types'
 
 const filterTabs: { value: QuoteStatus | 'all'; label: string }[] = [
     { value: 'all', label: 'All' },
@@ -115,6 +118,12 @@ function LineItemsEditor({
     )
 }
 
+const bankDetailsHint = (bankDetails: BankDetails | null | undefined) => {
+    if (bankDetails === undefined) return 'Loading the bank account from Settings…'
+    if (bankDetails === null) return 'No bank account set up yet — an admin can add one in Settings.'
+    return 'Prints the account currently saved in Settings.'
+}
+
 function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: () => void; onClose: () => void }) {
     const [clientName, setClientName] = useState(quote?.clientName ?? '')
     const [clientEmail, setClientEmail] = useState(quote?.clientEmail ?? '')
@@ -123,6 +132,10 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
     const [bufferPercent, setBufferPercent] = useState(quote?.bufferPercent ?? 0)
     const [profitPercent, setProfitPercent] = useState(quote?.profitPercent ?? 0)
     const [splitPayment, setSplitPayment] = useState(quote?.splitPayment ?? defaultSplitPayment)
+    const [includeBankDetails, setIncludeBankDetails] = useState(quote?.includeBankDetails ?? defaultIncludeBankDetails)
+    // Read live from Settings each time the form opens and never copied onto
+    // the quote, so a changed bank account shows on every PDF exported after.
+    const bankDetails = useBankDetails()
     const [lineItems, setLineItems] = useState<QuoteLineItem[]>(
         quote?.lineItems && quote.lineItems.length > 0 ? quote.lineItems : [{ description: '', quantity: 1, unitPrice: 0 }],
     )
@@ -158,6 +171,7 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
     const profitAmount = calcProfitAmount(subtotal, profitPercent)
     const total = calcGrandTotal(subtotal, bufferPercent, profitPercent)
     const paymentInstallments = calcPaymentInstallments(total, splitPayment)
+    const bankDetailsOnPdf = includeBankDetails && bankDetails ? bankDetails : null
 
     async function handleExport() {
         setExporting(true)
@@ -173,9 +187,10 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
                 bufferPercent,
                 profitPercent,
                 splitPayment,
+                includeBankDetails,
                 customerRequirements: customerRequirements.trim() || undefined,
                 createdAt: quote?.createdAt ?? new Date().toISOString(),
-            })
+            }, bankDetailsOnPdf)
         } finally {
             setExporting(false)
         }
@@ -194,6 +209,7 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
             bufferPercent,
             profitPercent,
             splitPayment,
+            includeBankDetails,
             customerRequirements: customerRequirements.trim(),
         }
 
@@ -375,6 +391,39 @@ function QuoteForm({ quote, onSaved, onClose }: { quote: Quote | null; onSaved: 
                     />
                 </span>
             </label>
+
+            <div className="rounded-lg border border-slate-200 p-4">
+                <label htmlFor="includeBankDetails" className="flex cursor-pointer items-start gap-3">
+                    <input
+                        id="includeBankDetails"
+                        type="checkbox"
+                        checked={bankDetailsOnPdf !== null}
+                        disabled={!bankDetails}
+                        onChange={(event) => setIncludeBankDetails(event.target.checked)}
+                        aria-labelledby="includeBankDetailsLabel"
+                        aria-describedby="includeBankDetailsHint"
+                        className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded border-slate-300 accent-blue-600 disabled:cursor-not-allowed"
+                    />
+                    <span>
+                        <span id="includeBankDetailsLabel" className="block text-sm font-medium text-slate-600">
+                            Include bank transfer details in PDF
+                        </span>
+                        <span id="includeBankDetailsHint" className="mt-0.5 block text-xs text-slate-500">
+                            {bankDetailsHint(bankDetails)}
+                        </span>
+                    </span>
+                </label>
+                {bankDetailsOnPdf && (
+                    <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 rounded-md bg-slate-50 px-3 py-2.5 text-xs">
+                        {listBankDetails(bankDetailsOnPdf).map((row) => (
+                            <Fragment key={row.label}>
+                                <dt className="text-slate-500">{row.label}</dt>
+                                <dd className="font-medium break-words text-slate-700">{row.value}</dd>
+                            </Fragment>
+                        ))}
+                    </dl>
+                )}
+            </div>
 
             <div className="space-y-2 border-t border-slate-200 pt-4">
                 <div className="flex items-center justify-between text-sm text-slate-500">
