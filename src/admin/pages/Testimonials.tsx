@@ -3,6 +3,7 @@ import { addDoc, collection, doc, getCountFromServer, getDocs, query, serverTime
 import { db } from '../../firebase/config'
 import { testimonialFromDoc } from '../../lib/firestore'
 import { timeAgo } from '../../lib/format'
+import { SITE_URL } from '../../lib/siteInfo'
 import { Skeleton } from '../../components/Skeleton'
 import { Avatar } from '../../components/Avatar'
 import type { Testimonial, TestimonialStatus } from '../../types'
@@ -152,7 +153,9 @@ function GenerateInviteButton() {
                 used: false,
                 createdAt: serverTimestamp(),
             })
-            setLink(`${window.location.origin}/testimonial/${inviteRef.id}`)
+            // Not window.location.origin: this page runs on the admin subdomain,
+            // which only serves admin routes, so the customer would get a 404.
+            setLink(`${SITE_URL}/testimonial/${inviteRef.id}`)
         } finally {
             setGenerating(false)
         }
