@@ -23,7 +23,9 @@ route trees in `src/App.tsx`:
 `admin.jayarathnatechsolutions.com`). On that host it renders *only* admin routes; on
 every other host (including `localhost`) it renders *only* public + portal routes, so
 `/admin` hits the 404 page during plain `npm run dev`. Same Vercel deployment serves
-both hosts.
+both hosts. Any link the admin panel hands to a customer (testimonial invites, and
+anything similar) must be built from `SITE_URL`, never `window.location.origin`, or it
+points at the admin host and 404s.
 
 `PLAN.md` holds the locked-in architecture decisions, assumptions, open risks, and a
 checkbox-tracked feature list (sections 0–19). Read it before starting work and check
